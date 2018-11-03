@@ -1,0 +1,6 @@
+[package]
+name = "ness"
+version = "0.1.0"
+authors = ["mynz <rollingteapot@gmail.com>"]
+
+[dependencies]
