@@ -11,8 +11,14 @@ fn load_bin(filename: String) {
     let mut reader = std::io::BufReader::new(fp);
 
     let mut bin: Vec<u8> = Vec::with_capacity(4095);
-    let res = reader.read_to_end(&mut bin).unwrap();
-    println!("{:?}", res);
+
+    let mut header = [0u8; 16];
+    let mut nread;
+    nread = reader.read(&mut header).unwrap();
+    println!("header: {}, {:?}", nread, header);
+
+    nread = reader.read_to_end(&mut bin).unwrap();
+    println!("{:?}", nread);
 
     for (i, b) in bin.into_iter().enumerate() {
         println!("b: {}P {:?}", i, b);
