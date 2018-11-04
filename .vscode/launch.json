@@ -19,7 +19,10 @@
                 }
             },
             "args": [],
-            "cwd": "${workspaceFolder}"
+            "cwd": "${workspaceFolder}",
+            "sourceMap": {
+                "*/rust-lang/rust/src/": "${env:HOME}/.rustup/toolchains/stable-x86_64-apple-darwin/lib/rustlib/src/rust/src/"
+            }
         },
         {
             "type": "lldb",
