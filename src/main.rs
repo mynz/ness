@@ -13,8 +13,7 @@ struct Image {
 impl Image {
     fn signature(&self) -> [u8; 4] {
         let mut ret = [0u8; 4];
-        let b = &self.bin[0..4];
-        ret.copy_from_slice(b);
+        ret.copy_from_slice(&self.bin[0..4]);
         ret
     }
 }
@@ -41,6 +40,16 @@ fn load_image(filename: String) -> Image {
     }
 
     Image { bin: bin }
+}
+
+#[test]
+fn test_image() {
+    assert!(true);
+
+    let image = load_image("rom/sample1.nes".to_string());
+
+    let sig = image.signature();
+    assert_eq!(sig, "NES\u{1a}".as_bytes());
 }
 
 fn main() {
