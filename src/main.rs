@@ -20,6 +20,14 @@ impl Image {
     fn get_header(&self) -> &[u8] {
         &self.bin[0..16]
     }
+
+    fn get_num_of_prg(&self) -> u8 {
+        self.get_header()[4]
+    }
+
+    fn get_num_of_chr(&self) -> u8 {
+        self.get_header()[5]
+    }
 }
 
 fn load_image(filename: String) -> Image {
@@ -47,6 +55,7 @@ fn main() {
     let image = load_image("rom/sample1.nes".to_string());
 
     println!("image size: {}", image.bin.len());
-    println!("image signature: {:#?}", image.get_signature());
     println!("image header: {:?}", image.get_header());
+    println!("image signature: {:?}, prg: {}, chr: {}",
+             image.get_signature(), image.get_num_of_prg(), image.get_num_of_chr());
 }
