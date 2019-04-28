@@ -21,12 +21,23 @@ impl Image {
         &self.bin[0..16]
     }
 
-    fn get_bytes_of_prg(&self) -> u16 {
-        self.get_header()[4] as u16 * 16 * 1024
+    fn get_bytes_of_prg(&self) -> usize {
+        self.get_header()[4] as usize * 16 * 1024
     }
 
-    fn get_bytes_of_chr(&self) -> u16 {
-        self.get_header()[5] as u16 * 8 * 1024
+    fn get_bytes_of_chr(&self) -> usize {
+        self.get_header()[5] as usize * 8 * 1024
+    }
+
+    fn get_prg(&self) -> &[u8] {
+        let start = 0x10;
+        let end = start + self.get_bytes_of_prg();
+        &self.bin[start..end]
+    }
+    fn get_chr(&self) -> &[u8] {
+        let start = 0x10 + self.get_bytes_of_prg();
+        let end = start + self.get_bytes_of_chr();
+        &self.bin[start..end]
     }
 }
 
@@ -58,4 +69,10 @@ fn main() {
     println!("image header: {:?}", image.get_header());
     println!("image signature: {:?}, prg: {}, chr: {}",
              image.get_signature(), image.get_bytes_of_prg(), image.get_bytes_of_chr());
+
+    //println!("prg: {:?}", image.get_prg());
+    //println!("prg: {:#?}", image.get_prg());
+    //println!("prg: {:?}", image.get_chr());
+    println!("prg: {:#?}", image.get_chr());
+
 }
