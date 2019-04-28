@@ -57,7 +57,10 @@ fn test_image() {
     assert_eq!(sig, "NES\u{1a}".as_bytes());
 
     let header = image.get_header();
-    assert_eq!(16, header.len())
+    assert_eq!(16, header.len());
+
+    assert_eq!(image.get_bytes_of_prg(), image.get_prg().len());
+    assert_eq!(image.get_bytes_of_chr(), image.get_prg().len());
 }
 
 fn main() {
@@ -67,12 +70,15 @@ fn main() {
 
     println!("image size: {}", image.bin.len());
     println!("image header: {:?}", image.get_header());
-    println!("image signature: {:?}, prg: {}, chr: {}",
-             image.get_signature(), image.get_bytes_of_prg(), image.get_bytes_of_chr());
+    println!(
+        "image signature: {:?}, prg: {}, chr: {}",
+        image.get_signature(),
+        image.get_bytes_of_prg(),
+        image.get_bytes_of_chr()
+    );
 
     //println!("prg: {:?}", image.get_prg());
     //println!("prg: {:#?}", image.get_prg());
     //println!("prg: {:?}", image.get_chr());
-    println!("prg: {:#?}", image.get_chr());
-
+    println!("chr: {:#?}", image.get_chr());
 }
