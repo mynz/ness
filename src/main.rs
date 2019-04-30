@@ -60,7 +60,7 @@ fn test_image() {
     assert_eq!(16, header.len());
 
     assert_eq!(image.get_bytes_of_prg(), image.get_prg().len());
-    assert_eq!(image.get_bytes_of_chr(), image.get_prg().len());
+    assert_eq!(image.get_bytes_of_chr(), image.get_chr().len());
 }
 
 fn main() {
@@ -80,5 +80,5 @@ fn main() {
     //println!("prg: {:?}", image.get_prg());
     //println!("prg: {:#?}", image.get_prg());
     //println!("prg: {:?}", image.get_chr());
-    println!("chr: {:#?}", image.get_chr());
+    println!("chr: {:?}", image.get_chr());
 }
