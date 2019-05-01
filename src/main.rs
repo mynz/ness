@@ -5,6 +5,9 @@
 use std::fs::File;
 //use std::io::{BufReader, Read};
 use std::io::Read;
+use std::path::Path;
+
+extern crate image;
 
 struct Image {
     bin: Vec<u8>,
@@ -62,6 +65,12 @@ fn test_image() {
     assert_eq!(image.get_bytes_of_prg(), image.get_prg().len());
     assert_eq!(image.get_bytes_of_chr(), image.get_chr().len());
 }
+ 
+fn write_png() {
+    let buf = [0u8; 32 * 32 * 4];
+
+    image::save_buffer(&Path::new("tmp/image.png"), &buf, 32, 32, image::RGB(8));
+}
 
 fn main() {
     println!("Hello, world!");
@@ -80,5 +89,7 @@ fn main() {
     //println!("prg: {:?}", image.get_prg());
     //println!("prg: {:#?}", image.get_prg());
     //println!("prg: {:?}", image.get_chr());
-    println!("chr: {:?}", image.get_chr());
+    //println!("chr: {:?}", image.get_chr());
+
+    write_png();
 }
