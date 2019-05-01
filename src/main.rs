@@ -1,6 +1,6 @@
 // main.rs
 
-#![warn(dead_code)]
+#![allow(dead_code)]
 
 use std::fs::File;
 //use std::io::{BufReader, Read};
@@ -65,51 +65,65 @@ fn test_image() {
     assert_eq!(image.get_bytes_of_prg(), image.get_prg().len());
     assert_eq!(image.get_bytes_of_chr(), image.get_chr().len());
 }
- 
-fn write_png(chr: &[u8]) {
 
+fn write_png(chr: &[u8]) {
     let nblocks = chr.len() / 16;
     let w = 8 * 64; // 512
     let h = (nblocks / 64) * 8;
 
-    println!("write_png: {}, nblocks: {}, w,h: {}, {}", chr.len(), nblocks, w, h);
+    println!(
+        "write_png: {}, nblocks: {}, w,h: {}, {}",
+        chr.len(),
+        nblocks,
+        w,
+        h
+    );
 
     let nbuf: usize = w * h * 4;
     let mut buf: Vec<u8> = vec![0u8; nbuf];
 
-    // 一ブロックは 16 byte 
-    for (idx_block, it) in chr.chunks(16).enumerate() {
-
+    // 一ブロックは 16 byte
+    for (idx_block, chunk) in chr.chunks(16).enumerate() {
         let xb = idx_block % 64;
         let yb = idx_block / 64;
         let x_base = xb * 8;
         let y_base = yb * 8;
 
-        //println!("it: {:?}, idx_block: {}, xb, yb: {}, {}, (x,y): {:?} ", it, idx_block, xb, yb, (x, y));
-
         for iy in 0..8 {
             for ix in 0..8 {
+                let lines = (chunk[iy], chunk[iy + 8]);
+                let a = lines.0 >> ix & 0x1;
+                let b = lines.1 >> ix & 0x1;
+                let bit = a | (b << 1);
+
+                assert!(bit < 4);
+                let c = match bit {
+                    0 => 0x00,
+                    1 => 0x55,
+                    2 => 0xaa,
+                    3 => 0xff,
+                    _ => 0xff,
+                };
 
                 let y = iy + y_base;
                 let x = ix + x_base;
-                let dst_index = y * w * 4 + x * 4 + 0;
-                let line = it[iy];
-                let bit = (line >> ix) & 0x1;
-                let c: u8 = if bit != 0 {
-                    0xff
-                } else {
-                    0x00
-                };
-
-                buf[dst_index + 0] = c;
-                buf[dst_index + 1] = c;
-                buf[dst_index + 2] = c;
-                buf[dst_index + 3] = 0xff;
+                let dst_idx = y * w * 4 + x * 4;
+                buf[dst_idx + 0] = c;
+                buf[dst_idx + 1] = c;
+                buf[dst_idx + 2] = c;
+                buf[dst_idx + 3] = 0xff;
             }
         }
     }
 
-    image::save_buffer(&Path::new("tmp/image.png"), &buf, w as u32, h as u32, image::RGBA(8));
+    image::save_buffer(
+        &Path::new("tmp/image.png"),
+        &buf,
+        w as u32,
+        h as u32,
+        image::RGBA(8),
+    )
+    .unwrap();
 }
 
 fn main() {
