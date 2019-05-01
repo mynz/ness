@@ -66,7 +66,7 @@ fn test_image() {
     assert_eq!(image.get_bytes_of_chr(), image.get_chr().len());
 }
 
-fn write_png(chr: &[u8]) {
+fn write_png(path: &Path, chr: &[u8]) {
     let nblocks = chr.len() / 16;
     let w = 8 * 64; // 512
     let h = (nblocks / 64) * 8;
@@ -117,14 +117,7 @@ fn write_png(chr: &[u8]) {
         }
     }
 
-    image::save_buffer(
-        &Path::new("tmp/image.png"),
-        &buf,
-        w as u32,
-        h as u32,
-        image::RGBA(8),
-    )
-    .unwrap();
+    image::save_buffer(path, &buf, w as u32, h as u32, image::RGBA(8)).unwrap();
 }
 
 fn main() {
@@ -146,5 +139,5 @@ fn main() {
     //println!("prg: {:?}", image.get_chr());
     //println!("chr: {:?}", image.get_chr());
 
-    write_png(image.get_chr());
+    write_png(&Path::new("tmp/image.png"), image.get_chr());
 }
