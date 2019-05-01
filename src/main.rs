@@ -92,8 +92,9 @@ fn write_png(chr: &[u8]) {
         for iy in 0..8 {
             for ix in 0..8 {
                 let lines = (chunk[iy], chunk[iy + 8]);
-                let a = lines.0 >> ix & 0x1;
-                let b = lines.1 >> ix & 0x1;
+                let rx = 7 - ix; // reverse endian
+                let a = lines.0 >> rx & 0x1;
+                let b = lines.1 >> rx & 0x1;
                 let bit = a | (b << 1);
 
                 assert!(bit < 4);
