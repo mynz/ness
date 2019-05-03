@@ -14,6 +14,14 @@ struct Rom {
 }
 
 impl Rom {
+    fn load_image(filename: String) -> Rom {
+        let fp = File::open(filename).unwrap();
+        let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
+        let mut reader = std::io::BufReader::new(fp);
+        reader.read_to_end(&mut bin).unwrap();
+        Rom { bin: bin }
+    }
+
     fn get_signature(&self) -> [u8; 4] {
         let mut ret = [0u8; 4];
         ret.copy_from_slice(&self.bin[0..4]);
@@ -44,26 +52,19 @@ impl Rom {
     }
 }
 
-fn load_image(filename: String) -> Rom {
-    let fp = File::open(filename).unwrap();
-    let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
-    let mut reader = std::io::BufReader::new(fp);
-    reader.read_to_end(&mut bin).unwrap();
-    Rom { bin: bin }
-}
 
 #[test]
 fn test_image() {
     assert!(true);
-    let image = load_image("rom/sample1.nes".to_string());
-    let sig = image.get_signature();
+    let rom = Rom::load_image("rom/sample1.nes".to_string());
+    let sig = rom.get_signature();
     assert_eq!(sig, "NES\u{1a}".as_bytes());
 
-    let header = image.get_header();
+    let header = rom.get_header();
     assert_eq!(16, header.len());
 
-    assert_eq!(image.get_bytes_of_prg(), image.get_prg().len());
-    assert_eq!(image.get_bytes_of_chr(), image.get_chr().len());
+    assert_eq!(rom.get_bytes_of_prg(), rom.get_prg().len());
+    assert_eq!(rom.get_bytes_of_chr(), rom.get_chr().len());
 }
 
 fn write_png(path: &Path, chr: &[u8]) {
@@ -153,7 +154,7 @@ impl Machine {
 fn main() {
     //println!("Hello, world!");
 
-    let rom = load_image("rom/sample1.nes".to_string());
+    let rom = Rom::load_image("rom/sample1.nes".to_string());
 
     println!("rom size: {}", rom.bin.len());
     println!("rom header: {:?}", rom.get_header());
