@@ -165,8 +165,7 @@ struct Machine {
     rom: Rom,
 }
 
-struct Bus {
-}
+//struct Bus { }
 
 impl Machine {
     fn new(rom: Rom) -> Machine {
@@ -175,8 +174,33 @@ impl Machine {
         Machine { register, rom }
     }
 
-    fn run() {
+    fn read_byte_by_addr(&self, addr: u16) -> u8 {
+
+        if addr < 0x07ff {
+            return self.rom.bin[addr as usize];
+        }
+
+        return 0
     }
+
+    fn reset(&mut self) {
+        self.register = Register::default();
+        // TODO: ちゃんと正しいアドレスからPCをセットするべし
+        self.register.pc = 0x8000;
+    }
+
+    fn run(&mut self) {
+        self.reset();
+
+        // TODO
+        self.register.pc += 1;
+    }
+}
+
+fn test_machine() {
+    let rom = Rom::load_image("rom/sample1.nes".to_string());
+    let mut machine = Machine::new(rom);
+    machine.run()
 }
 
 fn main() {
@@ -200,5 +224,5 @@ fn main() {
 
     rom.write_png(&Path::new("tmp/image.png"));
 
-    let machine = Machine::new(rom);
+    //let machine = Machine::new(rom);
 }
