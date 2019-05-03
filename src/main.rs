@@ -4,8 +4,11 @@
 
 use std::fs::File;
 //use std::io::{BufReader, Read};
-use std::io::Read;
+use std::io::{Cursor, Read};
 use std::path::Path;
+
+extern crate byteorder;
+use byteorder::{LittleEndian, ReadBytesExt};
 
 extern crate image;
 
@@ -174,19 +177,27 @@ impl Machine {
         Machine { register, rom }
     }
 
-    fn read_byte_by_addr(&self, addr: u16) -> u8 {
-
+    fn read_word(&self, addr: u16) -> u16 {
         if addr < 0x07ff {
-            return self.rom.bin[addr as usize];
+            let mut c = Cursor::new(&self.rom.bin);
+            c.set_position(addr as u64);
+            return c.read_u16::<LittleEndian>().unwrap();
         }
 
-        return 0
+        if addr == 0xfffc {
+            // reset 割り込みの値（暫定実装）
+            return 0x8000;
+        }
+
+        return 0;
     }
 
     fn reset(&mut self) {
         self.register = Register::default();
         // TODO: ちゃんと正しいアドレスからPCをセットするべし
-        self.register.pc = 0x8000;
+
+        //self.register.pc = 0x8000;
+        self.register.pc = self.read_word(0xfffc);
     }
 
     fn run(&mut self) {
@@ -197,9 +208,16 @@ impl Machine {
     }
 }
 
+#[test]
 fn test_machine() {
     let rom = Rom::load_image("rom/sample1.nes".to_string());
     let mut machine = Machine::new(rom);
+
+    //println!("XXX: {:x?}", machine.read_word(0));
+    assert_eq!(0x454e, machine.read_word(0));
+    assert_eq!(0x454e, machine.read_word(0));
+    assert_eq!(0x8000, machine.read_word(0xfffc)); // reset
+
     machine.run()
 }
 

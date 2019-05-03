@@ -6,3 +6,4 @@ authors = ["mynz <rollingteapot@gmail.com>"]
 [dependencies]
 
 image = ""
+byteorder = ""
