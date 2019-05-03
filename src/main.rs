@@ -50,8 +50,63 @@ impl Rom {
         let end = start + self.get_bytes_of_chr();
         &self.bin[start..end]
     }
-}
 
+    fn write_png(&self, path: &Path) {
+        let chr = self.get_chr();
+
+        let nblocks = chr.len() / 16;
+        let w = 8 * 64; // 512
+        let h = (nblocks / 64) * 8;
+
+        println!(
+            "write_png: {}, nblocks: {}, w,h: {}, {}",
+            chr.len(),
+            nblocks,
+            w,
+            h
+        );
+
+        let nbuf: usize = w * h * 4;
+        let mut buf: Vec<u8> = vec![0u8; nbuf];
+
+        // 一ブロックは 16 byte
+        for (idx_block, chunk) in chr.chunks(16).enumerate() {
+            let xb = idx_block % 64;
+            let yb = idx_block / 64;
+            let x_base = xb * 8;
+            let y_base = yb * 8;
+
+            for iy in 0..8 {
+                for ix in 0..8 {
+                    let lines = (chunk[iy], chunk[iy + 8]);
+                    let rx = 7 - ix; // reverse endian
+                    let a = lines.0 >> rx & 0x1;
+                    let b = lines.1 >> rx & 0x1;
+                    let bit = a | (b << 1);
+
+                    assert!(bit < 4);
+                    let c = match bit {
+                        0 => 0x00,
+                        1 => 0x55,
+                        2 => 0xaa,
+                        3 => 0xff,
+                        _ => 0xff,
+                    };
+
+                    let y = iy + y_base;
+                    let x = ix + x_base;
+                    let dst_idx = y * w * 4 + x * 4;
+                    buf[dst_idx + 0] = c;
+                    buf[dst_idx + 1] = c;
+                    buf[dst_idx + 2] = c;
+                    buf[dst_idx + 3] = 0xff;
+                }
+            }
+        }
+
+        image::save_buffer(path, &buf, w as u32, h as u32, image::RGBA(8)).unwrap();
+    }
+}
 
 #[test]
 fn test_image() {
@@ -67,60 +122,6 @@ fn test_image() {
     assert_eq!(rom.get_bytes_of_chr(), rom.get_chr().len());
 }
 
-fn write_png(path: &Path, chr: &[u8]) {
-    let nblocks = chr.len() / 16;
-    let w = 8 * 64; // 512
-    let h = (nblocks / 64) * 8;
-
-    println!(
-        "write_png: {}, nblocks: {}, w,h: {}, {}",
-        chr.len(),
-        nblocks,
-        w,
-        h
-    );
-
-    let nbuf: usize = w * h * 4;
-    let mut buf: Vec<u8> = vec![0u8; nbuf];
-
-    // 一ブロックは 16 byte
-    for (idx_block, chunk) in chr.chunks(16).enumerate() {
-        let xb = idx_block % 64;
-        let yb = idx_block / 64;
-        let x_base = xb * 8;
-        let y_base = yb * 8;
-
-        for iy in 0..8 {
-            for ix in 0..8 {
-                let lines = (chunk[iy], chunk[iy + 8]);
-                let rx = 7 - ix; // reverse endian
-                let a = lines.0 >> rx & 0x1;
-                let b = lines.1 >> rx & 0x1;
-                let bit = a | (b << 1);
-
-                assert!(bit < 4);
-                let c = match bit {
-                    0 => 0x00,
-                    1 => 0x55,
-                    2 => 0xaa,
-                    3 => 0xff,
-                    _ => 0xff,
-                };
-
-                let y = iy + y_base;
-                let x = ix + x_base;
-                let dst_idx = y * w * 4 + x * 4;
-                buf[dst_idx + 0] = c;
-                buf[dst_idx + 1] = c;
-                buf[dst_idx + 2] = c;
-                buf[dst_idx + 3] = 0xff;
-            }
-        }
-    }
-
-    image::save_buffer(path, &buf, w as u32, h as u32, image::RGBA(8)).unwrap();
-}
-
 #[derive(Default)]
 struct Register {
     a: u8,
@@ -131,8 +132,7 @@ struct Register {
     pc: u16,
 }
 
-impl Register {
-}
+impl Register {}
 
 struct Machine {
     register: Register,
@@ -140,14 +140,10 @@ struct Machine {
 }
 
 impl Machine {
-
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
 
-        Machine{
-            register,
-            rom,
-        }
+        Machine { register, rom }
     }
 }
 
@@ -170,7 +166,7 @@ fn main() {
     //println!("prg: {:?}", rom.get_chr());
     //println!("chr: {:?}", rom.get_chr());
 
-    write_png(&Path::new("tmp/image.png"), rom.get_chr());
+    rom.write_png(&Path::new("tmp/image.png"));
 
     let machine = Machine::new(rom);
 }
