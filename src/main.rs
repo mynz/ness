@@ -122,13 +122,39 @@ fn test_image() {
     assert_eq!(rom.get_bytes_of_chr(), rom.get_chr().len());
 }
 
+struct StatusRegister {
+    negative: bool,
+    overflow: bool,
+    reserved: bool,
+    brk: bool, // break
+    decimal: bool,
+    interrupt: bool,
+    zero: bool,
+    carry: bool,
+}
+
+impl Default for StatusRegister {
+    fn default() -> Self {
+        StatusRegister {
+            negative: false,
+            overflow: false,
+            reserved: true,
+            brk: true, // break
+            decimal: false,
+            interrupt: true,
+            zero: false,
+            carry: false,
+        }
+    }
+}
+
 #[derive(Default)]
 struct Register {
     a: u8,
     x: u8,
     y: u8,
     s: u8,
-    p: u8,
+    p: StatusRegister,
     pc: u16,
 }
 
@@ -139,11 +165,17 @@ struct Machine {
     rom: Rom,
 }
 
+struct Bus {
+}
+
 impl Machine {
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
 
         Machine { register, rom }
+    }
+
+    fn run() {
     }
 }
 
