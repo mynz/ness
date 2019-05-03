@@ -9,11 +9,11 @@ use std::path::Path;
 
 extern crate image;
 
-struct Image {
+struct Rom {
     bin: Vec<u8>,
 }
 
-impl Image {
+impl Rom {
     fn get_signature(&self) -> [u8; 4] {
         let mut ret = [0u8; 4];
         ret.copy_from_slice(&self.bin[0..4]);
@@ -44,12 +44,12 @@ impl Image {
     }
 }
 
-fn load_image(filename: String) -> Image {
+fn load_image(filename: String) -> Rom {
     let fp = File::open(filename).unwrap();
     let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
     let mut reader = std::io::BufReader::new(fp);
     reader.read_to_end(&mut bin).unwrap();
-    Image { bin: bin }
+    Rom { bin: bin }
 }
 
 #[test]
@@ -135,15 +135,17 @@ impl Register {
 
 struct Machine {
     register: Register,
+    rom: Rom,
 }
 
 impl Machine {
 
-    fn new() -> Machine {
+    fn new(rom: Rom) -> Machine {
         let register = Register::default();
 
         Machine{
             register,
+            rom,
         }
     }
 }
@@ -151,21 +153,23 @@ impl Machine {
 fn main() {
     //println!("Hello, world!");
 
-    let image = load_image("rom/sample1.nes".to_string());
+    let rom = load_image("rom/sample1.nes".to_string());
 
-    println!("image size: {}", image.bin.len());
-    println!("image header: {:?}", image.get_header());
+    println!("rom size: {}", rom.bin.len());
+    println!("rom header: {:?}", rom.get_header());
     println!(
-        "image signature: {:?}, prg: {}, chr: {}",
-        image.get_signature(),
-        image.get_bytes_of_prg(),
-        image.get_bytes_of_chr()
+        "rom signature: {:?}, prg: {}, chr: {}",
+        rom.get_signature(),
+        rom.get_bytes_of_prg(),
+        rom.get_bytes_of_chr()
     );
 
-    //println!("prg: {:?}", image.get_prg());
-    //println!("prg: {:#?}", image.get_prg());
-    //println!("prg: {:?}", image.get_chr());
-    //println!("chr: {:?}", image.get_chr());
+    //println!("prg: {:?}", rom.get_prg());
+    //println!("prg: {:#?}", rom.get_prg());
+    //println!("prg: {:?}", rom.get_chr());
+    //println!("chr: {:?}", rom.get_chr());
 
-    write_png(&Path::new("tmp/image.png"), image.get_chr());
+    write_png(&Path::new("tmp/image.png"), rom.get_chr());
+
+    let machine = Machine::new(rom);
 }
