@@ -120,6 +120,34 @@ fn write_png(path: &Path, chr: &[u8]) {
     image::save_buffer(path, &buf, w as u32, h as u32, image::RGBA(8)).unwrap();
 }
 
+#[derive(Default)]
+struct Register {
+    a: u8,
+    x: u8,
+    y: u8,
+    s: u8,
+    p: u8,
+    pc: u16,
+}
+
+impl Register {
+}
+
+struct Machine {
+    register: Register,
+}
+
+impl Machine {
+
+    fn new() -> Machine {
+        let register = Register::default();
+
+        Machine{
+            register,
+        }
+    }
+}
+
 fn main() {
     //println!("Hello, world!");
 
