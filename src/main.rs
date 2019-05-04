@@ -168,6 +168,7 @@ impl Register {}
 struct Machine {
     register: Register,
     rom: Rom,
+    wram: Box<[u8]>, // 2kb
 }
 
 //struct Bus { }
@@ -175,14 +176,14 @@ struct Machine {
 impl Machine {
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
-
-        Machine { register, rom }
+        let wram = Box::new([0;2 * 1024]);
+        Machine { register, rom, wram }
     }
 
     fn read_word(&self, addr: u16) -> u16 {
         if addr <= 0x07ff {
-            // FIXME, TODO: WRAMryouiki
-            let mut c = Cursor::new(&self.rom.bin);
+            // FIXME, TODO: WRAM領域(2kb)
+            let mut c = Cursor::new(&self.wram);
             c.set_position(addr as u64);
             return c.read_u16::<LittleEndian>().unwrap();
         }
@@ -201,7 +202,6 @@ impl Machine {
         self.register = Register::default();
         // TODO: ちゃんと正しいアドレスからPCをセットするべし
 
-        //self.register.pc = 0x8000;
         self.register.pc = self.read_word(0xfffc);
     }
 
@@ -220,8 +220,9 @@ fn test_machine() {
 
     println!("XXX: {:x?}", machine.read_word(0x8000));
 
-    assert_eq!(0x454e, machine.read_word(0));
-    assert_eq!(0x454e, machine.read_word(0));
+    assert_eq!(0x00, machine.read_word(0));
+    assert_eq!(0x00, machine.read_word(0));
+    assert_eq!(0x00, machine.read_word(2));
     assert_eq!(0x8000, machine.read_word(0xfffc)); // reset
     assert_eq!(0xa278, machine.read_word(0x8000)); // prg
     assert_eq!(0x9aff, machine.read_word(0x8002)); // prg
