@@ -198,16 +198,31 @@ impl Machine {
         return 0;
     }
 
+    fn read_byte(&self, addr: u16) -> u8 {
+        let word = self.read_word(addr);
+        (word >> 8 & 0x00ff) as u8
+    }
+
     fn reset(&mut self) {
         self.register = Register::default();
         self.register.pc = self.read_word(0xfffc);
     }
 
+    fn decode(&mut self) {
+        let op = self.read_byte(self.register.pc);
+        self.register.pc += 1;
+
+        println!("XXX op: {:x}", op);
+    }
+
     fn run(&mut self) {
         self.reset();
 
+        self.decode();
+
         // TODO
-        self.register.pc += 1;
+        //self.register.pc += 1;
+        //self.read_byte(self.Register.pc);
     }
 }
 
@@ -225,6 +240,8 @@ fn test_machine() {
     assert_eq!(0xa278, machine.read_word(0x8000)); // prg
     assert_eq!(0x9aff, machine.read_word(0x8002)); // prg
     assert_eq!(0x00a9, machine.read_word(0x8004)); // prg
+    assert_eq!(0x80, machine.read_byte(0xfffc)); // reset
+    assert_eq!(0x00, machine.read_byte(0xfffd)); // reset
 
     machine.run()
 }
@@ -259,5 +276,6 @@ fn main() {
     rom.write_png(&Path::new("tmp/image.png"));
     dump_bin(&Path::new("tmp/prg.bin"), rom.get_prg()).unwrap();
 
-    //let machine = Machine::new(rom);
+    let mut machine = Machine::new(rom);
+    machine.run();
 }
