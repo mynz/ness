@@ -187,15 +187,11 @@ impl Machine {
             return c.read_u16::<LittleEndian>().unwrap();
         }
 
-        if addr >= 0x8000 && addr <= 0x8000 + 0x4000 {
+        // 0xffff まで有効
+        if addr >= 0x8000 {
             let mut cur = Cursor::new(self.rom.get_prg());
             cur.set_position((addr - 0x8000) as u64);
             return cur.read_u16::<LittleEndian>().unwrap();
-        }
-
-        if addr == 0xfffc {
-            // reset 割り込みの値（暫定実装）
-            return 0x8000;
         }
 
         return 0;
