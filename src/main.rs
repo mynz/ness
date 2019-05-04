@@ -3,7 +3,9 @@
 #![allow(dead_code)]
 
 use std::fs::File;
+use std::fs::OpenOptions;
 //use std::io::{BufReader, Read};
+use std::io::prelude::*;
 use std::io::{Cursor, Read};
 use std::path::Path;
 
@@ -178,10 +180,17 @@ impl Machine {
     }
 
     fn read_word(&self, addr: u16) -> u16 {
-        if addr < 0x07ff {
+        if addr <= 0x07ff {
+            // FIXME, TODO: WRAMryouiki
             let mut c = Cursor::new(&self.rom.bin);
             c.set_position(addr as u64);
             return c.read_u16::<LittleEndian>().unwrap();
+        }
+
+        if addr >= 0x8000 && addr <= 0x8000 + 0x4000 {
+            let mut cur = Cursor::new(self.rom.get_prg());
+            cur.set_position((addr - 0x8000) as u64);
+            return cur.read_u16::<LittleEndian>().unwrap();
         }
 
         if addr == 0xfffc {
@@ -213,12 +222,22 @@ fn test_machine() {
     let rom = Rom::load_image("rom/sample1.nes".to_string());
     let mut machine = Machine::new(rom);
 
-    //println!("XXX: {:x?}", machine.read_word(0));
+    println!("XXX: {:x?}", machine.read_word(0x8000));
+
     assert_eq!(0x454e, machine.read_word(0));
     assert_eq!(0x454e, machine.read_word(0));
     assert_eq!(0x8000, machine.read_word(0xfffc)); // reset
+    assert_eq!(0xa278, machine.read_word(0x8000)); // prg
+    assert_eq!(0x9aff, machine.read_word(0x8002)); // prg
+    assert_eq!(0x00a9, machine.read_word(0x8004)); // prg
 
     machine.run()
+}
+
+fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
+    let mut fp = OpenOptions::new().create(true).write(true).open(path)?;
+    fp.write_all(bin)?;
+    Ok(())
 }
 
 fn main() {
@@ -229,9 +248,11 @@ fn main() {
     println!("rom size: {}", rom.bin.len());
     println!("rom header: {:?}", rom.get_header());
     println!(
-        "rom signature: {:?}, prg: {}, chr: {}",
+        "rom signature: {:?}, prg: {}(0x{:x?}), chr: {}(0x{:x?})",
         rom.get_signature(),
         rom.get_bytes_of_prg(),
+        rom.get_bytes_of_prg(),
+        rom.get_bytes_of_chr(),
         rom.get_bytes_of_chr()
     );
 
@@ -241,6 +262,7 @@ fn main() {
     //println!("chr: {:?}", rom.get_chr());
 
     rom.write_png(&Path::new("tmp/image.png"));
+    dump_bin(&Path::new("tmp/prg.bin"), rom.get_prg()).unwrap();
 
     //let machine = Machine::new(rom);
 }
