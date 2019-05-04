@@ -200,8 +200,6 @@ impl Machine {
 
     fn reset(&mut self) {
         self.register = Register::default();
-        // TODO: ちゃんと正しいアドレスからPCをセットするべし
-
         self.register.pc = self.read_word(0xfffc);
     }
 
