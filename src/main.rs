@@ -179,9 +179,7 @@ struct PpuRegister {
 
 impl PpuRegister {
     fn write(&mut self, addr: u16, data: u8) {
-        // TODO
         println!("ppu write: addr: {}, data: {}", addr, data);
-
         match addr {
             0 => {
                 self.ctrl = data;
@@ -293,6 +291,21 @@ impl Machine {
                 // SEI
                 self.register.p.interrupt = true;
             }
+            0x88 => {
+                // DEY
+                match self.register.y {
+                    0 => {
+                        self.register.y = 0xff;
+                    },
+                    1 => {
+                        self.register.p.zero = true;
+                        self.register.y -= 1;
+                    }, 
+                    _ => {
+                        self.register.y -= 1;
+                    }
+                }
+            }
             0x8d => {
                 // STA Absolute
                 let addr = self.fetch_word();
@@ -302,6 +315,12 @@ impl Machine {
             0x9a => {
                 // TXS
                 self.register.s = self.register.x;
+            }
+            0xa0 => {
+                // LDY
+                let imm = self.fetch_byte();
+                self.register.y = imm;
+                //println!("LDY imm: {:x}", imm);
             }
             0xa2 => {
                 // LDX
@@ -315,6 +334,24 @@ impl Machine {
                 self.register.a = imm;
                 //println!("LDA imm: {:x}", imm);
             }
+            0xbd => {
+                // LDA Absolute, X
+                let abs = self.fetch_word();
+                let x = self.register.x as u16;
+                let addr = abs + x;
+                let data = self.read_byte(addr);
+                self.register.a = data;
+                println!("LDA abs, x, addr: {}, {}, {}, data; {}", abs, x, addr, data);
+            }
+            0xe8 => {
+                // INX
+                if self.register.x == 0xff {
+                    self.register.x = 0;
+                    self.register.p.carry = true;
+                } else {
+                    self.register.x += 1;
+                }
+            }
 
             _ => {
                 // TODO
@@ -327,6 +364,24 @@ impl Machine {
     fn run(&mut self) {
         self.reset();
 
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
         self.execute();
         self.execute();
         self.execute();
