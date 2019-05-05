@@ -200,8 +200,13 @@ impl Machine {
 
     fn read_byte(&self, addr: u16) -> u8 {
         let word = self.read_word(addr);
-        //(word >> 8 & 0x00ff) as u8
         (word & 0x00ff) as u8
+    }
+
+    fn fetch_byte(&mut self) -> u8 {
+        let v = self.read_byte(self.register.pc);
+        self.register.pc += 1;
+        v
     }
 
     fn reset(&mut self) {
@@ -209,7 +214,7 @@ impl Machine {
         self.register.pc = self.read_word(0xfffc);
     }
 
-    fn decode(&mut self) {
+    fn execute(&mut self) {
         let op = self.read_byte(self.register.pc);
         self.register.pc += 1;
 
@@ -226,15 +231,13 @@ impl Machine {
             }
             0xa2 => {
                 // LDX
-                let imm = self.read_byte(self.register.pc);
-                self.register.pc += 1;
+                let imm = self.fetch_byte();
                 self.register.x = imm;
                 //println!("LDX imm: {:x}", imm);
             }
             0xa9 => {
                 // LDA
-                let imm = self.read_byte(self.register.pc);
-                self.register.pc += 1;
+                let imm = self.fetch_byte();
                 self.register.a = imm;
                 //println!("LDA imm: {:x}", imm);
             }
@@ -250,11 +253,11 @@ impl Machine {
     fn run(&mut self) {
         self.reset();
 
-        self.decode();
-        self.decode();
-        self.decode();
-        self.decode();
-        self.decode();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
+        self.execute();
 
         // TODO
         //self.register.pc += 1;
