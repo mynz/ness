@@ -200,7 +200,8 @@ impl Machine {
 
     fn read_byte(&self, addr: u16) -> u8 {
         let word = self.read_word(addr);
-        (word >> 8 & 0x00ff) as u8
+        //(word >> 8 & 0x00ff) as u8
+        (word & 0x00ff) as u8
     }
 
     fn reset(&mut self) {
@@ -212,15 +213,30 @@ impl Machine {
         let op = self.read_byte(self.register.pc);
         self.register.pc += 1;
 
-        println!("XXX op: {:x}", op);
+        println!("XXX op: {:x} from {:x}", op, self.register.pc);
 
         match op {
+            0x78 => {
+                // SEI
+                self.register.p.interrupt = true;
+            }
+            0x9a => {
+                // TXS
+                self.register.s = self.register.x;
+            }
             0xa2 => {
-                // LDA
-                let data = self.read_byte(self.register.pc);
+                // LDX
+                let imm = self.read_byte(self.register.pc);
                 self.register.pc += 1;
-                self.register.a = data;
-                //println!("XXX data: {:x}", data);
+                self.register.x = imm;
+                //println!("LDX imm: {:x}", imm);
+            }
+            0xa9 => {
+                // LDA
+                let imm = self.read_byte(self.register.pc);
+                self.register.pc += 1;
+                self.register.a = imm;
+                //println!("LDA imm: {:x}", imm);
             }
 
             _ => {
@@ -234,6 +250,9 @@ impl Machine {
     fn run(&mut self) {
         self.reset();
 
+        self.decode();
+        self.decode();
+        self.decode();
         self.decode();
         self.decode();
 
