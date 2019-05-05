@@ -167,14 +167,14 @@ impl Register {}
 
 #[derive(Default)]
 struct PpuRegister {
-    ctrl: u8, // w
-    mask: u8, // w
-    status: u8, // r
+    ctrl: u8,    // w
+    mask: u8,    // w
+    status: u8,  // r
     oamaddr: u8, // w
     oamdata: u8, // rw
-    scroll: u8, // w
-    addr: u8, // w
-    data: u8, // rw
+    scroll: u8,  // w
+    addr: u8,    // w
+    data: u8,    // rw
 }
 
 impl PpuRegister {
@@ -225,8 +225,13 @@ impl Machine {
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
         let ppu_register = PpuRegister::default();
-        let wram = Box::new([0;2 * 1024]);
-        Machine { register, ppu_register, rom, wram }
+        let wram = Box::new([0; 2 * 1024]);
+        Machine {
+            register,
+            ppu_register,
+            rom,
+            wram,
+        }
     }
 
     fn read_word(&self, addr: u16) -> u16 {
@@ -296,11 +301,11 @@ impl Machine {
                 match self.register.y {
                     0 => {
                         self.register.y = 0xff;
-                    },
+                    }
                     1 => {
                         self.register.p.zero = true;
                         self.register.y -= 1;
-                    }, 
+                    }
                     _ => {
                         self.register.y -= 1;
                     }
@@ -358,7 +363,6 @@ impl Machine {
                 println!("op yet to be implemented: {:x}", op);
             }
         }
-
     }
 
     fn run(&mut self) {
