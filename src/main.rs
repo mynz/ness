@@ -213,11 +213,28 @@ impl Machine {
         self.register.pc += 1;
 
         println!("XXX op: {:x}", op);
+
+        match op {
+            0xa2 => {
+                // LDA
+                let data = self.read_byte(self.register.pc);
+                self.register.pc += 1;
+                self.register.a = data;
+                //println!("XXX data: {:x}", data);
+            }
+
+            _ => {
+                // TODO
+                println!("op yet to be implemented: {:x}", op);
+            }
+        }
+
     }
 
     fn run(&mut self) {
         self.reset();
 
+        self.decode();
         self.decode();
 
         // TODO
