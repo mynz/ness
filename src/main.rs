@@ -165,8 +165,58 @@ struct Register {
 
 impl Register {}
 
+#[derive(Default)]
+struct PpuRegister {
+    ctrl: u8, // w
+    mask: u8, // w
+    status: u8, // r
+    oamaddr: u8, // w
+    oamdata: u8, // rw
+    scroll: u8, // w
+    addr: u8, // w
+    data: u8, // rw
+}
+
+impl PpuRegister {
+    fn write(&mut self, addr: u16, data: u8) {
+        // TODO
+        println!("ppu write: addr: {}, data: {}", addr, data);
+
+        match addr {
+            0 => {
+                self.ctrl = data;
+            }
+            1 => {
+                self.mask = data;
+            }
+            2 => {
+                panic!("Try to write read only register on ppu");
+            }
+            3 => {
+                self.oamaddr = data;
+            }
+            4 => {
+                self.oamdata = data;
+            }
+            5 => {
+                self.scroll = data;
+            }
+            6 => {
+                self.addr = data;
+            }
+            7 => {
+                self.data = data;
+            }
+            _ => {
+                assert!(false, "yet to be implemented");
+            }
+        }
+    }
+}
+
 struct Machine {
     register: Register,
+    ppu_register: PpuRegister,
     rom: Rom,
     wram: Box<[u8]>, // 2kb
 }
@@ -176,8 +226,9 @@ struct Machine {
 impl Machine {
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
+        let ppu_register = PpuRegister::default();
         let wram = Box::new([0;2 * 1024]);
-        Machine { register, rom, wram }
+        Machine { register, ppu_register, rom, wram }
     }
 
     fn read_word(&self, addr: u16) -> u16 {
@@ -195,6 +246,7 @@ impl Machine {
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
+        assert!(false, "yet to be implemented");
         return 0;
     }
 
@@ -203,9 +255,25 @@ impl Machine {
         (word & 0x00ff) as u8
     }
 
+    fn write_byte(&mut self, addr: u16, data: u8) {
+        // TODO
+        if addr >= 0x2000 && addr < 0x2008 {
+            let a = addr - 0x2000;
+            self.ppu_register.write(a, data);
+            return;
+        }
+        assert!(false, "yet to be implemented");
+    }
+
     fn fetch_byte(&mut self) -> u8 {
         let v = self.read_byte(self.register.pc);
         self.register.pc += 1;
+        v
+    }
+
+    fn fetch_word(&mut self) -> u16 {
+        let v = self.read_word(self.register.pc);
+        self.register.pc += 2;
         v
     }
 
@@ -224,6 +292,12 @@ impl Machine {
             0x78 => {
                 // SEI
                 self.register.p.interrupt = true;
+            }
+            0x8d => {
+                // STA Absolute
+                let addr = self.fetch_word();
+                let d = self.register.a;
+                self.write_byte(addr, d);
             }
             0x9a => {
                 // TXS
