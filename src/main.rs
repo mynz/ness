@@ -15,11 +15,7 @@ use byteorder::{LittleEndian, ReadBytesExt};
 extern crate image;
 
 fn u8_to_i8(u: u8) -> i8 {
-    if u <= 127 {
-        u as i8
-    } else {
-        (u - 128) as i8
-    }
+    unsafe { std::mem::transmute::<u8, i8>(u) }
 }
 
 struct Rom {
@@ -367,11 +363,11 @@ impl Machine {
             }
             0xd0 => {
                 // BNE
-                let rel = self.fetch_byte();
+                let rel = u8_to_i8(self.fetch_byte());
                 println!("BNE: {}", rel);
-                panic!("yet to be implemented");
-                if !self.register.p.zero {
-                    //self.register.pc
+                if self.register.p.zero == false {
+                    let pc = self.register.pc as i16 + rel as i16;
+                    self.register.pc = pc as u16;
                 }
             }
 
@@ -385,33 +381,16 @@ impl Machine {
     fn run(&mut self) {
         self.reset();
 
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
-        self.execute();
+        let mut inst_count: u32 = 0;
+        let inst_count_max: u32 = 200;
 
-        // TODO
-        //self.register.pc += 1;
-        //self.read_byte(self.Register.pc);
+        loop {
+            self.execute();
+            inst_count += 1;
+            if inst_count >= inst_count_max {
+                break;
+            }
+        }
     }
 }
 
