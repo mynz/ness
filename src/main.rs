@@ -14,6 +14,14 @@ use byteorder::{LittleEndian, ReadBytesExt};
 
 extern crate image;
 
+fn u8_to_i8(u: u8) -> i8 {
+    if u <= 127 {
+        u as i8
+    } else {
+        (u - 128) as i8
+    }
+}
+
 struct Rom {
     bin: Vec<u8>,
 }
@@ -155,10 +163,10 @@ impl Default for StatusRegister {
 
 #[derive(Default)]
 struct Register {
-    a: u8,
-    x: u8,
-    y: u8,
-    s: u8,
+    a: u8, // accumelater
+    x: u8, // index register
+    y: u8, // index register
+    s: u8, // stack pointer
     p: StatusRegister,
     pc: u16,
 }
@@ -355,6 +363,15 @@ impl Machine {
                     self.register.p.carry = true;
                 } else {
                     self.register.x += 1;
+                }
+            }
+            0xd0 => {
+                // BNE
+                let rel = self.fetch_byte();
+                println!("BNE: {}", rel);
+                panic!("yet to be implemented");
+                if !self.register.p.zero {
+                    //self.register.pc
                 }
             }
 
