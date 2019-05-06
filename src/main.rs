@@ -296,6 +296,14 @@ impl Machine {
         println!("XXX op: {:x} from {:x}", op, self.register.pc);
 
         match op {
+            0x4c => {
+                // JMP Absolute
+                // 間接アドレス指定がページをまたいでいる場合、アドレスの指定は失敗するらしい
+                // http://pgate1.at-ninja.jp/NES_on_FPGA/nes_cpu.htm#instruction
+                let abs = self.fetch_word();
+                println!("JMP: abs: {}, from: {}", abs, self.register.pc);
+                self.register.pc = abs;
+            }
             0x78 => {
                 // SEI
                 self.register.p.interrupt = true;
@@ -408,8 +416,8 @@ fn test_machine() {
     assert_eq!(0xa278, machine.read_word(0x8000)); // prg
     assert_eq!(0x9aff, machine.read_word(0x8002)); // prg
     assert_eq!(0x00a9, machine.read_word(0x8004)); // prg
-    assert_eq!(0x80, machine.read_byte(0xfffc)); // reset
-    assert_eq!(0x00, machine.read_byte(0xfffd)); // reset
+    assert_eq!(0x00, machine.read_byte(0xfffc)); // reset
+    assert_eq!(0x80, machine.read_byte(0xfffd)); // reset
 
     machine.run()
 }
