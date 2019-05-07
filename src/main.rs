@@ -399,6 +399,8 @@ impl Machine {
                 break;
             }
         }
+
+        println!("Loop out with inst_count: {}", inst_count);
     }
 }
 
