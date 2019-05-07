@@ -290,7 +290,8 @@ impl Machine {
     }
 
     fn execute(&mut self) {
-        let op = self.read_byte(self.register.pc);
+        let pc = self.register.pc;
+        let op = self.read_byte(pc);
         self.register.pc += 1;
 
         println!("XXX op: {:x} from {:x}", op, self.register.pc);
