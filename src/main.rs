@@ -131,6 +131,21 @@ fn test_image() {
     assert_eq!(rom.get_bytes_of_chr(), rom.get_chr().len());
 }
 
+enum AddrMode {
+    Implied,
+    Immediate(u8),
+    ZeroPage(u8),
+    ZeroPageX(u8),
+    ZeroPageY(u8),
+    Absolute(u16),
+    AbsoluteX(u16),
+    AbsoluteY(u16),
+    Relative(u8),
+    Indirect(u16),
+    IndirectX(u8),
+    IndirectY(u8),
+}
+
 struct StatusRegister {
     negative: bool,
     overflow: bool,
