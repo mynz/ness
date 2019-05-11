@@ -234,7 +234,19 @@ impl PpuRegister {
                 self.toggle_ppuaddr = !self.toggle_ppuaddr;
             }
             7 => {
-                self.ppudata = data;
+                let addr = self.ppuaddr;
+
+                // TODO: 実際に書き込みが必要
+
+                println!("ppudata write: addr {:x}, data: {:x}", addr, data);
+
+                // アドレスのインクリメント
+                let inc = if self.ctrl & 0x4 == 0 {
+                    1
+                } else {
+                    32
+                };
+                self.ppuaddr += inc;
             }
             _ => {
                 assert!(false, "yet to be implemented");
@@ -332,7 +344,7 @@ impl Machine {
         let op = self.read_byte(pc);
         self.register.pc += 1;
 
-        println!("XXX op: {:x} from {:x}", op, self.register.pc);
+        //println!("XXX op: {:x} from {:x}", op, self.register.pc);
 
         match op {
             0x4c => {
