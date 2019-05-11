@@ -184,6 +184,8 @@ struct Register {
 
 impl Register {}
 
+//// PPU
+
 #[derive(Default)]
 struct PpuRegister {
     ctrl: u8,    // w
@@ -228,6 +230,17 @@ impl PpuRegister {
                 assert!(false, "yet to be implemented");
             }
         }
+    }
+}
+
+struct Ppu {
+    vram: Box<[u8]>, // 2kb
+}
+
+impl Ppu {
+    fn new() -> Ppu {
+        let vram = Box::new([0u8; 0x2000]); // 2048 byte
+        Ppu { vram }
     }
 }
 
