@@ -120,7 +120,7 @@ impl Rom {
 #[test]
 fn test_image() {
     assert!(true);
-    let rom = Rom::load_image("rom/sample1.nes".to_string());
+    let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
     let sig = rom.get_signature();
     assert_eq!(sig, "NES\u{1a}".as_bytes());
 
@@ -435,7 +435,7 @@ impl Machine {
 
 #[test]
 fn test_machine() {
-    let rom = Rom::load_image("rom/sample1.nes".to_string());
+    let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
     let mut machine = Machine::new(rom);
 
     println!("XXX: {:x?}", machine.read_word(0x8000));
@@ -462,7 +462,7 @@ fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
 fn main() {
     //println!("Hello, world!");
 
-    let rom = Rom::load_image("rom/sample1.nes".to_string());
+    let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
 
     println!("rom size: {}", rom.bin.len());
     println!("rom header: {:?}", rom.get_header());
