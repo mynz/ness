@@ -194,8 +194,11 @@ struct PpuRegister {
     oamaddr: u8, // w
     oamdata: u8, // rw
     scroll: u8,  // w
-    addr: u8,    // w
-    data: u8,    // rw
+    ppuaddr: u16,    // w
+    ppudata: u8,    // rw
+
+    // ppuaddr の2会書き込み用のトグルフラグ
+    toggle_ppuaddr: bool,
 }
 
 impl PpuRegister {
@@ -221,10 +224,17 @@ impl PpuRegister {
                 self.scroll = data;
             }
             6 => {
-                self.addr = data;
+                let w = data as u16;
+                if !self.toggle_ppuaddr {
+                    self.ppuaddr = (self.ppuaddr & 0xff) | w << 8 ;
+                } else {
+                    self.ppuaddr = (self.ppuaddr & 0xff00) | w ;
+                }
+                println!("ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}", self.ppuaddr, self.toggle_ppuaddr, w);
+                self.toggle_ppuaddr = !self.toggle_ppuaddr;
             }
             7 => {
-                self.data = data;
+                self.ppudata = data;
             }
             _ => {
                 assert!(false, "yet to be implemented");
