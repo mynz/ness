@@ -188,21 +188,20 @@ impl Register {}
 
 #[derive(Default)]
 struct PpuRegister {
-    ctrl: u8,    // w
-    mask: u8,    // w
-    status: u8,  // r
-    oamaddr: u8, // w
-    oamdata: u8, // rw
-    scroll: u8,  // w
-    ppuaddr: u16,    // w
-    ppudata: u8,    // rw
+    ctrl: u8,     // w
+    mask: u8,     // w
+    status: u8,   // r
+    oamaddr: u8,  // w
+    oamdata: u8,  // rw
+    scroll: u8,   // w
+    ppuaddr: u16, // w
+    ppudata: u8,  // rw
 
     // ppuaddr の2会書き込み用のトグルフラグ
     toggle_ppuaddr: bool,
 }
 
-impl PpuRegister {
-}
+impl PpuRegister {}
 
 struct PpuUnit {
     register: PpuRegister,
@@ -240,11 +239,14 @@ impl PpuUnit {
             6 => {
                 let w = data as u16;
                 if !self.register.toggle_ppuaddr {
-                    self.register.ppuaddr = (self.register.ppuaddr & 0xff) | w << 8 ;
+                    self.register.ppuaddr = (self.register.ppuaddr & 0xff) | w << 8;
                 } else {
-                    self.register.ppuaddr = (self.register.ppuaddr & 0xff00) | w ;
+                    self.register.ppuaddr = (self.register.ppuaddr & 0xff00) | w;
                 }
-                println!("ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}", self.register.ppuaddr, self.register.toggle_ppuaddr, w);
+                println!(
+                    "ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}",
+                    self.register.ppuaddr, self.register.toggle_ppuaddr, w
+                );
                 self.register.toggle_ppuaddr = !self.register.toggle_ppuaddr;
             }
             7 => {
@@ -255,11 +257,7 @@ impl PpuUnit {
                 println!("ppudata write: addr {:x}, data: {:x}", addr, data);
 
                 // アドレスのインクリメント
-                let inc = if self.register.ctrl & 0x4 == 0 {
-                    1
-                } else {
-                    32
-                };
+                let inc = if self.register.ctrl & 0x4 == 0 { 1 } else { 32 };
                 self.register.ppuaddr += inc;
             }
             _ => {
