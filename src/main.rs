@@ -206,17 +206,29 @@ impl PpuRegister {}
 struct PpuUnit {
     register: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte
-    vram: Box<[u8]>,           // 2kb
+    name_table0: Box<[u8]>,    // 0x03c0 byte
+    attr_table0: Box<[u8]>,    // 0x0040 byte
+    bg_pallet: [u8; 0x10],     // 0x0010 byte
+    sprite_pallet: [u8; 0x10], // 0x0010 byte
+    vram: Box<[u8]>,           // 0x2000 byte
 }
 
 impl PpuUnit {
     fn new() -> PpuUnit {
         let register = PpuRegister::default();
         let pattern_table0 = Box::new([0_u8; 0x1000]);
+        let name_table0 = Box::new([0_u8; 0x03c0]);
+        let attr_table0 = Box::new([0_u8; 0x0040]);
+        let bg_pallet = [0_u8; 0x10];
+        let sprite_pallet = [0_u8; 0x10];
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
         PpuUnit {
             register,
             pattern_table0,
+            name_table0,
+            attr_table0,
+            bg_pallet,
+            sprite_pallet,
             vram,
         }
     }
@@ -279,13 +291,25 @@ impl PpuUnit {
                 println!("ppu pattern_table0 write: {:x}, {:x}", addr, data);
                 self.pattern_table0[addr as usize] = data;
             }
-            addr if addr >= 0x2000 && addr < 0x2000 + 0x400 => {
+            addr if addr >= 0x2000 && addr < 0x2000 + 0x3c0 => {
+                let a = (addr - 0x2000) as usize;
                 println!("ppu name_table0 write: {:x}, {:x}", addr, data);
-                // TODO
+                self.name_table0[a] = data;
             }
-            addr if addr >= 0x3f00 && addr < 0x3f00 + 0x20 => {
-                println!("ppu pallet_ram_indices write: {:x}, {:x}", addr, data);
-                // TODO
+            addr if addr >= 0x23c0 && addr < 0x23c0 + 0x040 => {
+                let a = (addr - 0x23c0) as usize;
+                println!("ppu name_table0 write: {:x}, {:x}", addr, data);
+                self.attr_table0[a] = data;
+            }
+            addr if addr >= 0x3f00 && addr < 0x3f00 + 0x10 => {
+                let a = (addr - 0x3f00) as usize;
+                self.bg_pallet[a] = data;
+                println!("ppu bg_pallet write: {:x}, {:x}", addr, data);
+            }
+            addr if addr >= 0x3f10 && addr < 0x3f10 + 0x10 => {
+                let a = (addr - 0x3f10) as usize;
+                self.sprite_pallet[a] = data;
+                println!("ppu sprite_pallet write: {:x}, {:x}", addr, data);
             }
             _ => {
                 panic!("yet to be implemented to write addr: {:x}", addr);
