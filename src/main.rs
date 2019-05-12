@@ -206,7 +206,7 @@ impl PpuRegister {}
 struct PpuUnit {
     register: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte
-    vram: Box<[u8]>, // 2kb
+    vram: Box<[u8]>,           // 2kb
 }
 
 impl PpuUnit {
@@ -214,7 +214,11 @@ impl PpuUnit {
         let register = PpuRegister::default();
         let pattern_table0 = Box::new([0_u8; 0x1000]);
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
-        PpuUnit { register, pattern_table0, vram }
+        PpuUnit {
+            register,
+            pattern_table0,
+            vram,
+        }
     }
 
     fn load_from_cpu(&mut self, addr: u16, data: u8) {
@@ -270,17 +274,22 @@ impl PpuUnit {
     fn write_to_ppu(&mut self, addr: u16, data: u8) {
         println!("write_to_ppu: {:x}, {:x}", addr, data);
 
-        if addr < 0x1000 {
-            println!("ppu pattern_table0 write: {:x}, {:x}", addr, data);
-            self.pattern_table0[addr as usize] = data;
-        } else if addr >= 0x2000 && addr < 0x2000 + 0x400 {
-            println!("ppu name_table0 write: {:x}, {:x}", addr, data);
-            // TODO
-        } else if addr >= 0x3f00 && addr < 0x3f00 + 0x20 {
-            println!("ppu pallet_ram_indices write: {:x}, {:x}", addr, data);
-            // TODO
-        } else {
-            panic!("yet to be implemented to write addr: {:x}", addr);
+        match addr {
+            addr if addr < 0x1000 => {
+                println!("ppu pattern_table0 write: {:x}, {:x}", addr, data);
+                self.pattern_table0[addr as usize] = data;
+            }
+            addr if addr >= 0x2000 && addr < 0x2000 + 0x400 => {
+                println!("ppu name_table0 write: {:x}, {:x}", addr, data);
+                // TODO
+            }
+            addr if addr >= 0x3f00 && addr < 0x3f00 + 0x20 => {
+                println!("ppu pallet_ram_indices write: {:x}, {:x}", addr, data);
+                // TODO
+            }
+            _ => {
+                panic!("yet to be implemented to write addr: {:x}", addr);
+            }
         }
     }
 }
