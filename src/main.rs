@@ -216,8 +216,8 @@ impl PpuUnit {
         PpuUnit { register, vram }
     }
 
-    fn write(&mut self, addr: u16, data: u8) {
-        println!("ppu write: addr: {}, data: {}", addr, data);
+    fn load_from_cpu(&mut self, addr: u16, data: u8) {
+        println!("ppu load_from_cpu: addr: {}, data: {}", addr, data);
         match addr {
             0 => {
                 self.register.ctrl = data;
@@ -319,7 +319,7 @@ impl Machine {
         // TODO
         if addr >= 0x2000 && addr < 0x2008 {
             let a = addr - 0x2000;
-            self.ppu_unit.write(a, data);
+            self.ppu_unit.load_from_cpu(a, data);
             return;
         }
         assert!(false, "yet to be implemented");
