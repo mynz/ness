@@ -202,51 +202,65 @@ struct PpuRegister {
 }
 
 impl PpuRegister {
+}
+
+struct PpuUnit {
+    register: PpuRegister,
+    vram: Box<[u8]>, // 2kb
+}
+
+impl PpuUnit {
+    fn new() -> PpuUnit {
+        let register = PpuRegister::default();
+        let vram = Box::new([0u8; 0x2000]); // 2048 byte
+        PpuUnit { register, vram }
+    }
+
     fn write(&mut self, addr: u16, data: u8) {
         println!("ppu write: addr: {}, data: {}", addr, data);
         match addr {
             0 => {
-                self.ctrl = data;
+                self.register.ctrl = data;
             }
             1 => {
-                self.mask = data;
+                self.register.mask = data;
             }
             2 => {
                 panic!("Try to write read only register on ppu");
             }
             3 => {
-                self.oamaddr = data;
+                self.register.oamaddr = data;
             }
             4 => {
-                self.oamdata = data;
+                self.register.oamdata = data;
             }
             5 => {
-                self.scroll = data;
+                self.register.scroll = data;
             }
             6 => {
                 let w = data as u16;
-                if !self.toggle_ppuaddr {
-                    self.ppuaddr = (self.ppuaddr & 0xff) | w << 8 ;
+                if !self.register.toggle_ppuaddr {
+                    self.register.ppuaddr = (self.register.ppuaddr & 0xff) | w << 8 ;
                 } else {
-                    self.ppuaddr = (self.ppuaddr & 0xff00) | w ;
+                    self.register.ppuaddr = (self.register.ppuaddr & 0xff00) | w ;
                 }
-                println!("ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}", self.ppuaddr, self.toggle_ppuaddr, w);
-                self.toggle_ppuaddr = !self.toggle_ppuaddr;
+                println!("ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}", self.register.ppuaddr, self.register.toggle_ppuaddr, w);
+                self.register.toggle_ppuaddr = !self.register.toggle_ppuaddr;
             }
             7 => {
-                let addr = self.ppuaddr;
+                let addr = self.register.ppuaddr;
 
                 // TODO: 実際に書き込みが必要
 
                 println!("ppudata write: addr {:x}, data: {:x}", addr, data);
 
                 // アドレスのインクリメント
-                let inc = if self.ctrl & 0x4 == 0 {
+                let inc = if self.register.ctrl & 0x4 == 0 {
                     1
                 } else {
                     32
                 };
-                self.ppuaddr += inc;
+                self.register.ppuaddr += inc;
             }
             _ => {
                 assert!(false, "yet to be implemented");
@@ -255,22 +269,11 @@ impl PpuRegister {
     }
 }
 
-struct Ppu {
-    vram: Box<[u8]>, // 2kb
-}
-
-impl Ppu {
-    fn new() -> Ppu {
-        let vram = Box::new([0u8; 0x2000]); // 2048 byte
-        Ppu { vram }
-    }
-}
-
 struct Machine {
     register: Register,
-    ppu_register: PpuRegister,
     rom: Rom,
     wram: Box<[u8]>, // 2kb
+    ppu_unit: PpuUnit,
 }
 
 //struct Bus { }
@@ -278,13 +281,13 @@ struct Machine {
 impl Machine {
     fn new(rom: Rom) -> Machine {
         let register = Register::default();
-        let ppu_register = PpuRegister::default();
         let wram = Box::new([0; 2 * 1024]);
+        let ppu_unit = PpuUnit::new();
         Machine {
             register,
-            ppu_register,
             rom,
             wram,
+            ppu_unit,
         }
     }
 
@@ -316,7 +319,7 @@ impl Machine {
         // TODO
         if addr >= 0x2000 && addr < 0x2008 {
             let a = addr - 0x2000;
-            self.ppu_register.write(a, data);
+            self.ppu_unit.write(a, data);
             return;
         }
         assert!(false, "yet to be implemented");
