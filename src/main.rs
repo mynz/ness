@@ -525,8 +525,65 @@ fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
     Ok(())
 }
 
+///
+extern crate quicksilver;
+use quicksilver::{
+    geom::{Rectangle, Vector},
+    graphics::{Background::Col, Color},
+    input::Key,
+    lifecycle::{run, Settings, State, Window},
+    Result,
+};
+
+#[derive(Default)]
+struct DrawGeometry {
+    key_u: bool,
+    key_d: bool,
+    key_l: bool,
+    key_r: bool,
+}
+
+impl State for DrawGeometry {
+    fn new() -> Result<DrawGeometry> {
+        Ok(DrawGeometry::default())
+    }
+
+    fn update(&mut self, window: &mut Window) -> Result<()> {
+        if window.keyboard()[Key::Q].is_down() {
+            window.close();
+        }
+
+        self.key_u = false;
+        self.key_d = false;
+        self.key_l = false;
+        self.key_r = false;
+        if window.keyboard()[Key::K].is_down() {
+            self.key_u = true;
+        }
+        if window.keyboard()[Key::J].is_down() {
+            self.key_d = true;
+        }
+        if window.keyboard()[Key::H].is_down() {
+            self.key_l = true;
+        }
+        if window.keyboard()[Key::L].is_down() {
+            self.key_r = true;
+        }
+
+        Ok(())
+    }
+
+    fn draw(&mut self, window: &mut Window) -> Result<()> {
+        window.clear(Color::WHITE)?;
+        window.draw(&Rectangle::new((100, 100), (32, 32)), Col(Color::BLUE));
+        Ok(())
+    }
+}
+
 fn main() {
     //println!("Hello, world!");
+
+    run::<DrawGeometry>("Draw Geometry", Vector::new(256, 240), Settings::default());
 
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
 
