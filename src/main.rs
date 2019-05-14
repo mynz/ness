@@ -413,18 +413,10 @@ impl Machine {
             }
             0x88 => {
                 // DEY
-                match self.register.y {
-                    0 => {
-                        self.register.y = 0xff;
-                    }
-                    1 => {
-                        self.register.p.zero = true;
-                        self.register.y -= 1;
-                    }
-                    _ => {
-                        self.register.y -= 1;
-                    }
-                }
+                let c = self.register.y;
+                self.register.y = if c == 0 { 0xff } else { c - 1 };
+                self.register.p.zero = self.register.y == 0;
+                self.register.p.negative = self.register.y & 0x80 != 0;
             }
             0x8d => {
                 // STA Absolute
