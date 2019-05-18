@@ -531,31 +531,42 @@ use quicksilver::{
     geom::{Rectangle, Vector},
     graphics::{Background::Col, Color},
     input::Key,
-    lifecycle::{run, Settings, State, Window},
+    lifecycle::{run_with, Settings, State, Window},
     Result,
 };
 
 #[derive(Default)]
 struct App {
-    display_size: Vector,
+    pixel_rate: u16,
+    display_size: (u16, u16),
 
     arrow_ud: i8,
     arrow_lr: i8,
 }
 
 impl App {
+    fn new(display_size: (u16, u16), pixel_rate: u16) -> Result<Self> {
+        let app = Self {
+            pixel_rate,
+            display_size,
+            ..Default::default()
+        };
+        Ok(app)
+    }
+
     fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
-        let sizes = (1, 1);
+        //let sizes = (2, 2);
+        let sizes = (self.pixel_rate, self.pixel_rate);
         window.draw(&Rectangle::new(pos, sizes), Col(color));
     }
 
     fn run() {
-        let app = Self {
-            display_size: Vector::new(256, 240),
-            ..Default::default()
-        };
-
-        run::<Self>("NESS", app.display_size, Settings::default());
+        let pixel_rate = 2;
+        let display_size = (256 * pixel_rate, 240 * pixel_rate);
+        let v = Vector::new(display_size.0, display_size.1);
+        run_with("NESS", v, Settings::default(), || {
+            Self::new(display_size, pixel_rate)
+        });
     }
 }
 
