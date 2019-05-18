@@ -537,10 +537,8 @@ use quicksilver::{
 
 #[derive(Default)]
 struct DrawGeometry {
-    key_u: bool,
-    key_d: bool,
-    key_l: bool,
-    key_r: bool,
+    arrow_ud: i8,
+    arrow_lr: i8,
 }
 
 impl State for DrawGeometry {
@@ -553,21 +551,19 @@ impl State for DrawGeometry {
             window.close();
         }
 
-        self.key_u = false;
-        self.key_d = false;
-        self.key_l = false;
-        self.key_r = false;
+        self.arrow_ud = 0;
+        self.arrow_lr = 0;
         if window.keyboard()[Key::K].is_down() {
-            self.key_u = true;
+            self.arrow_ud = -1;
         }
         if window.keyboard()[Key::J].is_down() {
-            self.key_d = true;
+            self.arrow_ud = 1;
         }
         if window.keyboard()[Key::H].is_down() {
-            self.key_l = true;
+            self.arrow_lr = -1;
         }
         if window.keyboard()[Key::L].is_down() {
-            self.key_r = true;
+            self.arrow_lr = 1;
         }
 
         Ok(())
