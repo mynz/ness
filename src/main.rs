@@ -536,21 +536,21 @@ use quicksilver::{
 };
 
 #[derive(Default)]
-struct DrawGeometry {
+struct App {
     arrow_ud: i8,
     arrow_lr: i8,
 }
 
-impl DrawGeometry {
+impl App {
     fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
         let to = ( pos.0 + 1, pos.1 + 1);
         window.draw(&Rectangle::new(pos, to), Col(color));
     }
 }
 
-impl State for DrawGeometry {
-    fn new() -> Result<DrawGeometry> {
-        Ok(DrawGeometry::default())
+impl State for App {
+    fn new() -> Result<App> {
+        Ok(App::default())
     }
 
     fn update(&mut self, window: &mut Window) -> Result<()> {
@@ -588,7 +588,7 @@ impl State for DrawGeometry {
 fn main() {
     //println!("Hello, world!");
 
-    run::<DrawGeometry>("Draw Geometry", Vector::new(256, 240), Settings::default());
+    run::<App>("Draw Geometry", Vector::new(256, 240), Settings::default());
 
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
 
