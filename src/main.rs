@@ -537,6 +537,8 @@ use quicksilver::{
 
 #[derive(Default)]
 struct App {
+    display_size: Vector,
+
     arrow_ud: i8,
     arrow_lr: i8,
 }
@@ -545,6 +547,15 @@ impl App {
     fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
         let sizes = (1, 1);
         window.draw(&Rectangle::new(pos, sizes), Col(color));
+    }
+
+    fn run() {
+        let app = Self {
+            display_size: Vector::new(256, 240),
+            ..Default::default()
+        };
+
+        run::<Self>("NESS", app.display_size, Settings::default());
     }
 }
 
@@ -588,7 +599,8 @@ impl State for App {
 fn main() {
     //println!("Hello, world!");
 
-    run::<App>("Draw Geometry", Vector::new(256, 240), Settings::default());
+    //run::<App>("Draw Geometry", Vector::new(256, 240), Settings::default());
+    App::run();
 
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
 
