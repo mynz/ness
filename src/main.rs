@@ -587,7 +587,7 @@ impl State for App {
     }
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
-        window.clear(Color::WHITE)?;
+        window.clear(Color::BLACK)?;
 
         self.draw_pixel(window, (10, 10), Color::RED);
         self.draw_pixel(window, (200, 200), Color::BLUE);
