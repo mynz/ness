@@ -555,9 +555,10 @@ impl App {
     }
 
     fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
-        //let sizes = (2, 2);
-        let sizes = (self.pixel_rate, self.pixel_rate);
-        window.draw(&Rectangle::new(pos, sizes), Col(color));
+        let r = self.pixel_rate;
+        let p = (pos.0 * r, pos.1 * r);
+        let sizes = (r, r);
+        window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
     fn run() {
@@ -601,6 +602,10 @@ impl State for App {
         window.clear(Color::BLACK)?;
 
         self.draw_pixel(window, (10, 10), Color::RED);
+        //self.draw_pixel(window, (10, 11), Color::GREEN);
+        //self.draw_pixel(window, (11, 10), Color::BLUE);
+        //self.draw_pixel(window, (11, 11), Color::WHITE);
+
         self.draw_pixel(window, (200, 200), Color::BLUE);
 
         Ok(())
