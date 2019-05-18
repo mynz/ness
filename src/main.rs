@@ -541,6 +541,13 @@ struct DrawGeometry {
     arrow_lr: i8,
 }
 
+impl DrawGeometry {
+    fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
+        let to = ( pos.0 + 1, pos.1 + 1);
+        window.draw(&Rectangle::new(pos, to), Col(color));
+    }
+}
+
 impl State for DrawGeometry {
     fn new() -> Result<DrawGeometry> {
         Ok(DrawGeometry::default())
@@ -565,13 +572,15 @@ impl State for DrawGeometry {
         if window.keyboard()[Key::L].is_down() {
             self.arrow_lr = 1;
         }
-
         Ok(())
     }
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         window.clear(Color::WHITE)?;
         window.draw(&Rectangle::new((100, 100), (32, 32)), Col(Color::BLUE));
+
+        self.draw_pixel(window, (55, 55), Color::RED);
+
         Ok(())
     }
 }
