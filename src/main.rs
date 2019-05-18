@@ -543,8 +543,8 @@ struct App {
 
 impl App {
     fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
-        let to = ( pos.0 + 1, pos.1 + 1);
-        window.draw(&Rectangle::new(pos, to), Col(color));
+        let sizes = (1, 1);
+        window.draw(&Rectangle::new(pos, sizes), Col(color));
     }
 }
 
@@ -577,9 +577,9 @@ impl State for App {
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         window.clear(Color::WHITE)?;
-        window.draw(&Rectangle::new((100, 100), (32, 32)), Col(Color::BLUE));
 
-        self.draw_pixel(window, (55, 55), Color::RED);
+        self.draw_pixel(window, (10, 10), Color::RED);
+        self.draw_pixel(window, (200, 200), Color::BLUE);
 
         Ok(())
     }
