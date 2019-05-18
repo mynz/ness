@@ -18,6 +18,7 @@ fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
 
+#[derive(Default)]
 struct Rom {
     bin: Vec<u8>,
 }
@@ -203,6 +204,7 @@ struct PpuRegister {
 
 impl PpuRegister {}
 
+#[derive(Default)]
 struct PpuUnit {
     register: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte
@@ -318,6 +320,7 @@ impl PpuUnit {
     }
 }
 
+#[derive(Default)]
 struct Machine {
     register: Register,
     rom: Rom,
@@ -481,6 +484,10 @@ impl Machine {
         }
     }
 
+    fn step(&mut self) {
+        self.execute();
+    }
+
     fn run(&mut self) {
         self.reset();
 
@@ -539,13 +546,17 @@ use quicksilver::{
 struct App {
     pixel_rate: u16,
     display_size: (u16, u16),
-
-    arrow_ud: i8,
-    arrow_lr: i8,
+    arrow_ud: i8, // TODO: remove this
+    arrow_lr: i8, // TODO: remove this
+    machine: Machine,
 }
 
 impl App {
-    fn new(display_size: (u16, u16), pixel_rate: u16) -> Result<Self> {
+    fn new(display_size: (u16, u16), pixel_rate: u16, rom: Rom) -> Result<Self> {
+        let mut machine = Machine::new(rom);
+
+        machine.reset();
+
         let app = Self {
             pixel_rate,
             display_size,
@@ -561,12 +572,12 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn run() {
+    fn run(rom: Rom) {
         let pixel_rate = 2;
         let display_size = (256 * pixel_rate, 240 * pixel_rate);
         let v = Vector::new(display_size.0, display_size.1);
         run_with("NESS", v, Settings::default(), || {
-            Self::new(display_size, pixel_rate)
+            Self::new(display_size, pixel_rate, rom)
         });
     }
 }
@@ -595,6 +606,9 @@ impl State for App {
         if window.keyboard()[Key::L].is_down() {
             self.arrow_lr = 1;
         }
+
+        self.machine.step();
+
         Ok(())
     }
 
@@ -616,29 +630,10 @@ fn main() {
     //println!("Hello, world!");
 
     //run::<App>("Draw Geometry", Vector::new(256, 240), Settings::default());
-    App::run();
 
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
+    App::run(rom);
 
-    println!("rom size: {}", rom.bin.len());
-    println!("rom header: {:?}", rom.get_header());
-    println!(
-        "rom signature: {:?}, prg: {}(0x{:x?}), chr: {}(0x{:x?})",
-        rom.get_signature(),
-        rom.get_bytes_of_prg(),
-        rom.get_bytes_of_prg(),
-        rom.get_bytes_of_chr(),
-        rom.get_bytes_of_chr()
-    );
-
-    //println!("prg: {:?}", rom.get_prg());
-    //println!("prg: {:#?}", rom.get_prg());
-    //println!("prg: {:?}", rom.get_chr());
-    //println!("chr: {:?}", rom.get_chr());
-
-    rom.write_png(&Path::new("tmp/image.png"));
-    dump_bin(&Path::new("tmp/prg.bin"), rom.get_prg()).unwrap();
-
-    let mut machine = Machine::new(rom);
-    machine.run();
+    //let mut machine = Machine::new(rom);
+    //machine.run();
 }
