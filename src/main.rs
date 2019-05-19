@@ -24,12 +24,16 @@ struct Rom {
 }
 
 impl Rom {
-    fn load_image(filename: String) -> Rom {
+    fn dummy() -> Self {
+        Self { bin: Vec::new() }
+    }
+
+    fn load_image(filename: String) -> Box<Rom> {
         let fp = File::open(filename).unwrap();
         let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
         let mut reader = std::io::BufReader::new(fp);
         reader.read_to_end(&mut bin).unwrap();
-        Rom { bin: bin }
+        Box::new(Rom { bin: bin })
     }
 
     fn get_signature(&self) -> [u8; 4] {
@@ -320,32 +324,43 @@ impl PpuUnit {
     }
 }
 
-#[derive(Default)]
+//#[derive(Default)]
 struct Machine {
     register: Register,
-    rom: Rom,
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
+    rom: Box<Rom>,
 }
 
 //struct Bus { }
 
 impl Machine {
-    fn new(rom: Rom) -> Machine {
+    fn new() -> Machine {
         let register = Register::default();
         let wram = Box::new([0; 2 * 1024]);
         let ppu_unit = PpuUnit::new();
+        let rom = Box::new(Rom::dummy());
+
         Machine {
             register,
-            rom,
             wram,
             ppu_unit,
+            rom,
         }
+    }
+
+    fn hard_reset(&mut self) {
+        self.register = Register::default();
+        self.register.pc = self.read_word(0xfffc);
+    }
+
+    fn set_rom(&mut self, rom: Box<Rom>) {
+        self.rom = rom;
+        self.hard_reset();
     }
 
     fn read_word(&self, addr: u16) -> u16 {
         if addr <= 0x07ff {
-            // FIXME, TODO: WRAM領域(2kb)
             let mut c = Cursor::new(&self.wram);
             c.set_position(addr as u64);
             return c.read_u16::<LittleEndian>().unwrap();
@@ -387,11 +402,6 @@ impl Machine {
         let v = self.read_word(self.register.pc);
         self.register.pc += 2;
         v
-    }
-
-    fn reset(&mut self) {
-        self.register = Register::default();
-        self.register.pc = self.read_word(0xfffc);
     }
 
     fn execute(&mut self) {
@@ -542,7 +552,7 @@ use quicksilver::{
     Result,
 };
 
-#[derive(Default)]
+//#[derive(Default)]
 struct App {
     pixel_rate: u16,
     display_size: (u16, u16),
@@ -552,15 +562,30 @@ struct App {
 }
 
 impl App {
-    fn new(display_size: (u16, u16), pixel_rate: u16, rom: Rom) -> Result<Self> {
-        let mut machine = Machine::new(rom);
+    fn new() -> Result<Self> {
+        let machine = Machine::new();
 
+        Ok(Self {
+            pixel_rate: 0,
+            display_size: (0, 0),
+            arrow_ud: 0,
+            arrow_lr: 0,
+            machine: Machine::new(),
+        })
+    }
+
+    fn new_with_params(display_size: (u16, u16), pixel_rate: u16, rom: Box<Rom>) -> Result<Self> {
+        let mut machine = Machine::new();
+        machine.set_rom(rom);
         machine.reset();
 
         let app = Self {
             pixel_rate,
             display_size,
-            ..Default::default()
+            arrow_ud: 0,
+            arrow_lr: 0,
+            machine,
+            //..Default::default()
         };
         Ok(app)
     }
@@ -572,19 +597,19 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn run(rom: Rom) {
+    fn run(rom: Box<Rom>) {
         let pixel_rate = 2;
         let display_size = (256 * pixel_rate, 240 * pixel_rate);
         let v = Vector::new(display_size.0, display_size.1);
         run_with("NESS", v, Settings::default(), || {
-            Self::new(display_size, pixel_rate, rom)
+            Self::new_with_params(display_size, pixel_rate, rom)
         });
     }
 }
 
 impl State for App {
     fn new() -> Result<App> {
-        Ok(App::default())
+        App::new()
     }
 
     fn update(&mut self, window: &mut Window) -> Result<()> {
