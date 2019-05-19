@@ -498,8 +498,8 @@ impl Machine {
         self.execute();
     }
 
-    fn run(&mut self) {
-        self.reset();
+    fn exec_loop(&mut self) {
+        self.hard_reset();
 
         let mut inst_count: u32 = 0;
         let inst_count_max: u32 = 200;
@@ -519,7 +519,8 @@ impl Machine {
 #[test]
 fn test_machine() {
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
-    let mut machine = Machine::new(rom);
+    let mut machine = Machine::new();
+    machine.set_rom(rom);
 
     println!("XXX: {:x?}", machine.read_word(0x8000));
 
@@ -533,7 +534,7 @@ fn test_machine() {
     assert_eq!(0x00, machine.read_byte(0xfffc)); // reset
     assert_eq!(0x80, machine.read_byte(0xfffd)); // reset
 
-    machine.run()
+    machine.exec_loop()
 }
 
 fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
@@ -552,6 +553,8 @@ use quicksilver::{
     Result,
 };
 
+const DISPLAY_SIZE: (u16, u16) = (256, 240);
+
 //#[derive(Default)]
 struct App {
     pixel_rate: u16,
@@ -567,17 +570,16 @@ impl App {
 
         Ok(Self {
             pixel_rate: 0,
-            display_size: (0, 0),
+            display_size: DISPLAY_SIZE,
             arrow_ud: 0,
             arrow_lr: 0,
-            machine: Machine::new(),
+            machine,
         })
     }
 
     fn new_with_params(display_size: (u16, u16), pixel_rate: u16, rom: Box<Rom>) -> Result<Self> {
         let mut machine = Machine::new();
         machine.set_rom(rom);
-        machine.reset();
 
         let app = Self {
             pixel_rate,
@@ -599,7 +601,7 @@ impl App {
 
     fn run(rom: Box<Rom>) {
         let pixel_rate = 2;
-        let display_size = (256 * pixel_rate, 240 * pixel_rate);
+        let display_size = (DISPLAY_SIZE.0 * pixel_rate, DISPLAY_SIZE.1 * pixel_rate);
         let v = Vector::new(display_size.0, display_size.1);
         run_with("NESS", v, Settings::default(), || {
             Self::new_with_params(display_size, pixel_rate, rom)
