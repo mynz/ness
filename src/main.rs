@@ -330,9 +330,8 @@ struct Machine {
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
     rom: Box<Rom>,
+    step_count: u32,
 }
-
-//struct Bus { }
 
 impl Machine {
     fn new() -> Machine {
@@ -346,6 +345,7 @@ impl Machine {
             wram,
             ppu_unit,
             rom,
+            step_count: 0,
         }
     }
 
@@ -405,6 +405,8 @@ impl Machine {
     }
 
     fn execute(&mut self) {
+        self.step_count += 1;
+
         let pc = self.register.pc;
         let op = self.read_byte(pc);
         self.register.pc += 1;
