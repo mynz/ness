@@ -573,24 +573,19 @@ struct App {
     display_size: (u16, u16),
     pad_state: PadState,
     machine: Machine,
-    font_line: Asset<Image>, // for debug
+    font_line: Option<Asset<Image>>, // for debug
 }
 
 impl App {
     fn new() -> Result<Self> {
         let machine = Machine::new();
 
-        let font_line = Asset::new(
-            Font::load(FONT_NAME)
-                .and_then(|font| font.render("jagajin", &FontStyle::new(20.0, Color::RED))),
-        );
-
         Ok(Self {
             pixel_rate: 0,
             display_size: DISPLAY_SIZE,
             pad_state: PadState::default(),
             machine,
-            font_line,
+            font_line: None,
         })
     }
 
@@ -608,8 +603,7 @@ impl App {
             display_size,
             pad_state: PadState::default(),
             machine,
-            font_line,
-            //..Default::default()
+            font_line: Some(font_line),
         };
         Ok(app)
     }
@@ -670,10 +664,12 @@ impl State for App {
 
         self.draw_pixel(window, (200, 200), Color::BLUE);
 
-        self.font_line.execute(|image| {
-            window.draw(&image.area().with_center((100, 100)), Img(&image));
-            Ok(())
-        })?;
+        if let Some(ref mut font_line) = self.font_line {
+            font_line.execute(|image| {
+                window.draw(&image.area().with_center((100, 100)), Img(&image));
+                Ok(())
+            })?;
+        }
 
         Ok(())
     }
