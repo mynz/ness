@@ -549,11 +549,14 @@ fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
 ///
 extern crate quicksilver;
 use quicksilver::{
-    geom::{Rectangle, Vector},
-    graphics::{Background::Col, Color},
+    geom::{Rectangle, Shape, Vector},
+    graphics::{
+        Background::{Col, Img},
+        Color, Font, FontStyle, Image,
+    },
     input::Key,
-    lifecycle::{run_with, Settings, State, Window},
-    Result,
+    lifecycle::{run_with, Asset, Settings, State, Window},
+    Future, Result,
 };
 
 #[derive(Default)]
@@ -563,23 +566,31 @@ struct PadState {
 }
 
 const DISPLAY_SIZE: (u16, u16) = (256, 240);
+const FONT_NAME: &str = "mononoki-Regular.ttf";
 
 struct App {
     pixel_rate: u16,
     display_size: (u16, u16),
     pad_state: PadState,
     machine: Machine,
+    font_line: Asset<Image>, // for debug
 }
 
 impl App {
     fn new() -> Result<Self> {
         let machine = Machine::new();
 
+        let font_line = Asset::new(
+            Font::load(FONT_NAME)
+                .and_then(|font| font.render("jagajin", &FontStyle::new(20.0, Color::RED))),
+        );
+
         Ok(Self {
             pixel_rate: 0,
             display_size: DISPLAY_SIZE,
             pad_state: PadState::default(),
             machine,
+            font_line,
         })
     }
 
@@ -587,11 +598,17 @@ impl App {
         let mut machine = Machine::new();
         machine.set_rom(rom);
 
+        let font_line = Asset::new(
+            Font::load(FONT_NAME)
+                .and_then(|font| font.render("Jagajin", &FontStyle::new(20.0, Color::RED))),
+        );
+
         let app = Self {
             pixel_rate,
             display_size,
             pad_state: PadState::default(),
             machine,
+            font_line,
             //..Default::default()
         };
         Ok(app)
@@ -652,6 +669,11 @@ impl State for App {
         //self.draw_pixel(window, (11, 11), Color::WHITE);
 
         self.draw_pixel(window, (200, 200), Color::BLUE);
+
+        self.font_line.execute(|image| {
+            window.draw(&image.area().with_center((100, 100)), Img(&image));
+            Ok(())
+        })?;
 
         Ok(())
     }
