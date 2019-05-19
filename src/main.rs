@@ -498,6 +498,7 @@ impl Machine {
         self.execute();
     }
 
+    // テスト用
     fn exec_loop(&mut self) {
         self.hard_reset();
 
@@ -553,14 +554,18 @@ use quicksilver::{
     Result,
 };
 
+#[derive(Default)]
+struct PadState {
+    key_ud: i8,
+    key_lr: i8,
+}
+
 const DISPLAY_SIZE: (u16, u16) = (256, 240);
 
-//#[derive(Default)]
 struct App {
     pixel_rate: u16,
     display_size: (u16, u16),
-    arrow_ud: i8, // TODO: remove this
-    arrow_lr: i8, // TODO: remove this
+    pad_state: PadState,
     machine: Machine,
 }
 
@@ -571,8 +576,7 @@ impl App {
         Ok(Self {
             pixel_rate: 0,
             display_size: DISPLAY_SIZE,
-            arrow_ud: 0,
-            arrow_lr: 0,
+            pad_state: PadState::default(),
             machine,
         })
     }
@@ -584,8 +588,7 @@ impl App {
         let app = Self {
             pixel_rate,
             display_size,
-            arrow_ud: 0,
-            arrow_lr: 0,
+            pad_state: PadState::default(),
             machine,
             //..Default::default()
         };
@@ -619,19 +622,18 @@ impl State for App {
             window.close();
         }
 
-        self.arrow_ud = 0;
-        self.arrow_lr = 0;
+        self.pad_state = PadState::default();
         if window.keyboard()[Key::K].is_down() {
-            self.arrow_ud = -1;
+            self.pad_state.key_ud = -1;
         }
         if window.keyboard()[Key::J].is_down() {
-            self.arrow_ud = 1;
+            self.pad_state.key_ud = 1;
         }
         if window.keyboard()[Key::H].is_down() {
-            self.arrow_lr = -1;
+            self.pad_state.key_lr = -1;
         }
         if window.keyboard()[Key::L].is_down() {
-            self.arrow_lr = 1;
+            self.pad_state.key_lr = 1;
         }
 
         self.machine.step();
