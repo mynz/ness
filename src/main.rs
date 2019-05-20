@@ -622,7 +622,7 @@ impl App {
             let y = (i / 0x20) as u16;
             let c = if *v != 0 { Color::RED } else { Color::WHITE };
 
-            self.draw_pixel(window, (x, y), c);
+            self.draw_pixel(window, (x * 8, y * 8), c);
         }
 
         if false {
