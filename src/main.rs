@@ -607,11 +607,32 @@ impl App {
         Ok(app)
     }
 
-    fn draw_pixel(&mut self, window: &mut Window, pos: (u16, u16), color: Color) {
+    fn draw_pixel(&self, window: &mut Window, pos: (u16, u16), color: Color) {
         let r = self.pixel_rate;
         let p = (pos.0 * r, pos.1 * r);
         let sizes = (r, r);
         window.draw(&Rectangle::new(p, sizes), Col(color));
+    }
+
+    fn draw_internal(&self, window: &mut Window) {
+        for (i, v) in self.machine.ppu_unit.name_table0.iter().enumerate() {
+            println!("draw_internal: {:?}", (i, v));
+
+            let x = (i % 0x20) as u16;
+            let y = (i / 0x20) as u16;
+            let c = if *v != 0 { Color::RED } else { Color::WHITE };
+
+            self.draw_pixel(window, (x, y), c);
+        }
+
+        if false {
+            self.draw_pixel(window, (10, 10), Color::RED);
+            //self.draw_pixel(window, (10, 11), Color::GREEN);
+            //self.draw_pixel(window, (11, 10), Color::BLUE);
+            //self.draw_pixel(window, (11, 11), Color::WHITE);
+
+            self.draw_pixel(window, (200, 200), Color::BLUE);
+        }
     }
 
     fn run(rom: Box<Rom>) {
@@ -656,13 +677,9 @@ impl State for App {
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         window.clear(Color::BLACK)?;
 
-        self.draw_pixel(window, (10, 10), Color::RED);
-        //self.draw_pixel(window, (10, 11), Color::GREEN);
-        //self.draw_pixel(window, (11, 10), Color::BLUE);
-        //self.draw_pixel(window, (11, 11), Color::WHITE);
+        self.draw_internal(window);
 
-        self.draw_pixel(window, (200, 200), Color::BLUE);
-
+        // デバッグ用のフォント文字列があれば描画する
         if let Some(ref mut font_line) = self.font_line {
             font_line.execute(|image| {
                 window.draw(&image.area().with_center((100, 100)), Img(&image));
