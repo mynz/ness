@@ -360,9 +360,9 @@ impl Machine {
 
     fn read_word(&self, addr: u16) -> u16 {
         if addr <= 0x07ff {
-            let mut c = Cursor::new(&self.wram);
-            c.set_position(addr as u64);
-            return c.read_u16::<LittleEndian>().unwrap();
+            let mut cur = Cursor::new(&self.wram);
+            cur.set_position(addr as u64);
+            return cur.read_u16::<LittleEndian>().unwrap();
         }
 
         // 0xffff まで有効
@@ -614,14 +614,45 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
+    fn draw_block(&self, window: &mut Window, pos: (u16, u16), v: u8) {
+        let offset = v as u16 * 16;
+
+        for y in 0..8 {
+            let idx0 = offset + y;
+            let idx1 = offset + y + 8;
+
+            let l0 = self.machine.rom.get_chr()[idx0 as usize];
+            let l1 = self.machine.rom.get_chr()[idx1 as usize];
+
+            for x in 0..8 {
+                let mask = 0x01_u8 << x;
+                let b0 = l0 & mask;
+                let b1 = l1 & mask;
+                let color_idx = (b1 << 2) + b0;
+
+                let color = match color_idx {
+                    0 => Color::RED,
+                    1 => Color::GREEN,
+                    2 => Color::BLUE,
+                    _ => Color::WHITE,
+                };
+
+                self.draw_pixel(window, (pos.0 + x, pos.1 + y as u16), color);
+            }
+        }
+    }
+
     fn draw_internal(&self, window: &mut Window) {
         for (i, v) in self.machine.ppu_unit.name_table0.iter().enumerate() {
-            println!("draw_internal: {:?}", (i, v));
-
             let x = (i % 0x20) as u16;
             let y = (i / 0x20) as u16;
             let c = if *v != 0 { Color::RED } else { Color::WHITE };
 
+            if *v != 0 {
+                println!("draw_internal: {:?}", (i, v));
+            }
+
+            self.draw_block(window, (x * 8, y * 8), *v);
             self.draw_pixel(window, (x * 8, y * 8), c);
         }
 
