@@ -208,7 +208,6 @@ struct PpuRegister {
 
 impl PpuRegister {}
 
-#[derive(Default)]
 struct PpuUnit {
     register: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte
