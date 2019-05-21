@@ -673,7 +673,7 @@ impl App {
         let pixel_rate = 2;
         let display_size = (DISPLAY_SIZE.0 * pixel_rate, DISPLAY_SIZE.1 * pixel_rate);
         let v = Vector::new(display_size.0, display_size.1);
-        run_with("NESS", v, Settings::default(), || {
+        run_with("RUSTNESS", v, Settings::default(), || {
             Self::new_with_params(display_size, pixel_rate, rom)
         });
     }
