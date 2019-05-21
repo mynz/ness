@@ -625,16 +625,19 @@ impl App {
             let l1 = self.machine.rom.get_chr()[idx1 as usize];
 
             for x in 0..8 {
-                let mask = 0x01_u8 << x;
-                let b0 = l0 & mask;
-                let b1 = l1 & mask;
-                let color_idx = (b1 << 2) + b0;
+                let mask = 0x01_u8 << (7 - x);
+                let b0 = if l0 & mask != 0 { 1 } else { 0 };
+                let b1 = if l1 & mask != 0 { 1 } else { 0 };
+                let color_idx = (b1 << 1) + b0;
 
                 let color = match color_idx {
-                    0 => Color::RED,
-                    1 => Color::GREEN,
-                    2 => Color::BLUE,
-                    _ => Color::WHITE,
+                    0 => Color::BLACK,
+                    1 => Color::RED,
+                    2 => Color::GREEN,
+                    3 => Color::BLUE,
+                    any => {
+                        panic!("no way with {}", any);
+                    }
                 };
 
                 self.draw_pixel(window, (pos.0 + x, pos.1 + y as u16), color);
@@ -653,7 +656,7 @@ impl App {
             }
 
             self.draw_block(window, (x * 8, y * 8), *v);
-            self.draw_pixel(window, (x * 8, y * 8), c);
+            self.draw_pixel(window, (x * 8, y * 8), c); // for debug
         }
 
         if false {
@@ -710,12 +713,14 @@ impl State for App {
 
         self.draw_internal(window);
 
-        // デバッグ用のフォント文字列があれば描画する
-        if let Some(ref mut font_line) = self.font_line {
-            font_line.execute(|image| {
-                window.draw(&image.area().with_center((100, 100)), Img(&image));
-                Ok(())
-            })?;
+        if false {
+            // デバッグ用のフォント文字列があれば描画する
+            if let Some(ref mut font_line) = self.font_line {
+                font_line.execute(|image| {
+                    window.draw(&image.area().with_center((100, 100)), Img(&image));
+                    Ok(())
+                })?;
+            }
         }
 
         Ok(())
