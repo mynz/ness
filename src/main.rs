@@ -210,12 +210,12 @@ impl PpuRegister {}
 
 struct PpuUnit {
     register: PpuRegister,
-    pattern_table0: Box<[u8]>, // 0x1000 byte
-    name_table0: Box<[u8]>,    // 0x03c0 byte
-    attr_table0: Box<[u8]>,    // 0x0040 byte
+    pattern_table0: Box<[u8]>,  // 0x1000 byte
+    name_table0: Box<[u8]>,     // 0x03c0 byte
+    attr_table0: Box<[u8]>,     // 0x0040 byte
     bg_palette: [u8; 0x10],     // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
-    vram: Box<[u8]>,           // 0x2000 byte
+    vram: Box<[u8]>,            // 0x2000 byte
 }
 
 impl PpuUnit {
@@ -614,8 +614,10 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn draw_block(&self, window: &mut Window, pos: (u16, u16), v: u8) {
+    fn draw_block(&self, window: &mut Window, name_table: &[u8], pos: (u16, u16), v: u8) {
         let offset = v as u16 * 16;
+
+        //let bg_palette = &self.machine.ppu_unit.bg_palette;
 
         for y in 0..8 {
             let idx0 = offset + y;
@@ -646,7 +648,10 @@ impl App {
     }
 
     fn draw_internal(&self, window: &mut Window) {
-        for (i, v) in self.machine.ppu_unit.name_table0.iter().enumerate() {
+        let name_table = &self.machine.ppu_unit.name_table0;
+        let attr_table = &self.machine.ppu_unit.attr_table0;
+
+        for (i, v) in name_table.iter().enumerate() {
             let x = (i % 0x20) as u16;
             let y = (i / 0x20) as u16;
             let c = if *v != 0 { Color::RED } else { Color::WHITE };
@@ -655,7 +660,7 @@ impl App {
                 println!("draw_internal: {:?}", (i, v));
             }
 
-            self.draw_block(window, (x * 8, y * 8), *v);
+            self.draw_block(window, name_table, (x * 8, y * 8), *v);
             self.draw_pixel(window, (x * 8, y * 8), c); // for debug
         }
 
