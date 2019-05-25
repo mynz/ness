@@ -213,8 +213,8 @@ struct PpuUnit {
     pattern_table0: Box<[u8]>, // 0x1000 byte
     name_table0: Box<[u8]>,    // 0x03c0 byte
     attr_table0: Box<[u8]>,    // 0x0040 byte
-    bg_pallet: [u8; 0x10],     // 0x0010 byte
-    sprite_pallet: [u8; 0x10], // 0x0010 byte
+    bg_palette: [u8; 0x10],     // 0x0010 byte
+    sprite_palette: [u8; 0x10], // 0x0010 byte
     vram: Box<[u8]>,           // 0x2000 byte
 }
 
@@ -224,16 +224,16 @@ impl PpuUnit {
         let pattern_table0 = Box::new([0_u8; 0x1000]);
         let name_table0 = Box::new([0_u8; 0x03c0]);
         let attr_table0 = Box::new([0_u8; 0x0040]);
-        let bg_pallet = [0_u8; 0x10];
-        let sprite_pallet = [0_u8; 0x10];
+        let bg_palette = [0_u8; 0x10];
+        let sprite_palette = [0_u8; 0x10];
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
         PpuUnit {
             register,
             pattern_table0,
             name_table0,
             attr_table0,
-            bg_pallet,
-            sprite_pallet,
+            bg_palette,
+            sprite_palette,
             vram,
         }
     }
@@ -308,13 +308,13 @@ impl PpuUnit {
             }
             addr if addr >= 0x3f00 && addr < 0x3f00 + 0x10 => {
                 let a = (addr - 0x3f00) as usize;
-                self.bg_pallet[a] = data;
-                println!("ppu bg_pallet write: {:x}, {:x}", addr, data);
+                self.bg_palette[a] = data;
+                println!("ppu bg_palette write: {:x}, {:x}", addr, data);
             }
             addr if addr >= 0x3f10 && addr < 0x3f10 + 0x10 => {
                 let a = (addr - 0x3f10) as usize;
-                self.sprite_pallet[a] = data;
-                println!("ppu sprite_pallet write: {:x}, {:x}", addr, data);
+                self.sprite_palette[a] = data;
+                println!("ppu sprite_palette write: {:x}, {:x}", addr, data);
             }
             _ => {
                 panic!("yet to be implemented to write addr: {:x}", addr);
