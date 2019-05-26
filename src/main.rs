@@ -614,7 +614,7 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn draw_block(&self, window: &mut Window, attr_table: &[u8], pos: (u16, u16), v: u8) {
+    fn draw_tile(&self, window: &mut Window, attr_table: &[u8], pos: (u16, u16), v: u8) {
         let offset = v as u16 * 16;
 
         //let bg_palette = &self.machine.ppu_unit.bg_palette;
@@ -652,16 +652,31 @@ impl App {
         let attr_table = &self.machine.ppu_unit.attr_table0;
 
         for (i, v) in name_table.iter().enumerate() {
-            let x = (i % 0x20) as u16;
-            let y = (i / 0x20) as u16;
+            // タイルは一列32個
+            let time_x = (i % 0x20) as u16;
+            let time_y = (i / 0x20) as u16;
+
+            let pixel_pos = (time_x * 8, time_y * 8);
+
+            // block
+            let block_pos = (pixel_pos.0 / 16, pixel_pos.1 / 16);
+
+            let block_idx = (block_pos.1 / 2) + (block_pos.0 / 2);
+
+            // [0, 4): Zの字
+            let subblock_idx = (time_x % 2) + (time_y % 2 * 2);
+            assert!(subblock_idx >= 0 && subblock_idx < 4);
+
+            let attr = attr_table[block_idx as usize];
+            let palette_idx = attr >> (subblock_idx * 2) & 0x03;
+            assert!(palette_idx >= 0 && palette_idx < 4);
+
+            // tile = 8x8
+            self.draw_tile(window, attr_table, pixel_pos, *v);
+
+            // for debug
             let c = if *v != 0 { Color::RED } else { Color::WHITE };
-
-            if *v != 0 {
-                println!("draw_internal: {:?}", (i, v));
-            }
-
-            self.draw_block(window, attr_table, (x * 8, y * 8), *v);
-            self.draw_pixel(window, (x * 8, y * 8), c); // for debug
+            self.draw_pixel(window, pixel_pos, c);
         }
 
         if false {
