@@ -614,7 +614,7 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn draw_block(&self, window: &mut Window, name_table: &[u8], pos: (u16, u16), v: u8) {
+    fn draw_block(&self, window: &mut Window, attr_table: &[u8], pos: (u16, u16), v: u8) {
         let offset = v as u16 * 16;
 
         //let bg_palette = &self.machine.ppu_unit.bg_palette;
@@ -660,7 +660,7 @@ impl App {
                 println!("draw_internal: {:?}", (i, v));
             }
 
-            self.draw_block(window, name_table, (x * 8, y * 8), *v);
+            self.draw_block(window, attr_table, (x * 8, y * 8), *v);
             self.draw_pixel(window, (x * 8, y * 8), c); // for debug
         }
 
