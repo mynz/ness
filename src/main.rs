@@ -614,10 +614,10 @@ impl App {
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn draw_tile(&self, window: &mut Window, attr_table: &[u8], pos: (u16, u16), v: u8) {
-        let offset = v as u16 * 16;
+    fn draw_tile(&self, window: &mut Window, pos: (u16, u16), v: u8, palette: &[u8]) {
+        assert!(palette.len() == 4);
 
-        //let bg_palette = &self.machine.ppu_unit.bg_palette;
+        let offset = v as u16 * 16;
 
         for y in 0..8 {
             let idx0 = offset + y;
@@ -650,6 +650,7 @@ impl App {
     fn draw_internal(&self, window: &mut Window) {
         let name_table = &self.machine.ppu_unit.name_table0;
         let attr_table = &self.machine.ppu_unit.attr_table0;
+        let bg_palette = &self.machine.ppu_unit.bg_palette;
 
         for (i, v) in name_table.iter().enumerate() {
             // タイルは一列32個
@@ -671,8 +672,11 @@ impl App {
             let palette_idx = attr >> (subblock_idx * 2) & 0x03;
             assert!(palette_idx >= 0 && palette_idx < 4);
 
+            let palette_ofs = (palette_idx * 4) as usize;
+            let palette = &bg_palette[palette_ofs..palette_ofs + 4];
+
             // tile = 8x8
-            self.draw_tile(window, attr_table, pixel_pos, *v);
+            self.draw_tile(window, pixel_pos, *v, palette);
 
             // for debug
             let c = if *v != 0 { Color::RED } else { Color::WHITE };
