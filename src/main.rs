@@ -632,15 +632,18 @@ impl App {
                 let b1 = if l1 & mask != 0 { 1 } else { 0 };
                 let color_idx = (b1 << 1) + b0;
 
-                let color = match color_idx {
-                    0 => Color::BLACK,
-                    1 => Color::RED,
-                    2 => Color::GREEN,
-                    3 => Color::BLUE,
-                    any => {
-                        panic!("no way with {}", any);
-                    }
-                };
+                //let color = match color_idx {
+                    //0 => Color::BLACK,
+                    //1 => Color::RED,
+                    //2 => Color::GREEN,
+                    //3 => Color::BLUE,
+                    //any => {
+                        //panic!("no way with {}", any);
+                    //}
+                //};
+
+                let rgb = COLOR_PALETTE[palette[color_idx] as usize];
+                let color = Color::from_rgba(rgb.0, rgb.1, rgb.2, 1.0);
 
                 self.draw_pixel(window, (pos.0 + x, pos.1 + y as u16), color);
             }
