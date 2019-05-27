@@ -632,16 +632,6 @@ impl App {
                 let b1 = if l1 & mask != 0 { 1 } else { 0 };
                 let color_idx = (b1 << 1) + b0;
 
-                //let color = match color_idx {
-                    //0 => Color::BLACK,
-                    //1 => Color::RED,
-                    //2 => Color::GREEN,
-                    //3 => Color::BLUE,
-                    //any => {
-                        //panic!("no way with {}", any);
-                    //}
-                //};
-
                 let rgb = COLOR_PALETTE[palette[color_idx] as usize];
                 let color = Color::from_rgba(rgb.0, rgb.1, rgb.2, 1.0);
 
@@ -657,10 +647,10 @@ impl App {
 
         for (i, v) in name_table.iter().enumerate() {
             // タイルは一列32個
-            let time_x = (i % 0x20) as u16;
-            let time_y = (i / 0x20) as u16;
+            let tile_x = (i % 0x20) as u16;
+            let tile_y = (i / 0x20) as u16;
 
-            let pixel_pos = (time_x * 8, time_y * 8);
+            let pixel_pos = (tile_x * 8, tile_y * 8);
 
             // block
             let block_pos = (pixel_pos.0 / 16, pixel_pos.1 / 16);
@@ -668,12 +658,12 @@ impl App {
             let block_idx = (block_pos.1 / 2) + (block_pos.0 / 2);
 
             // [0, 4): Zの字
-            let subblock_idx = (time_x % 2) + (time_y % 2 * 2);
-            assert!(subblock_idx >= 0 && subblock_idx < 4);
+            let subblock_idx = (tile_x % 2) + (tile_y % 2 * 2);
+            assert!(subblock_idx < 4);
 
             let attr = attr_table[block_idx as usize];
             let palette_idx = attr >> (subblock_idx * 2) & 0x03;
-            assert!(palette_idx >= 0 && palette_idx < 4);
+            assert!(palette_idx < 4);
 
             let palette_ofs = (palette_idx * 4) as usize;
             let palette = &bg_palette[palette_ofs..palette_ofs + 4];
@@ -682,8 +672,10 @@ impl App {
             self.draw_tile(window, pixel_pos, *v, palette);
 
             // for debug
-            let c = if *v != 0 { Color::RED } else { Color::WHITE };
-            self.draw_pixel(window, pixel_pos, c);
+            if false {
+                let c = if *v != 0 { Color::RED } else { Color::WHITE };
+                self.draw_pixel(window, pixel_pos, c);
+            }
         }
 
         if false {
