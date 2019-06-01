@@ -564,20 +564,20 @@ struct PadState {
     key_lr: i8,
 }
 
-const DISPLAY_SIZE: (u16, u16) = (256, 240);
+const DISPLAY_SIZE: (u32, u32) = (256, 240);
 const FONT_NAME: &str = "mononoki-Regular.ttf";
 
 #[derive(Default, Copy, Clone)]
 struct Rgb(u8, u8, u8);
 
 struct FrameBuffer {
-    sizes: (u16, u16),
+    sizes: (u32, u32),
     buf: Vec<u8>,
     image: Image,
 }
 
 impl FrameBuffer {
-    fn new(sizes: (u16, u16)) -> Self {
+    fn new(sizes: (u32, u32)) -> Self {
         let len = 3 * sizes.0 as usize * sizes.1 as usize;
         let buf = vec![0; len];
         let image = Image::from_raw(
@@ -600,7 +600,7 @@ impl FrameBuffer {
         }
     }
 
-    fn set_pixel(&mut self, pos: (u16, u16), rgb: Rgb) {
+    fn set_pixel(&mut self, pos: (u32, u32), rgb: Rgb) {
         let ofs = 3 * (pos.1 * self.sizes.0 + pos.0) as usize;
         self.buf[ofs + 0] = rgb.0;
         self.buf[ofs + 1] = rgb.1;
@@ -617,7 +617,7 @@ impl FrameBuffer {
         .unwrap();
     }
 
-    fn draw(&mut self, window: &mut Window, rate: u16) {
+    fn draw(&mut self, window: &mut Window, rate: u32) {
         self.apply_to_image(); //
         let sz = (rate * self.sizes.0, rate * self.sizes.1);
         window.draw(&Rectangle::new((0, 0), sz), Img(&self.image));
@@ -625,8 +625,8 @@ impl FrameBuffer {
 }
 
 struct App {
-    pixel_rate: u16,
-    display_size: (u16, u16),
+    pixel_rate: u32,
+    display_size: (u32, u32),
     pad_state: PadState,
     machine: Machine,
     frame_buffer: FrameBuffer,
@@ -648,7 +648,7 @@ impl App {
         })
     }
 
-    fn new_with_params(display_size: (u16, u16), pixel_rate: u16, rom: Box<Rom>) -> Result<Self> {
+    fn new_with_params(display_size: (u32, u32), pixel_rate: u32, rom: Box<Rom>) -> Result<Self> {
         let mut machine = Machine::new();
         machine.set_rom(rom);
 
@@ -668,26 +668,26 @@ impl App {
         Ok(app)
     }
 
-    fn draw_pixel(&self, window: &mut Window, pos: (u16, u16), color: Color) {
+    fn draw_pixel(&self, window: &mut Window, pos: (u32, u32), color: Color) {
         let r = self.pixel_rate;
         let p = (pos.0 * r, pos.1 * r);
         let sizes = (r, r);
         window.draw(&Rectangle::new(p, sizes), Col(color));
     }
 
-    fn draw_tile(&self, window: &mut Window, pos: (u16, u16), v: u8, palette: &[u8]) {
+    fn draw_tile(&self, window: &mut Window, pos: (u32, u32), v: u8, palette: &[u8]) {
         assert!(palette.len() == 4);
 
-        let offset = v as u16 * 16;
+        let offset = v as u32 * 16;
 
-        for y in 0..8 {
+        for y in 0..8_u32 {
             let idx0 = offset + y;
             let idx1 = offset + y + 8;
 
             let l0 = self.machine.rom.get_chr()[idx0 as usize];
             let l1 = self.machine.rom.get_chr()[idx1 as usize];
 
-            for x in 0..8 {
+            for x in 0..8_u32 {
                 let mask = 0x01_u8 << (7 - x);
                 let b0 = if l0 & mask != 0 { 1 } else { 0 };
                 let b1 = if l1 & mask != 0 { 1 } else { 0 };
@@ -696,7 +696,7 @@ impl App {
                 let rgb = COLOR_PALETTE[palette[color_idx] as usize];
                 let color = Color::from_rgba(rgb.0, rgb.1, rgb.2, 1.0);
 
-                self.draw_pixel(window, (pos.0 + x, pos.1 + y as u16), color);
+                self.draw_pixel(window, (pos.0 + x, pos.1 + y), color);
             }
         }
     }
@@ -708,8 +708,8 @@ impl App {
 
         for (i, v) in name_table.iter().enumerate() {
             // タイルは一列32個
-            let tile_x = (i % 0x20) as u16;
-            let tile_y = (i / 0x20) as u16;
+            let tile_x = (i % 0x20) as u32;
+            let tile_y = (i / 0x20) as u32;
 
             let pixel_pos = (tile_x * 8, tile_y * 8);
 
