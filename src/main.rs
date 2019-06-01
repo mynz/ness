@@ -9,6 +9,18 @@ use std::io::prelude::*;
 use std::io::{Cursor, Read};
 use std::path::Path;
 
+extern crate quicksilver;
+use quicksilver::{
+    geom::{Rectangle, Shape, Vector},
+    graphics::{
+        Background::{Col, Img},
+        Color, Font, FontStyle, Image, PixelFormat,
+    },
+    input::Key,
+    lifecycle::{run_with, Asset, Settings, State, Window},
+    Future, Result,
+};
+
 extern crate byteorder;
 use byteorder::{LittleEndian, ReadBytesExt};
 
@@ -544,19 +556,6 @@ fn dump_bin(path: &Path, bin: &[u8]) -> std::io::Result<()> {
     fp.write_all(bin)?;
     Ok(())
 }
-
-///
-extern crate quicksilver;
-use quicksilver::{
-    geom::{Rectangle, Shape, Vector},
-    graphics::{
-        Background::{Col, Img},
-        Color, Font, FontStyle, Image, PixelFormat,
-    },
-    input::Key,
-    lifecycle::{run_with, Asset, Settings, State, Window},
-    Future, Result,
-};
 
 #[derive(Default)]
 struct PadState {
