@@ -13,7 +13,8 @@ extern crate quicksilver;
 use quicksilver::{
     geom::{Rectangle, Shape, Vector},
     graphics::{
-        Background::{Col, Img},
+        //Background::{Col, Img},
+        Background::{Img},
         Color, Font, FontStyle, Image, PixelFormat,
     },
     input::Key,
@@ -599,7 +600,7 @@ impl FrameBuffer {
         }
     }
 
-    fn set_pixel(&mut self, pos: (u32, u32), rgb: Rgb) {
+    fn set_pixel(&mut self, pos: (u32, u32), rgb: (u8, u8, u8)) {
         let ofs = 3 * (pos.1 * self.sizes.0 + pos.0) as usize;
         self.buf[ofs + 0] = rgb.0;
         self.buf[ofs + 1] = rgb.1;
@@ -667,14 +668,14 @@ impl App {
         Ok(app)
     }
 
-    fn draw_pixel(&self, window: &mut Window, pos: (u32, u32), color: Color) {
-        let r = self.pixel_rate;
-        let p = (pos.0 * r, pos.1 * r);
-        let sizes = (r, r);
-        window.draw(&Rectangle::new(p, sizes), Col(color));
-    }
+    //fn draw_pixel(&self, window: &mut Window, pos: (u32, u32), color: Color) {
+        //let r = self.pixel_rate;
+        //let p = (pos.0 * r, pos.1 * r);
+        //let sizes = (r, r);
+        //window.draw(&Rectangle::new(p, sizes), Col(color));
+    //}
 
-    fn draw_tile(&self, window: &mut Window, pos: (u32, u32), v: u8, palette: &[u8]) {
+    fn draw_tile(&self, frame_buffer: &mut FrameBuffer, pos: (u32, u32), v: u8, palette: &[u8]) {
         assert!(palette.len() == 4);
 
         let offset = v as u32 * 16;
@@ -693,14 +694,12 @@ impl App {
                 let color_idx = (b1 << 1) + b0;
 
                 let rgb = COLOR_PALETTE[palette[color_idx] as usize];
-                let color = Color::from_rgba(rgb.0, rgb.1, rgb.2, 1.0);
-
-                self.draw_pixel(window, (pos.0 + x, pos.1 + y), color);
+                frame_buffer.set_pixel((pos.0 + x, pos.1 + y), rgb);
             }
         }
     }
 
-    fn draw_internal(&self, window: &mut Window) {
+    fn draw_internal(&self, frame_buffer: &mut FrameBuffer) {
         let name_table = &self.machine.ppu_unit.name_table0;
         let attr_table = &self.machine.ppu_unit.attr_table0;
         let bg_palette = &self.machine.ppu_unit.bg_palette;
@@ -728,23 +727,7 @@ impl App {
             let palette_ofs = (palette_idx * 4) as usize;
             let palette = &bg_palette[palette_ofs..palette_ofs + 4];
 
-            // tile = 8x8
-            self.draw_tile(window, pixel_pos, *v, palette);
-
-            // for debug
-            if false {
-                let c = if *v != 0 { Color::RED } else { Color::WHITE };
-                self.draw_pixel(window, pixel_pos, c);
-            }
-        }
-
-        if false {
-            self.draw_pixel(window, (10, 10), Color::RED);
-            //self.draw_pixel(window, (10, 11), Color::GREEN);
-            //self.draw_pixel(window, (11, 10), Color::BLUE);
-            //self.draw_pixel(window, (11, 11), Color::WHITE);
-
-            self.draw_pixel(window, (200, 200), Color::BLUE);
+            self.draw_tile(frame_buffer, pixel_pos, *v, palette);
         }
     }
 
@@ -790,10 +773,11 @@ impl State for App {
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         window.clear(Color::BLACK)?;
 
-        self.draw_internal(window);
-
         self.frame_buffer.clear(Rgb(0, 0xcc, 0));
-        //self.frame_buffer.set_pixel((10, 10), Rgb(0xff, 0, 0));
+
+        self.draw_internal(&mut self.frame_buffer);
+
+        //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0));
         self.frame_buffer.draw(window, self.pixel_rate);
 
         if false {
