@@ -551,7 +551,7 @@ use quicksilver::{
     geom::{Rectangle, Shape, Vector},
     graphics::{
         Background::{Col, Img},
-        Color, Font, FontStyle, Image,
+        Color, Font, FontStyle, Image, PixelFormat,
     },
     input::Key,
     lifecycle::{run_with, Asset, Settings, State, Window},
@@ -567,11 +567,69 @@ struct PadState {
 const DISPLAY_SIZE: (u16, u16) = (256, 240);
 const FONT_NAME: &str = "mononoki-Regular.ttf";
 
+#[derive(Default, Copy, Clone)]
+struct Rgb(u8, u8, u8);
+
+struct FrameBuffer {
+    sizes: (u16, u16),
+    buf: Vec<u8>,
+    image: Image,
+}
+
+impl FrameBuffer {
+    fn new(sizes: (u16, u16)) -> Self {
+        let len = 3 * sizes.0 as usize * sizes.1 as usize;
+        let buf = vec![0; len];
+        let image = Image::from_raw(
+            &buf,
+            DISPLAY_SIZE.0 as u32,
+            DISPLAY_SIZE.1 as u32,
+            PixelFormat::RGB,
+        )
+        .unwrap();
+
+        Self { sizes, buf, image }
+    }
+
+    fn clear(&mut self, rgb: Rgb) {
+        let n = self.buf.len() / 3;
+        for i in 0..n {
+            self.buf[i * 3 + 0] = rgb.0;
+            self.buf[i * 3 + 1] = rgb.1;
+            self.buf[i * 3 + 2] = rgb.2;
+        }
+    }
+
+    fn set_pixel(&mut self, pos: (u16, u16), rgb: Rgb) {
+        let ofs = 3 * (pos.1 * self.sizes.0 + pos.0) as usize;
+        self.buf[ofs + 0] = rgb.0;
+        self.buf[ofs + 1] = rgb.1;
+        self.buf[ofs + 2] = rgb.2;
+    }
+
+    fn apply_to_image(&mut self) {
+        self.image = Image::from_raw(
+            &self.buf,
+            self.sizes.0 as u32,
+            self.sizes.1 as u32,
+            PixelFormat::RGB,
+        )
+        .unwrap();
+    }
+
+    fn draw(&mut self, window: &mut Window, rate: u16) {
+        self.apply_to_image(); //
+        let sz = (rate * self.sizes.0, rate * self.sizes.1);
+        window.draw(&Rectangle::new((0, 0), sz), Img(&self.image));
+    }
+}
+
 struct App {
     pixel_rate: u16,
     display_size: (u16, u16),
     pad_state: PadState,
     machine: Machine,
+    frame_buffer: FrameBuffer,
     font_line: Option<Asset<Image>>, // for debug
 }
 
@@ -579,11 +637,13 @@ impl App {
     fn new() -> Result<Self> {
         let machine = Machine::new();
 
+        // 疑似初期化
         Ok(Self {
             pixel_rate: 0,
             display_size: DISPLAY_SIZE,
             pad_state: PadState::default(),
             machine,
+            frame_buffer: FrameBuffer::new((1, 1)),
             font_line: None,
         })
     }
@@ -602,6 +662,7 @@ impl App {
             display_size,
             pad_state: PadState::default(),
             machine,
+            frame_buffer: FrameBuffer::new(DISPLAY_SIZE),
             font_line: Some(font_line),
         };
         Ok(app)
@@ -731,6 +792,10 @@ impl State for App {
         window.clear(Color::BLACK)?;
 
         self.draw_internal(window);
+
+        self.frame_buffer.clear(Rgb(0, 0xcc, 0));
+        //self.frame_buffer.set_pixel((10, 10), Rgb(0xff, 0, 0));
+        self.frame_buffer.draw(window, self.pixel_rate);
 
         if false {
             // デバッグ用のフォント文字列があれば描画する
