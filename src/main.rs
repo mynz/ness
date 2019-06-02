@@ -626,6 +626,43 @@ impl FrameBuffer {
         let sz = (rate * self.sizes.0, rate * self.sizes.1);
         window.draw(&Rectangle::new((0, 0), sz), Img(&self.image));
     }
+
+    // buf に書き込む
+    fn render_line(&mut self, machine: &Machine, y: u32) {
+
+        // タイルは一列32個
+        //let tile_x = (i % 0x20) as u32;
+        //let tile_y = (i / 0x20) as u32;
+
+        let name_table = &machine.ppu_unit.name_table0;
+        let attr_table = &machine.ppu_unit.attr_table0;
+        let bg_palette = &machine.ppu_unit.bg_palette;
+
+        let block_base = y % 32;
+
+        // ブロックは一列に16個
+        for ib in 0..16 {
+
+            let block_idx = ib + block_base;
+            let attr = attr_table[block_idx as usize];
+
+            //let palette_idx = attr >> (subblock_idx * 2) & 0x03;
+            //assert!(palette_idx < 4);
+
+            for subblock in 0..2 {
+                for x_in_block in 0..8 {
+                    let x = (8 * subblock) + (16 * ib) + x_in_block;
+
+                    assert!(x < DISPLAY_SIZE.0);
+                    assert!(y < DISPLAY_SIZE.1);
+                    let pos = (x, y);
+                    let rgb = (x as u8, 0xcc, y as u8);
+
+                    self.set_pixel(pos, rgb);
+                }
+            }
+        }
+    }
 }
 
 struct App {
@@ -778,8 +815,14 @@ impl State for App {
 
         self.frame_buffer.clear(Rgb(0, 0xcc, 0));
 
-        App::draw_internal(&mut self.frame_buffer, &self.machine);
-        //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0)); // debug
+        if true {
+            for y in 0..DISPLAY_SIZE.1 {
+                self.frame_buffer.render_line(&self.machine, y);
+            }
+        } else {
+            App::draw_internal(&mut self.frame_buffer, &self.machine);
+            //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0)); // debug
+        }
         self.frame_buffer.draw(window, self.pixel_rate);
 
         if false {
