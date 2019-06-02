@@ -675,7 +675,9 @@ impl App {
         //window.draw(&Rectangle::new(p, sizes), Col(color));
     //}
 
-    fn draw_tile(&self, frame_buffer: &mut FrameBuffer, pos: (u32, u32), v: u8, palette: &[u8]) {
+    fn draw_tile(frame_buffer: &mut FrameBuffer,
+                 machine: &Machine,
+                 pos: (u32, u32), v: u8, palette: &[u8]) {
         assert!(palette.len() == 4);
 
         let offset = v as u32 * 16;
@@ -684,8 +686,8 @@ impl App {
             let idx0 = offset + y;
             let idx1 = offset + y + 8;
 
-            let l0 = self.machine.rom.get_chr()[idx0 as usize];
-            let l1 = self.machine.rom.get_chr()[idx1 as usize];
+            let l0 = machine.rom.get_chr()[idx0 as usize];
+            let l1 = machine.rom.get_chr()[idx1 as usize];
 
             for x in 0..8_u32 {
                 let mask = 0x01_u8 << (7 - x);
@@ -699,10 +701,10 @@ impl App {
         }
     }
 
-    fn draw_internal(&self, frame_buffer: &mut FrameBuffer) {
-        let name_table = &self.machine.ppu_unit.name_table0;
-        let attr_table = &self.machine.ppu_unit.attr_table0;
-        let bg_palette = &self.machine.ppu_unit.bg_palette;
+    fn draw_internal(frame_buffer: &mut FrameBuffer, machine: &Machine) {
+        let name_table = &machine.ppu_unit.name_table0;
+        let attr_table = &machine.ppu_unit.attr_table0;
+        let bg_palette = &machine.ppu_unit.bg_palette;
 
         for (i, v) in name_table.iter().enumerate() {
             // タイルは一列32個
@@ -727,7 +729,7 @@ impl App {
             let palette_ofs = (palette_idx * 4) as usize;
             let palette = &bg_palette[palette_ofs..palette_ofs + 4];
 
-            self.draw_tile(frame_buffer, pixel_pos, *v, palette);
+            App::draw_tile(frame_buffer, machine, pixel_pos, *v, palette);
         }
     }
 
@@ -775,7 +777,7 @@ impl State for App {
 
         self.frame_buffer.clear(Rgb(0, 0xcc, 0));
 
-        self.draw_internal(&mut self.frame_buffer);
+        App::draw_internal(&mut self.frame_buffer, &self.machine); 
 
         //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0));
         self.frame_buffer.draw(window, self.pixel_rate);
