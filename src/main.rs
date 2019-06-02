@@ -672,13 +672,6 @@ impl App {
         Ok(app)
     }
 
-    //fn draw_pixel(&self, window: &mut Window, pos: (u32, u32), color: Color) {
-    //let r = self.pixel_rate;
-    //let p = (pos.0 * r, pos.1 * r);
-    //let sizes = (r, r);
-    //window.draw(&Rectangle::new(p, sizes), Col(color));
-    //}
-
     fn draw_tile(
         frame_buffer: &mut FrameBuffer,
         machine: &Machine,
