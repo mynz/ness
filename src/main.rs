@@ -14,8 +14,12 @@ use quicksilver::{
     geom::{Rectangle, Shape, Vector},
     graphics::{
         //Background::{Col, Img},
-        Background::{Img},
-        Color, Font, FontStyle, Image, PixelFormat,
+        Background::Img,
+        Color,
+        Font,
+        FontStyle,
+        Image,
+        PixelFormat,
     },
     input::Key,
     lifecycle::{run_with, Asset, Settings, State, Window},
@@ -669,15 +673,19 @@ impl App {
     }
 
     //fn draw_pixel(&self, window: &mut Window, pos: (u32, u32), color: Color) {
-        //let r = self.pixel_rate;
-        //let p = (pos.0 * r, pos.1 * r);
-        //let sizes = (r, r);
-        //window.draw(&Rectangle::new(p, sizes), Col(color));
+    //let r = self.pixel_rate;
+    //let p = (pos.0 * r, pos.1 * r);
+    //let sizes = (r, r);
+    //window.draw(&Rectangle::new(p, sizes), Col(color));
     //}
 
-    fn draw_tile(frame_buffer: &mut FrameBuffer,
-                 machine: &Machine,
-                 pos: (u32, u32), v: u8, palette: &[u8]) {
+    fn draw_tile(
+        frame_buffer: &mut FrameBuffer,
+        machine: &Machine,
+        pos: (u32, u32),
+        v: u8,
+        palette: &[u8],
+    ) {
         assert!(palette.len() == 4);
 
         let offset = v as u32 * 16;
@@ -777,9 +785,8 @@ impl State for App {
 
         self.frame_buffer.clear(Rgb(0, 0xcc, 0));
 
-        App::draw_internal(&mut self.frame_buffer, &self.machine); 
-
-        //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0));
+        App::draw_internal(&mut self.frame_buffer, &self.machine);
+        //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0)); // debug
         self.frame_buffer.draw(window, self.pixel_rate);
 
         if false {
@@ -797,15 +804,8 @@ impl State for App {
 }
 
 fn main() {
-    //println!("Hello, world!");
-
-    //run::<App>("Draw Geometry", Vector::new(256, 240), Settings::default());
-
     let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
     App::run(rom);
-
-    //let mut machine = Machine::new(rom);
-    //machine.run();
 }
 
 const COLOR_PALETTE: [(u8, u8, u8); 64] = [
