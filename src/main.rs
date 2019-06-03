@@ -634,11 +634,13 @@ impl FrameBuffer {
         //let tile_x = (i % 0x20) as u32;
         //let tile_y = (i / 0x20) as u32;
 
+
         let name_table = &machine.ppu_unit.name_table0;
         let attr_table = &machine.ppu_unit.attr_table0;
         let bg_palette = &machine.ppu_unit.bg_palette;
 
         let block_base = y % 32;
+        let subblock_y = if y / 8 % 2 == 0 { 0 } else { 1 };
 
         // ブロックは一列に16個
         for ib in 0..16 {
@@ -646,17 +648,29 @@ impl FrameBuffer {
             let block_idx = ib + block_base;
             let attr = attr_table[block_idx as usize];
 
-            //let palette_idx = attr >> (subblock_idx * 2) & 0x03;
-            //assert!(palette_idx < 4);
+            for subblock_x in 0..2 {
+                let subblock_idx = (subblock_y << 1) | subblock_x;
+                assert!(subblock_idx < 4, "subblock_idx is {}", subblock_idx);
 
-            for subblock in 0..2 {
+                let palette_idx = attr >> (subblock_idx * 2) & 0x03;
+                assert!(palette_idx < 4);
+
+                let palette_ofs = (palette_idx * 4) as usize;
+                let palette = &bg_palette[palette_ofs..palette_ofs + 4];
+
                 for x_in_block in 0..8 {
-                    let x = (8 * subblock) + (16 * ib) + x_in_block;
+                    let x = (8 * subblock_x) + (16 * ib) + x_in_block;
 
                     assert!(x < DISPLAY_SIZE.0);
                     assert!(y < DISPLAY_SIZE.1);
                     let pos = (x, y);
-                    let rgb = (x as u8, 0xcc, y as u8);
+
+                    //let rgb = (x as u8, 0xcc, y as u8);
+
+                    let rgb = [
+                        (0xff, 0, 0), (0x00, 0xff, 0),
+                        (0x00, 0, 0xff), (0xff, 0xff, 0),
+                    ] [subblock_idx as usize]; 
 
                     self.set_pixel(pos, rgb);
                 }
