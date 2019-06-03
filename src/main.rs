@@ -627,20 +627,49 @@ impl FrameBuffer {
         window.draw(&Rectangle::new((0, 0), sz), Img(&self.image));
     }
 
+    fn draw_tile(
+        &mut self,
+        machine: &Machine,
+        pos: (u32, u32),
+        v: u8,
+        palette: &[u8],
+    ) {
+        assert!(palette.len() == 4);
+
+        let offset = v as u32 * 16;
+
+        for y in 0..8_u32 {
+            let idx0 = offset + y;
+            let idx1 = offset + y + 8;
+
+            let l0 = machine.rom.get_chr()[idx0 as usize];
+            let l1 = machine.rom.get_chr()[idx1 as usize];
+
+            for x in 0..8_u32 {
+                let mask = 0x01_u8 << (7 - x);
+                let b0 = if l0 & mask != 0 { 1 } else { 0 };
+                let b1 = if l1 & mask != 0 { 1 } else { 0 };
+                let color_idx = (b1 << 1) + b0;
+
+                let rgb = COLOR_PALETTE[palette[color_idx] as usize];
+                self.set_pixel((pos.0 + x, pos.1 + y), rgb);
+            }
+        }
+    }
+
     // buf に書き込む
     fn render_line(&mut self, machine: &Machine, y: u32) {
-
-        // タイルは一列32個
-        //let tile_x = (i % 0x20) as u32;
-        //let tile_y = (i / 0x20) as u32;
-
 
         let name_table = &machine.ppu_unit.name_table0;
         let attr_table = &machine.ppu_unit.attr_table0;
         let bg_palette = &machine.ppu_unit.bg_palette;
+        //let chr = &machine.rom.get_chr();
 
         let block_base = y % 32;
         let subblock_y = if y / 8 % 2 == 0 { 0 } else { 1 };
+
+        let tile_base_idx = y / 8;
+
 
         // ブロックは一列に16個
         for ib in 0..16 {
@@ -660,20 +689,30 @@ impl FrameBuffer {
 
                 for x_in_block in 0..8 {
                     let x = (8 * subblock_x) + (16 * ib) + x_in_block;
-
                     assert!(x < DISPLAY_SIZE.0);
                     assert!(y < DISPLAY_SIZE.1);
                     let pos = (x, y);
 
-                    //let rgb = (x as u8, 0xcc, y as u8);
+                    let tile_idx = (tile_base_idx + (x / 8)) as usize;
 
-                    let rgb = [
-                        (0xff, 0, 0), (0x00, 0xff, 0),
-                        (0x00, 0, 0xff), (0xff, 0xff, 0),
-                    ] [subblock_idx as usize]; 
+                    let name0 = name_table[16 * tile_idx];
+                    let name1 = name_table[16 * tile_idx + 8];
+
+                    let mask = 0x01u8 << (7 - x_in_block);
+                    let b0 = if name0 & mask != 0 { 1 } else { 0 };
+                    let b1 = if name1 & mask != 0 { 1 } else { 0 };
+                    let color_idx = (b1 << 1) + b0;
+                    let rgb = COLOR_PALETTE[palette[color_idx] as usize];
+                    //frame_buffer.set_pixel((pos.0 + x, pos.1 + y), rgb);
+
+                    //let rgb = [
+                        //(0xff, 0, 0), (0x00, 0xff, 0),
+                        //(0x00, 0, 0xff), (0xff, 0xff, 0),
+                    //] [subblock_idx as usize]; 
 
                     self.set_pixel(pos, rgb);
                 }
+
             }
         }
     }
