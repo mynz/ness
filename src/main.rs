@@ -627,30 +627,6 @@ impl FrameBuffer {
         window.draw(&Rectangle::new((0, 0), sz), Img(&self.image));
     }
 
-    fn draw_tile(&mut self, machine: &Machine, pos: (u32, u32), v: u8, palette: &[u8]) {
-        assert!(palette.len() == 4);
-
-        let offset = v as u32 * 16;
-
-        for y in 0..8_u32 {
-            let idx0 = offset + y;
-            let idx1 = offset + y + 8;
-
-            let l0 = machine.rom.get_chr()[idx0 as usize];
-            let l1 = machine.rom.get_chr()[idx1 as usize];
-
-            for x in 0..8_u32 {
-                let mask = 0x01_u8 << (7 - x);
-                let b0 = if l0 & mask != 0 { 1 } else { 0 };
-                let b1 = if l1 & mask != 0 { 1 } else { 0 };
-                let color_idx = (b1 << 1) + b0;
-
-                let rgb = COLOR_PALETTE[palette[color_idx] as usize];
-                self.set_pixel((pos.0 + x, pos.1 + y), rgb);
-            }
-        }
-    }
-
     // buf に書き込む
     fn render_line(&mut self, machine: &Machine, y: u32) {
         let name_table = &machine.ppu_unit.name_table0;
@@ -750,68 +726,6 @@ impl App {
         Ok(app)
     }
 
-    fn draw_tile(
-        frame_buffer: &mut FrameBuffer,
-        machine: &Machine,
-        pos: (u32, u32),
-        v: u8,
-        palette: &[u8],
-    ) {
-        assert!(palette.len() == 4);
-
-        let offset = v as u32 * 16;
-
-        for y in 0..8_u32 {
-            let idx0 = offset + y;
-            let idx1 = offset + y + 8;
-
-            let l0 = machine.rom.get_chr()[idx0 as usize];
-            let l1 = machine.rom.get_chr()[idx1 as usize];
-
-            for x in 0..8_u32 {
-                let mask = 0x01_u8 << (7 - x);
-                let b0 = if l0 & mask != 0 { 1 } else { 0 };
-                let b1 = if l1 & mask != 0 { 1 } else { 0 };
-                let color_idx = (b1 << 1) + b0;
-
-                let rgb = COLOR_PALETTE[palette[color_idx] as usize];
-                frame_buffer.set_pixel((pos.0 + x, pos.1 + y), rgb);
-            }
-        }
-    }
-
-    fn draw_internal(frame_buffer: &mut FrameBuffer, machine: &Machine) {
-        let name_table = &machine.ppu_unit.name_table0;
-        let attr_table = &machine.ppu_unit.attr_table0;
-        let bg_palette = &machine.ppu_unit.bg_palette;
-
-        for (i, v) in name_table.iter().enumerate() {
-            // タイルは一列32個
-            let tile_x = (i % 0x20) as u32;
-            let tile_y = (i / 0x20) as u32;
-
-            let pixel_pos = (tile_x * 8, tile_y * 8);
-
-            // block
-            let block_pos = (pixel_pos.0 / 16, pixel_pos.1 / 16);
-
-            let block_idx = (block_pos.1 / 2) + (block_pos.0 / 2);
-
-            // [0, 4): Zの字
-            let subblock_idx = (tile_x % 2) + (tile_y % 2 * 2);
-            assert!(subblock_idx < 4);
-
-            let attr = attr_table[block_idx as usize];
-            let palette_idx = attr >> (subblock_idx * 2) & 0x03;
-            assert!(palette_idx < 4);
-
-            let palette_ofs = (palette_idx * 4) as usize;
-            let palette = &bg_palette[palette_ofs..palette_ofs + 4];
-
-            App::draw_tile(frame_buffer, machine, pixel_pos, *v, palette);
-        }
-    }
-
     fn run(rom: Box<Rom>) {
         let pixel_rate = 2;
         let display_size = (DISPLAY_SIZE.0 * pixel_rate, DISPLAY_SIZE.1 * pixel_rate);
@@ -856,14 +770,10 @@ impl State for App {
 
         self.frame_buffer.clear(Rgb(0, 0xcc, 0));
 
-        if true {
-            for y in 0..DISPLAY_SIZE.1 {
-                self.frame_buffer.render_line(&self.machine, y);
-            }
-        } else {
-            App::draw_internal(&mut self.frame_buffer, &self.machine);
-            //self.frame_buffer.set_pixel((10, 10), (0xff, 0, 0)); // debug
+        for y in 0..DISPLAY_SIZE.1 {
+            self.frame_buffer.render_line(&self.machine, y);
         }
+
         self.frame_buffer.draw(window, self.pixel_rate);
 
         if false {
