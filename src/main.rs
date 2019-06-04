@@ -775,13 +775,14 @@ impl State for App {
             self.pad_state.key_lr = 1;
         }
 
-        self.machine.step(&mut self.frame_buffer);
-
         Ok(())
     }
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         //window.clear(Color::BLACK)?;
+
+        // 本来 update() で呼び出すべきかもしれないが、ここに書かないとキーイベントなどがうまくとれない.
+        self.machine.step(&mut self.frame_buffer);
 
         self.frame_buffer.draw(window, self.pixel_rate);
 
