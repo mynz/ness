@@ -420,9 +420,10 @@ impl Machine {
         v
     }
 
-    fn execute(&mut self) {
+    fn execute(&mut self) -> u32 {
         self.step_count += 1;
 
+        let mut cycle = 1;
         let pc = self.register.pc;
         let op = self.read_byte(pc);
         self.register.pc += 1;
@@ -510,11 +511,20 @@ impl Machine {
                 println!("op yet to be implemented: {:x}", op);
             }
         }
+
+        return cycle;
     }
 
     fn step(&mut self, frame_buffer: &mut FrameBuffer) {
         for y in 0..DISPLAY_SIZE.1 {
-            self.execute();
+            let mut cycle = 0;
+
+            loop {
+                cycle += self.execute();
+                if cycle > 341 {
+                    break;
+                }
+            }
 
             frame_buffer.render_line(&self, y);
         }
