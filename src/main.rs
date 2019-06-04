@@ -512,8 +512,12 @@ impl Machine {
         }
     }
 
-    fn step(&mut self) {
-        self.execute();
+    fn step(&mut self, frame_buffer: &mut FrameBuffer) {
+        for y in 0..DISPLAY_SIZE.1 {
+            self.execute();
+
+            frame_buffer.render_line(&self, y);
+        }
     }
 
     // テスト用
@@ -760,19 +764,13 @@ impl State for App {
             self.pad_state.key_lr = 1;
         }
 
-        self.machine.step();
+        self.machine.step(&mut self.frame_buffer);
 
         Ok(())
     }
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
-        window.clear(Color::BLACK)?;
-
-        self.frame_buffer.clear(Rgb(0, 0xcc, 0));
-
-        for y in 0..DISPLAY_SIZE.1 {
-            self.frame_buffer.render_line(&self.machine, y);
-        }
+        //window.clear(Color::BLACK)?;
 
         self.frame_buffer.draw(window, self.pixel_rate);
 
