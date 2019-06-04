@@ -421,8 +421,6 @@ impl Machine {
     }
 
     fn execute(&mut self) -> u32 {
-        self.step_count += 1;
-
         let mut cycle = 1;
         let pc = self.register.pc;
         let op = self.read_byte(pc);
@@ -436,7 +434,7 @@ impl Machine {
                 // 間接アドレス指定がページをまたいでいる場合、アドレスの指定は失敗するらしい
                 // http://pgate1.at-ninja.jp/NES_on_FPGA/nes_cpu.htm#instruction
                 let abs = self.fetch_word();
-                println!("JMP: abs: {}, from: {}", abs, self.register.pc);
+                //println!("JMP: abs: {}, from: {}", abs, self.register.pc);
                 self.register.pc = abs;
             }
             0x78 => {
@@ -516,6 +514,9 @@ impl Machine {
     }
 
     fn step(&mut self, frame_buffer: &mut FrameBuffer) {
+        self.step_count += 1;
+        println!("step: {}", self.step_count);
+
         for y in 0..DISPLAY_SIZE.1 {
             let mut cycle = 0;
 
