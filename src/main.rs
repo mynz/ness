@@ -421,7 +421,7 @@ impl Machine {
     }
 
     fn execute(&mut self) -> u32 {
-        let mut cycle = 1;
+        let cycle = 3;
         let pc = self.register.pc;
         let op = self.read_byte(pc);
         self.register.pc += 1;
@@ -801,7 +801,8 @@ impl State for App {
 }
 
 fn main() {
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    //let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/roms/giko005.nes".to_string());
     App::run(rom);
 }
 
