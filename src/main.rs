@@ -307,7 +307,20 @@ impl PpuUnit {
     fn write_to_ppu(&mut self, addr: u16, data: u8) {
         println!("write_to_ppu: {:x}, {:x}", addr, data);
 
-        match addr {
+        //fn chk(addr: u16, base: u16, size: u16) -> bool {
+            //return addr >= base && addr < base + size;
+        //}
+
+        // solve mirror mapping
+        let addr2 = if addr >= 0x3000 && addr <= 0x3eff {
+            addr - 0x1000
+        } else if addr >= 0x3f20 && addr <= 0x3fff {
+            addr - 0x0020
+        } else {
+            addr
+        };
+
+        match addr2 {
             addr if addr < 0x1000 => {
                 println!("ppu pattern_table0 write: {:x}, {:x}", addr, data);
                 self.pattern_table0[addr as usize] = data;
@@ -383,7 +396,7 @@ impl Machine {
 
         // 0xffff まで有効
         if addr >= 0x8000 {
-            let base = 0x8000; 
+            let base = 0x8000;
             let prg_size = self.rom.get_prg().len();
             let mut ofs = (addr - base) as u64;
 
