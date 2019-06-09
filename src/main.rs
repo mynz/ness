@@ -321,29 +321,29 @@ impl PpuUnit {
         };
 
         match addr2 {
-            addr if addr < 0x1000 => {
-                println!("ppu pattern_table0 write: {:x}, {:x}", addr, data);
-                self.pattern_table0[addr as usize] = data;
+            a if a < 0x1000 => {
+                println!("ppu pattern_table0 write: {:x}, {:x}", a, data);
+                self.pattern_table0[a as usize] = data;
             }
-            addr if addr >= 0x2000 && addr < 0x2000 + 0x3c0 => {
-                let a = (addr - 0x2000) as usize;
-                println!("ppu name_table0 write: {:x}, {:x}", addr, data);
-                self.name_table0[a] = data;
+            a if a >= 0x2000 && a < 0x2000 + 0x3c0 => {
+                let idx = (a - 0x2000) as usize;
+                println!("ppu name_table0 write: {:x}, {:x}", a, data);
+                self.name_table0[idx] = data;
             }
-            addr if addr >= 0x23c0 && addr < 0x23c0 + 0x040 => {
-                let a = (addr - 0x23c0) as usize;
-                println!("ppu name_table0 write: {:x}, {:x}", addr, data);
-                self.attr_table0[a] = data;
+            a if a >= 0x23c0 && a < 0x23c0 + 0x040 => {
+                let idx = (a - 0x23c0) as usize;
+                println!("ppu name_table0 write: {:x}, {:x}", a, data);
+                self.attr_table0[idx] = data;
             }
-            addr if addr >= 0x3f00 && addr < 0x3f00 + 0x10 => {
-                let a = (addr - 0x3f00) as usize;
-                self.bg_palette[a] = data;
-                println!("ppu bg_palette write: {:x}, {:x}", addr, data);
+            a if a >= 0x3f00 && a < 0x3f00 + 0x10 => {
+                let idx = (a - 0x3f00) as usize;
+                self.bg_palette[idx] = data;
+                println!("ppu bg_palette write: {:x}, {:x}, {:x}", a, addr2, data);
             }
-            addr if addr >= 0x3f10 && addr < 0x3f10 + 0x10 => {
-                let a = (addr - 0x3f10) as usize;
-                self.sprite_palette[a] = data;
-                println!("ppu sprite_palette write: {:x}, {:x}", addr, data);
+            a if a >= 0x3f10 && a < 0x3f10 + 0x10 => {
+                let idx = (a - 0x3f10) as usize;
+                self.sprite_palette[idx] = data;
+                println!("ppu sprite_palette write: {:x}, {:x}", a, data);
             }
             _ => {
                 panic!("yet to be implemented to write addr: {:x}", addr);
