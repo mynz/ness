@@ -551,7 +551,7 @@ impl Machine {
 
 #[test]
 fn test_machine() {
-    let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
     let mut machine = Machine::new();
     machine.set_rom(rom);
 
