@@ -141,8 +141,7 @@ impl Rom {
 
 #[test]
 fn test_image() {
-    assert!(true);
-    let rom = Rom::load_image("rom/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
     let sig = rom.get_signature();
     assert_eq!(sig, "NES\u{1a}".as_bytes());
 
