@@ -383,8 +383,17 @@ impl Machine {
 
         // 0xffff まで有効
         if addr >= 0x8000 {
+            let base = 0x8000; 
+            let prg_size = self.rom.get_prg().len();
+            let mut ofs = (addr - base) as u64;
+
+            // prg が 16kb しかない場合は、0xc000 からの領域にミラーリングされていると見なす
+            if ofs >= 0x4000 && prg_size <= 0x4000 {
+                ofs -= 0x4000;
+            }
+
             let mut cur = Cursor::new(self.rom.get_prg());
-            cur.set_position((addr - 0x8000) as u64);
+            cur.set_position(ofs);
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
