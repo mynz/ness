@@ -410,7 +410,7 @@ impl Machine {
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
-        assert!(false, "yet to be implemented");
+        assert!(false, "yet to be implemented: {:x}", addr);
         return 0;
     }
 
@@ -497,6 +497,13 @@ impl Machine {
                 self.register.a = imm;
                 //println!("LDA imm: {:x}", imm);
             }
+            0xad => {
+                // LDA Abs
+                let addr = self.fetch_word();
+                let data = self.read_byte(addr);
+                self.register.a = data;
+                println!("LDA abs: {:x}, {:x}", addr, data);
+            }
             0xbd => {
                 // LDA Absolute, X
                 let abs = self.fetch_word();
@@ -527,7 +534,7 @@ impl Machine {
 
             _ => {
                 // TODO
-                println!("op yet to be implemented: {:x}", op);
+                panic!("op yet to be implemented: {:x}", op);
             }
         }
 
