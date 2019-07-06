@@ -1,4 +1,3 @@
-
 pub const COLOR_PALETTE: [(u8, u8, u8); 64] = [
     (84, 84, 84),
     (0, 30, 116),
@@ -65,4 +64,3 @@ pub const COLOR_PALETTE: [(u8, u8, u8); 64] = [
     (0, 0, 0),
     (0, 0, 0),
 ];
-
