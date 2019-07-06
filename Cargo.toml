@@ -1,5 +1,5 @@
 [package]
-name = "ness"
+name = "rustness"
 version = "0.1.0"
 authors = ["mynz <rollingteapot@gmail.com>"]
 
