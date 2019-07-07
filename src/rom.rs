@@ -32,11 +32,11 @@ impl Rom {
         &self.bin[0..16]
     }
 
-    fn get_bytes_of_prg(&self) -> usize {
+    pub fn get_bytes_of_prg(&self) -> usize {
         self.get_header()[4] as usize * 16 * 1024
     }
 
-    fn get_bytes_of_chr(&self) -> usize {
+    pub fn get_bytes_of_chr(&self) -> usize {
         self.get_header()[5] as usize * 8 * 1024
     }
 

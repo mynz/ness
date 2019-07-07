@@ -44,6 +44,7 @@ impl Default for StatusRegister {
         }
     }
 }
+
 #[derive(Default)]
 struct Register {
     a: u8, // accumelater
@@ -58,6 +59,15 @@ impl Register {}
 
 #[test]
 fn test_cpu() {
+    use crate::rom::Rom;
+
     assert!(true);
     assert_eq!(1, 1);
+
+    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+
+    let prg = rom.get_prg();
+    assert_eq!(rom.get_bytes_of_prg(), prg.len());
+
+    println!("prog len: {}", prg.len());
 }
