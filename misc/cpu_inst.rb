@@ -19,7 +19,7 @@ table = txt.lines.map { |line|
   [am] + cs
 }.select {|e| e }
 
-#pp table
+pp table
 
 ams = table.map {|e|
   e[0]
@@ -29,5 +29,10 @@ ops = table.map {|e|
   e[1]
 }.uniq.sort
 
+icodes = table.map {|e|
+  e[3][1..-1]
+}.uniq.sort
+
 pp ams
 pp ops
+pp icodes
