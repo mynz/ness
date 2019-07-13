@@ -14,12 +14,24 @@ table = txt.lines.map { |line|
   #puts l
 
   am = l[0..13].strip
-  cs = l[13..-1].split
+  op = l[14..17].strip
+  ol = l[18..27].strip
+  cd = l[28+1..33].strip.to_i(16)
+  ex = l[34..37].strip
+  cl = l[38..39].strip
+
+  ec = l.size >= 40 ? l[40..-1].strip : ""
+  #pp cl, ec
+
+  [ am, op, ol, cd, ex, cl, ec]
+
+  #cs = l[13..-1].split
   #puts cs.size
-  [am] + cs
+  #[am] + cs
 }.select {|e| e }
 
-pp table
+#pp table
+pp table[0..5]
 
 ams = table.map {|e|
   e[0]
@@ -29,10 +41,44 @@ ops = table.map {|e|
   e[1]
 }.uniq.sort
 
-icodes = table.map {|e|
-  e[3][1..-1]
-}.uniq.sort
+#pp ams
+#pp ops
+#pp icodes
 
-pp ams
-pp ops
-pp icodes
+
+orderd = table.sort {|a, b|
+  a[3] <=> b[3]
+}.map { |e|
+  [e[3], e]
+}
+
+def fmt(e)
+  o = e[1]
+  am = e[0]
+  am.delete! ", "
+
+  sz = e[4]
+  cl = e[5]
+  ec = e[6]
+  
+  #p ec
+
+  ec = case ec
+  when "" then "Zero"
+  when "+1" then "One"
+  when "+1or2" then "OneOrTwo"
+  end
+
+  "#{o}, #{am}, #{sz}, #{cl}, #{ec}"
+end
+
+255.times { |i|
+  e = orderd.assoc(i)
+  e = orderd.assoc(0xea) unless e # NOP
+
+  l = fmt(e[1])
+  puts l + ",  // #{i}"
+}
+
+
+

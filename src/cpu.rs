@@ -116,9 +116,18 @@ enum AddrMode {
     IndirectY(u8),
 }
 
+enum ExtraCycle {
+    Zero,
+    One,
+    OneOrTwo,
+}
+
 struct Instruction {
     opcode: Opcode,
     addr_mode: AddrMode,
+    size: u8,
+    cycle: u8,
+    ext_cycle: ExtraCycle,
 }
 
 struct InstructionTable {
@@ -127,13 +136,30 @@ struct InstructionTable {
 
 impl InstructionTable {
     fn new() -> Self {
-        let a = Instruction {
-            opcode: Opcode::NOP,
-            addr_mode: AddrMode::Implied,
+        //let a = Instruction {
+        //opcode: Opcode::NOP,
+        //addr_mode: AddrMode::Implied,
+        //};
+
+        let proc = |opcode, addr_mode, size, cycle, ext_cycle| Instruction {
+            opcode,
+            addr_mode,
+            size,
+            cycle,
+            ext_cycle,
         };
 
         // TODO
-        let instructions = vec![a];
+        let instructions = vec![
+            proc(Opcode::NOP, AddrMode::Implied, 2, 3, ExtraCycle::Zero),
+            proc(
+                Opcode::AND,
+                AddrMode::Immediate(0),
+                3,
+                4,
+                ExtraCycle::OneOrTwo,
+            ),
+        ];
 
         InstructionTable { instructions }
     }
