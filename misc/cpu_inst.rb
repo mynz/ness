@@ -52,10 +52,11 @@ orderd = table.sort {|a, b|
   [e[3], e]
 }
 
-def fmt(e)
+def fmt(e, idx)
   o = e[1]
   am = e[0]
   am.delete! ", "
+  am = am + "(0)" unless ["Implied", "Accumulator"].include? am
 
   sz = e[4]
   cl = e[5]
@@ -69,15 +70,28 @@ def fmt(e)
   when "+1or2" then "OneOrTwo"
   end
 
-  "#{o}, #{am}, #{sz}, #{cl}, #{ec}"
+  #"#{o}, #{am}, #{sz}, #{cl}, #{ec}"
+
+
+  ret = <<-"EOS"
+  Inst {  // #{idx}
+    opcode: Opcode::#{o},
+    addr_mode: AddrMode::#{am},
+    size: #{sz},
+    cycle: #{cl},
+    ext_cycle: ExtCycle::#{ec},
+  },
+  EOS
+  ret
 end
 
 255.times { |i|
   e = orderd.assoc(i)
   e = orderd.assoc(0xea) unless e # NOP
 
-  l = fmt(e[1])
-  puts l + ",  // #{i}"
+  l = fmt(e[1], i)
+  #puts l + ",  // #{i}"
+  puts l
 }
 
 
