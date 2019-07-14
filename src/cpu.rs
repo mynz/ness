@@ -2,7 +2,6 @@
 
 mod inst_set;
 
-
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
@@ -45,7 +44,7 @@ struct Register {
 
 impl Register {}
 
-#[derive(PartialEq)]
+#[derive(Debug, PartialEq)]
 enum Opcode {
     ADC,
     AND,
@@ -105,6 +104,7 @@ enum Opcode {
     TYA,
 }
 
+#[derive(Debug)]
 enum AddrMode {
     Implied,
     Accumulator,
@@ -121,12 +121,14 @@ enum AddrMode {
     IndirectY(u8),
 }
 
+#[derive(Debug)]
 enum ExtCycle {
     Zero,
     One,
     OneOrTwo,
 }
 
+#[derive(Debug)]
 struct Inst {
     opcode: Opcode,
     addr_mode: AddrMode,
@@ -136,9 +138,21 @@ struct Inst {
 }
 
 #[test]
-fn test_cpu() {
-    use crate::rom::Rom;
+fn test_inst() {
     use self::inst_set::INST_SET;
+
+    for i in 0..256 {
+        let inst = &INST_SET[i];
+        assert!(inst.size > 0);
+    }
+
+    assert!(INST_SET[0].opcode == Opcode::BRK);
+}
+
+#[test]
+fn test_cpu() {
+    //use self::inst_set::INST_SET;
+    use crate::rom::Rom;
 
     assert!(true);
     assert_eq!(1, 1);
@@ -150,10 +164,20 @@ fn test_cpu() {
 
     println!("prog len: {}", prg.len());
 
-    for i in 0..256 {
-        let inst = &INST_SET[i];
-        assert!(inst.size > 0);
-    }
+    let mut cur = std::io::Cursor::new(prg);
 
-    assert!(INST_SET[0].opcode == Opcode::BRK);
+    //use std::io::Read;
+    use byteorder::ReadBytesExt;
+    //use byteorder::{LittleEndian, ReadBytesExt};
+    use self::inst_set::INST_SET;
+
+    {
+        let op = cur.read_u8().unwrap();
+        println!("op: {:#?}", op);
+
+        let inst = &INST_SET[op as usize];
+        println!("inst: {:#?}", inst);
+
+        assert!(inst.opcode == Opcode::SEI);
+    }
 }

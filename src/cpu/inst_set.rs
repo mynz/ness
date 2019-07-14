@@ -2050,5 +2050,3 @@ pub(super) const INST_SET: &[Inst] = &[
         ext_cycle: ExtCycle::Zero,
     },
 ];
-
-
