@@ -131,57 +131,6 @@ struct Inst {
     ext_cycle: ExtCycle,
 }
 
-struct InstructionTable {
-    instructions: Vec<Inst>,
-}
-
-impl InstructionTable {
-    fn new() -> Self {
-        //let a = Inst {
-        //opcode: Opcode::NOP,
-        //addr_mode: AddrMode::Implied,
-        //};
-
-        let proc = |opcode, addr_mode, size, cycle, ext_cycle| Inst {
-            opcode,
-            addr_mode,
-            size,
-            cycle,
-            ext_cycle,
-        };
-
-        // TODO
-        let instructions = vec![
-            proc(Opcode::NOP, AddrMode::Implied, 2, 3, ExtCycle::Zero),
-            proc(
-                Opcode::AND,
-                AddrMode::Immediate(0),
-                3,
-                4,
-                ExtCycle::OneOrTwo,
-            ),
-        ];
-
-        InstructionTable { instructions }
-    }
-}
-
-const fn bb(
-    opcode: Opcode,
-    addr_mode: AddrMode,
-    size: u8,
-    cycle: u8,
-    ext_cycle: ExtCycle,
-) -> Inst {
-    Inst {
-        opcode,
-        addr_mode,
-        size,
-        cycle,
-        ext_cycle,
-    }
-}
-
 const INST_TBL: &[Inst] = &[
   Inst {  // 0
     opcode: Opcode::BRK,
