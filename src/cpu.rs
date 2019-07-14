@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+mod inst_set;
+
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
