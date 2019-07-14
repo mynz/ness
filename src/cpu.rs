@@ -1917,6 +1917,13 @@ const INST_TBL: &[Inst] = &[
     cycle: 6,
     ext_cycle: ExtCycle::One,
   },
+  Inst {  // 255
+    opcode: Opcode::NOP,
+    addr_mode: AddrMode::Implied,
+    size: 1,
+    cycle: 2,
+    ext_cycle: ExtCycle::Zero,
+  },
 ];
 
 #[test]
@@ -1933,5 +1940,8 @@ fn test_cpu() {
 
     println!("prog len: {}", prg.len());
 
-    let _inst_table = InstructionTable::new();
+    for i in 0..256 {
+        let inst = &INST_TBL[i];
+        assert!(inst.size > 0);
+    }
 }

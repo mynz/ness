@@ -85,7 +85,7 @@ def fmt(e, idx)
   ret
 end
 
-255.times { |i|
+256.times { |i|
   e = orderd.assoc(i)
   e = orderd.assoc(0xea) unless e # NOP
 
