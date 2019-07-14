@@ -171,13 +171,39 @@ fn test_cpu() {
     //use byteorder::{LittleEndian, ReadBytesExt};
     use self::inst_set::INST_SET;
 
-    {
+    let expect_ops = &[
+        Opcode::SEI,
+        Opcode::LDX,
+        Opcode::TXS,
+        Opcode::LDA,
+        Opcode::STA,
+        Opcode::STA,
+    ];
+
+    for i in 0..6 {
+        println!("i: {}", i);
+
         let op = cur.read_u8().unwrap();
         println!("op: {:#?}", op);
 
         let inst = &INST_SET[op as usize];
         println!("inst: {:#?}", inst);
 
-        assert!(inst.opcode == Opcode::SEI);
+        let nrest = inst.size - 1;
+        match nrest {
+            0 => {}
+            1 => {
+                cur.read_u8().unwrap();
+            }
+            2 => {
+                cur.read_u8().unwrap();
+                cur.read_u8().unwrap();
+            }
+            x => {
+                panic!("unexpected inst: {}", x);
+            }
+        }
+
+        assert_eq!(inst.opcode, expect_ops[i]);
     }
 }
