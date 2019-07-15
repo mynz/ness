@@ -108,9 +108,8 @@ enum Opcode {
     TYA,
 }
 
-// TODO: rename to Operand
-#[derive(Debug)]
-enum AddrMode {
+#[derive(Debug, PartialEq, Copy, Clone)]
+enum Operand {
     Implied,
     Accumulator,
     Immediate(u8),
@@ -137,7 +136,7 @@ enum ExtCycle {
 struct InstSpec {
     code: u8,
     opcode: Opcode,
-    addr_mode: AddrMode,
+    operand: Operand,
     size: u8,
     cycle: u8,
     ext_cycle: ExtCycle,
@@ -155,43 +154,39 @@ fn test_inst() {
     assert!(INST_SET[0].opcode == Opcode::BRK);
 }
 
-#[derive(Debug)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 struct Inst {
-    code: u8,
+    //code: u8,
     opcode: Opcode,
-    operand: AddrMode,
+    operand: Operand,
 }
 
 impl Inst {
-    fn parse_operand(cur: &mut Cursor<&[u8]>, spec: &InstSpec) -> Self {
+    fn decode(cur: &mut Cursor<&[u8]>, spec: &InstSpec) -> Self {
         //let n = (spec.size - 1) as usize;
 
-        let operand = match spec.addr_mode {
-            AddrMode::Implied => AddrMode::Implied,
-            AddrMode::Accumulator => AddrMode::Accumulator,
-            AddrMode::Immediate(_u8) => AddrMode::Immediate(cur.read_u8().unwrap()),
-            AddrMode::ZeroPage(_u8) => AddrMode::ZeroPage(cur.read_u8().unwrap()),
-            AddrMode::ZeroPageX(_u8) => AddrMode::ZeroPageX(cur.read_u8().unwrap()),
-
-            AddrMode::ZeroPageY(_u8) => AddrMode::ZeroPageY(cur.read_u8().unwrap()),
-
-            AddrMode::Absolute(_u16) => AddrMode::Absolute(cur.read_u16::<LittleEndian>().unwrap()),
-
-            AddrMode::AbsoluteX(_u16) => {
-                AddrMode::AbsoluteX(cur.read_u16::<LittleEndian>().unwrap())
+        let operand = match spec.operand {
+            Operand::Implied => Operand::Implied,
+            Operand::Accumulator => Operand::Accumulator,
+            Operand::Immediate(_u8) => Operand::Immediate(cur.read_u8().unwrap()),
+            Operand::ZeroPage(_u8) => Operand::ZeroPage(cur.read_u8().unwrap()),
+            Operand::ZeroPageX(_u8) => Operand::ZeroPageX(cur.read_u8().unwrap()),
+            Operand::ZeroPageY(_u8) => Operand::ZeroPageY(cur.read_u8().unwrap()),
+            Operand::Absolute(_u16) => Operand::Absolute(cur.read_u16::<LittleEndian>().unwrap()),
+            Operand::AbsoluteX(_u16) => {
+                Operand::AbsoluteX(cur.read_u16::<LittleEndian>().unwrap())
             }
-            AddrMode::AbsoluteY(_u16) => {
-                AddrMode::AbsoluteY(cur.read_u16::<LittleEndian>().unwrap())
+            Operand::AbsoluteY(_u16) => {
+                Operand::AbsoluteY(cur.read_u16::<LittleEndian>().unwrap())
             }
-
-            AddrMode::Relative(_u8) => AddrMode::Relative(cur.read_u8().unwrap()),
-            AddrMode::Indirect(_u16) => AddrMode::Indirect(cur.read_u16::<LittleEndian>().unwrap()),
-            AddrMode::IndirectX(_u8) => AddrMode::IndirectX(cur.read_u8().unwrap()),
-            AddrMode::IndirectY(_u8) => AddrMode::IndirectY(cur.read_u8().unwrap()),
+            Operand::Relative(_u8) => Operand::Relative(cur.read_u8().unwrap()),
+            Operand::Indirect(_u16) => Operand::Indirect(cur.read_u16::<LittleEndian>().unwrap()),
+            Operand::IndirectX(_u8) => Operand::IndirectX(cur.read_u8().unwrap()),
+            Operand::IndirectY(_u8) => Operand::IndirectY(cur.read_u8().unwrap()),
         };
 
         Inst {
-            code: spec.code,
+            //code: spec.code,
             opcode: spec.opcode,
             operand,
         }
@@ -236,24 +231,9 @@ fn test_cpu() {
         let inst_spec = &INST_SET[op as usize];
         println!("inst_spec: {:#?}", inst_spec);
 
-        let inst = Inst::parse_operand(&mut cur, inst_spec);
+        let inst = Inst::decode(&mut cur, inst_spec);
 
         println!("inst: {:#?}", inst);
-
-        //let nrest = inst_spec.size - 1;
-        //match nrest {
-        //0 => {}
-        //1 => {
-        //cur.read_u8().unwrap();
-        //}
-        //2 => {
-        //cur.read_u8().unwrap();
-        //cur.read_u8().unwrap();
-        //}
-        //x => {
-        //panic!("unexpected inst_spec: {}", x);
-        //}
-        //}
 
         assert_eq!(inst_spec.opcode, expect_ops[i]);
     }

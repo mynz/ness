@@ -77,7 +77,7 @@ def fmt(e, idx)
   InstSpec {  // #{idx}
     code: #{cd},
     opcode: Opcode::#{o},
-    addr_mode: AddrMode::#{am},
+    operand: Operand::#{am},
     size: #{sz},
     cycle: #{cl},
     ext_cycle: ExtCycle::#{ec},
