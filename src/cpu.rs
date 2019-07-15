@@ -173,12 +173,8 @@ impl Inst {
             Operand::ZeroPageX(_u8) => Operand::ZeroPageX(cur.read_u8().unwrap()),
             Operand::ZeroPageY(_u8) => Operand::ZeroPageY(cur.read_u8().unwrap()),
             Operand::Absolute(_u16) => Operand::Absolute(cur.read_u16::<LittleEndian>().unwrap()),
-            Operand::AbsoluteX(_u16) => {
-                Operand::AbsoluteX(cur.read_u16::<LittleEndian>().unwrap())
-            }
-            Operand::AbsoluteY(_u16) => {
-                Operand::AbsoluteY(cur.read_u16::<LittleEndian>().unwrap())
-            }
+            Operand::AbsoluteX(_u16) => Operand::AbsoluteX(cur.read_u16::<LittleEndian>().unwrap()),
+            Operand::AbsoluteY(_u16) => Operand::AbsoluteY(cur.read_u16::<LittleEndian>().unwrap()),
             Operand::Relative(_u8) => Operand::Relative(cur.read_u8().unwrap()),
             Operand::Indirect(_u16) => Operand::Indirect(cur.read_u16::<LittleEndian>().unwrap()),
             Operand::IndirectX(_u8) => Operand::IndirectX(cur.read_u8().unwrap()),
@@ -213,28 +209,25 @@ fn test_cpu() {
     //use std::io::Read;
     use self::inst_set::INST_SET;
 
-    let expect_ops = &[
-        Opcode::SEI,
-        Opcode::LDX,
-        Opcode::TXS,
-        Opcode::LDA,
-        Opcode::STA,
-        Opcode::STA,
+    let expect_insts = &[
+        (Opcode::SEI, Operand::Implied),
+        (Opcode::LDX, Operand::Immediate(255)),
+        (Opcode::TXS, Operand::Implied),
+        (Opcode::LDA, Operand::Immediate(0)),
+        (Opcode::STA, Operand::Absolute(8192)),
+        (Opcode::STA, Operand::Absolute(8193)),
     ];
 
     for i in 0..6 {
         println!("i: {}", i);
 
         let op = cur.read_u8().unwrap();
-        println!("op: {:#?}", op);
-
         let inst_spec = &INST_SET[op as usize];
-        println!("inst_spec: {:#?}", inst_spec);
-
         let inst = Inst::decode(&mut cur, inst_spec);
 
         println!("inst: {:#?}", inst);
 
-        assert_eq!(inst_spec.opcode, expect_ops[i]);
+        assert_eq!(inst.opcode, expect_insts[i].0);
+        assert_eq!(inst.operand, expect_insts[i].1);
     }
 }
