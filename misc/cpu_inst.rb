@@ -58,6 +58,7 @@ def fmt(e, idx)
   am.delete! ", "
   am = am + "(0)" unless ["Implied", "Accumulator"].include? am
 
+  cd = e[3]
   sz = e[4]
   cl = e[5]
   ec = e[6]
@@ -72,9 +73,9 @@ def fmt(e, idx)
 
   #"#{o}, #{am}, #{sz}, #{cl}, #{ec}"
 
-
   ret = <<-"EOS"
-  Inst {  // #{idx}
+  InstSpec {  // #{idx}
+    code: #{cd},
     opcode: Opcode::#{o},
     addr_mode: AddrMode::#{am},
     size: #{sz},
@@ -93,6 +94,3 @@ end
   #puts l + ",  // #{i}"
   puts l
 }
-
-
-
