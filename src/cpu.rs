@@ -2,6 +2,10 @@
 
 mod inst_set;
 
+use std::io::Cursor;
+//use byteorder::ReadBytesExt;
+use byteorder::{LittleEndian, ReadBytesExt};
+
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
@@ -44,7 +48,7 @@ struct Register {
 
 impl Register {}
 
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Copy, Clone)]
 enum Opcode {
     ADC,
     AND,
@@ -104,6 +108,7 @@ enum Opcode {
     TYA,
 }
 
+// TODO: rename to Operand
 #[derive(Debug)]
 enum AddrMode {
     Implied,
@@ -143,11 +148,54 @@ fn test_inst() {
     use self::inst_set::INST_SET;
 
     for i in 0..256 {
-        let inst = &INST_SET[i];
-        assert!(inst.size > 0);
+        let inst_spec = &INST_SET[i];
+        assert!(inst_spec.size > 0);
     }
 
     assert!(INST_SET[0].opcode == Opcode::BRK);
+}
+
+#[derive(Debug)]
+struct Inst {
+    code: u8,
+    opcode: Opcode,
+    operand: AddrMode,
+}
+
+impl Inst {
+    fn parse_operand(cur: &mut Cursor<&[u8]>, spec: &InstSpec) -> Self {
+        //let n = (spec.size - 1) as usize;
+
+        let operand = match spec.addr_mode {
+            AddrMode::Implied => AddrMode::Implied,
+            AddrMode::Accumulator => AddrMode::Accumulator,
+            AddrMode::Immediate(_u8) => AddrMode::Immediate(cur.read_u8().unwrap()),
+            AddrMode::ZeroPage(_u8) => AddrMode::ZeroPage(cur.read_u8().unwrap()),
+            AddrMode::ZeroPageX(_u8) => AddrMode::ZeroPageX(cur.read_u8().unwrap()),
+
+            AddrMode::ZeroPageY(_u8) => AddrMode::ZeroPageY(cur.read_u8().unwrap()),
+
+            AddrMode::Absolute(_u16) => AddrMode::Absolute(cur.read_u16::<LittleEndian>().unwrap()),
+
+            AddrMode::AbsoluteX(_u16) => {
+                AddrMode::AbsoluteX(cur.read_u16::<LittleEndian>().unwrap())
+            }
+            AddrMode::AbsoluteY(_u16) => {
+                AddrMode::AbsoluteY(cur.read_u16::<LittleEndian>().unwrap())
+            }
+
+            AddrMode::Relative(_u8) => AddrMode::Relative(cur.read_u8().unwrap()),
+            AddrMode::Indirect(_u16) => AddrMode::Indirect(cur.read_u16::<LittleEndian>().unwrap()),
+            AddrMode::IndirectX(_u8) => AddrMode::IndirectX(cur.read_u8().unwrap()),
+            AddrMode::IndirectY(_u8) => AddrMode::IndirectY(cur.read_u8().unwrap()),
+        };
+
+        Inst {
+            code: spec.code,
+            opcode: spec.opcode,
+            operand,
+        }
+    }
 }
 
 #[test]
@@ -168,8 +216,6 @@ fn test_cpu() {
     let mut cur = std::io::Cursor::new(prg);
 
     //use std::io::Read;
-    use byteorder::ReadBytesExt;
-    //use byteorder::{LittleEndian, ReadBytesExt};
     use self::inst_set::INST_SET;
 
     let expect_ops = &[
@@ -187,24 +233,28 @@ fn test_cpu() {
         let op = cur.read_u8().unwrap();
         println!("op: {:#?}", op);
 
-        let inst = &INST_SET[op as usize];
+        let inst_spec = &INST_SET[op as usize];
+        println!("inst_spec: {:#?}", inst_spec);
+
+        let inst = Inst::parse_operand(&mut cur, inst_spec);
+
         println!("inst: {:#?}", inst);
 
-        let nrest = inst.size - 1;
-        match nrest {
-            0 => {}
-            1 => {
-                cur.read_u8().unwrap();
-            }
-            2 => {
-                cur.read_u8().unwrap();
-                cur.read_u8().unwrap();
-            }
-            x => {
-                panic!("unexpected inst: {}", x);
-            }
-        }
+        //let nrest = inst_spec.size - 1;
+        //match nrest {
+        //0 => {}
+        //1 => {
+        //cur.read_u8().unwrap();
+        //}
+        //2 => {
+        //cur.read_u8().unwrap();
+        //cur.read_u8().unwrap();
+        //}
+        //x => {
+        //panic!("unexpected inst_spec: {}", x);
+        //}
+        //}
 
-        assert_eq!(inst.opcode, expect_ops[i]);
+        assert_eq!(inst_spec.opcode, expect_ops[i]);
     }
 }
