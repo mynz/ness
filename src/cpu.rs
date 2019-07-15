@@ -1,9 +1,8 @@
 #![allow(dead_code)]
 
-mod inst_set;
+mod inst_specs;
 
 use std::io::Cursor;
-//use byteorder::ReadBytesExt;
 use byteorder::{LittleEndian, ReadBytesExt};
 
 fn u8_to_i8(u: u8) -> i8 {
@@ -144,19 +143,19 @@ struct InstSpec {
 
 #[test]
 fn test_inst() {
-    use self::inst_set::INST_SET;
+    use self::inst_specs::INST_SPECS;
 
     for i in 0..256 {
-        let inst_spec = &INST_SET[i];
+        let inst_spec = &INST_SPECS[i];
         assert!(inst_spec.size > 0);
     }
 
-    assert!(INST_SET[0].opcode == Opcode::BRK);
+    assert!(INST_SPECS[0].opcode == Opcode::BRK);
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 struct Inst {
-    //code: u8,
+    code: u8,
     opcode: Opcode,
     operand: Operand,
 }
@@ -182,7 +181,7 @@ impl Inst {
         };
 
         Inst {
-            //code: spec.code,
+            code: spec.code,
             opcode: spec.opcode,
             operand,
         }
@@ -191,7 +190,6 @@ impl Inst {
 
 #[test]
 fn test_cpu() {
-    //use self::inst_set::INST_SET;
     use crate::rom::Rom;
 
     assert!(true);
@@ -206,8 +204,7 @@ fn test_cpu() {
 
     let mut cur = std::io::Cursor::new(prg);
 
-    //use std::io::Read;
-    use self::inst_set::INST_SET;
+    use self::inst_specs::INST_SPECS;
 
     let expect_insts = &[
         (Opcode::SEI, Operand::Implied),
@@ -222,7 +219,7 @@ fn test_cpu() {
         println!("i: {}", i);
 
         let op = cur.read_u8().unwrap();
-        let inst_spec = &INST_SET[op as usize];
+        let inst_spec = &INST_SPECS[op as usize];
         let inst = Inst::decode(&mut cur, inst_spec);
 
         println!("inst: {:#?}", inst);

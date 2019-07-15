@@ -1,6 +1,6 @@
 use super::*;
 
-pub(super) const INST_SET: &[InstSpec] = &[
+pub(super) const INST_SPECS: &[InstSpec] = &[
     InstSpec {
         // 0
         code: 0,
