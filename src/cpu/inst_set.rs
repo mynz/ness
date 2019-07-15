@@ -1,2048 +1,2048 @@
 use super::*;
 
-pub(super) const INST_SET: &[Inst] = &[
-    Inst {
-        // 0
+pub(super) const INST_SET: &[InstSpec] = &[
+    InstSpec {
+        code: 0,
         opcode: Opcode::BRK,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 7,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 1
+    InstSpec {
+        code: 1,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 2
+    InstSpec {
+        code: 2,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 3
+    InstSpec {
+        code: 3,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 4
+    InstSpec {
+        code: 4,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 5
+    InstSpec {
+        code: 5,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 6
+    InstSpec {
+        code: 6,
         opcode: Opcode::ASL,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 7
+    InstSpec {
+        code: 7,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 8
+    InstSpec {
+        code: 8,
         opcode: Opcode::PHP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 9
+    InstSpec {
+        code: 9,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 10
+    InstSpec {
+        code: 10,
         opcode: Opcode::ASL,
         addr_mode: AddrMode::Accumulator,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 11
+    InstSpec {
+        code: 11,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 12
+    InstSpec {
+        code: 12,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 13
+    InstSpec {
+        code: 13,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 14
+    InstSpec {
+        code: 14,
         opcode: Opcode::ASL,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 15
+    InstSpec {
+        code: 15,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 16
+    InstSpec {
+        code: 16,
         opcode: Opcode::BPL,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 17
+    InstSpec {
+        code: 17,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 18
+    InstSpec {
+        code: 18,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 19
+    InstSpec {
+        code: 19,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 20
+    InstSpec {
+        code: 20,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 21
+    InstSpec {
+        code: 21,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 22
+    InstSpec {
+        code: 22,
         opcode: Opcode::ASL,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 23
+    InstSpec {
+        code: 23,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 24
+    InstSpec {
+        code: 24,
         opcode: Opcode::CLC,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 25
+    InstSpec {
+        code: 25,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 26
+    InstSpec {
+        code: 26,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 27
+    InstSpec {
+        code: 27,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 28
+    InstSpec {
+        code: 28,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 29
+    InstSpec {
+        code: 29,
         opcode: Opcode::ORA,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 30
+    InstSpec {
+        code: 30,
         opcode: Opcode::ASL,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 31
+    InstSpec {
+        code: 31,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 32
+    InstSpec {
+        code: 32,
         opcode: Opcode::JSR,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 33
+    InstSpec {
+        code: 33,
         opcode: Opcode::AND,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 34
+    InstSpec {
+        code: 34,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 35
+    InstSpec {
+        code: 35,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 36
+    InstSpec {
+        code: 36,
         opcode: Opcode::BIT,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 37
+    InstSpec {
+        code: 37,
         opcode: Opcode::AND,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 38
+    InstSpec {
+        code: 38,
         opcode: Opcode::ROL,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 39
+    InstSpec {
+        code: 39,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 40
+    InstSpec {
+        code: 40,
         opcode: Opcode::PLP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 41
+    InstSpec {
+        code: 41,
         opcode: Opcode::AND,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 42
+    InstSpec {
+        code: 42,
         opcode: Opcode::ROL,
         addr_mode: AddrMode::Accumulator,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 43
+    InstSpec {
+        code: 43,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 44
+    InstSpec {
+        code: 44,
         opcode: Opcode::BIT,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 45
+    InstSpec {
+        code: 45,
         opcode: Opcode::AND,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 46
+    InstSpec {
+        code: 46,
         opcode: Opcode::ROL,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 47
+    InstSpec {
+        code: 47,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 48
+    InstSpec {
+        code: 48,
         opcode: Opcode::BMI,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 49
+    InstSpec {
+        code: 49,
         opcode: Opcode::AND,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 50
+    InstSpec {
+        code: 50,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 51
+    InstSpec {
+        code: 51,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 52
+    InstSpec {
+        code: 52,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 53
+    InstSpec {
+        code: 53,
         opcode: Opcode::AND,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 54
+    InstSpec {
+        code: 54,
         opcode: Opcode::ROL,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 55
+    InstSpec {
+        code: 55,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 56
+    InstSpec {
+        code: 56,
         opcode: Opcode::SEC,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 57
+    InstSpec {
+        code: 57,
         opcode: Opcode::AND,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 58
+    InstSpec {
+        code: 58,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 59
+    InstSpec {
+        code: 59,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 60
+    InstSpec {
+        code: 60,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 61
+    InstSpec {
+        code: 61,
         opcode: Opcode::AND,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 62
+    InstSpec {
+        code: 62,
         opcode: Opcode::ROL,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 63
+    InstSpec {
+        code: 63,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 64
+    InstSpec {
+        code: 64,
         opcode: Opcode::RTI,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 65
+    InstSpec {
+        code: 65,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 66
+    InstSpec {
+        code: 66,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 67
+    InstSpec {
+        code: 67,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 68
+    InstSpec {
+        code: 68,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 69
+    InstSpec {
+        code: 69,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 70
+    InstSpec {
+        code: 70,
         opcode: Opcode::LSR,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 71
+    InstSpec {
+        code: 71,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 72
+    InstSpec {
+        code: 72,
         opcode: Opcode::PHA,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 73
+    InstSpec {
+        code: 73,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 74
+    InstSpec {
+        code: 74,
         opcode: Opcode::LSR,
         addr_mode: AddrMode::Accumulator,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 75
+    InstSpec {
+        code: 75,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 76
+    InstSpec {
+        code: 76,
         opcode: Opcode::JMP,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 77
+    InstSpec {
+        code: 77,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 78
+    InstSpec {
+        code: 78,
         opcode: Opcode::LSR,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 79
+    InstSpec {
+        code: 79,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 80
+    InstSpec {
+        code: 80,
         opcode: Opcode::BVC,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 81
+    InstSpec {
+        code: 81,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 82
+    InstSpec {
+        code: 82,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 83
+    InstSpec {
+        code: 83,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 84
+    InstSpec {
+        code: 84,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 85
+    InstSpec {
+        code: 85,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 86
+    InstSpec {
+        code: 86,
         opcode: Opcode::LSR,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 87
+    InstSpec {
+        code: 87,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 88
+    InstSpec {
+        code: 88,
         opcode: Opcode::CLI,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 89
+    InstSpec {
+        code: 89,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 90
+    InstSpec {
+        code: 90,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 91
+    InstSpec {
+        code: 91,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 92
+    InstSpec {
+        code: 92,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 93
+    InstSpec {
+        code: 93,
         opcode: Opcode::EOR,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 94
+    InstSpec {
+        code: 94,
         opcode: Opcode::LSR,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 95
+    InstSpec {
+        code: 95,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 96
+    InstSpec {
+        code: 96,
         opcode: Opcode::RTS,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 97
+    InstSpec {
+        code: 97,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 98
+    InstSpec {
+        code: 98,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 99
+    InstSpec {
+        code: 99,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 100
+    InstSpec {
+        code: 100,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 101
+    InstSpec {
+        code: 101,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 102
+    InstSpec {
+        code: 102,
         opcode: Opcode::ROR,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 103
+    InstSpec {
+        code: 103,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 104
+    InstSpec {
+        code: 104,
         opcode: Opcode::PLA,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 105
+    InstSpec {
+        code: 105,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 106
+    InstSpec {
+        code: 106,
         opcode: Opcode::ROR,
         addr_mode: AddrMode::Accumulator,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 107
+    InstSpec {
+        code: 107,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 108
+    InstSpec {
+        code: 108,
         opcode: Opcode::JMP,
         addr_mode: AddrMode::Indirect(0),
         size: 3,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 109
+    InstSpec {
+        code: 109,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 110
+    InstSpec {
+        code: 110,
         opcode: Opcode::ROR,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 111
+    InstSpec {
+        code: 111,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 112
+    InstSpec {
+        code: 112,
         opcode: Opcode::BVS,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 113
+    InstSpec {
+        code: 113,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 114
+    InstSpec {
+        code: 114,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 115
+    InstSpec {
+        code: 115,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 116
+    InstSpec {
+        code: 116,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 117
+    InstSpec {
+        code: 117,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 118
+    InstSpec {
+        code: 118,
         opcode: Opcode::ROR,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 119
+    InstSpec {
+        code: 119,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 120
+    InstSpec {
+        code: 120,
         opcode: Opcode::SEI,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 121
+    InstSpec {
+        code: 121,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 122
+    InstSpec {
+        code: 122,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 123
+    InstSpec {
+        code: 123,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 124
+    InstSpec {
+        code: 124,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 125
+    InstSpec {
+        code: 125,
         opcode: Opcode::ADC,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 126
+    InstSpec {
+        code: 126,
         opcode: Opcode::ROR,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 127
+    InstSpec {
+        code: 127,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 128
+    InstSpec {
+        code: 128,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 129
+    InstSpec {
+        code: 129,
         opcode: Opcode::STA,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 130
+    InstSpec {
+        code: 130,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 131
+    InstSpec {
+        code: 131,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 132
+    InstSpec {
+        code: 132,
         opcode: Opcode::STY,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 133
+    InstSpec {
+        code: 133,
         opcode: Opcode::STA,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 134
+    InstSpec {
+        code: 134,
         opcode: Opcode::STX,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 135
+    InstSpec {
+        code: 135,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 136
+    InstSpec {
+        code: 136,
         opcode: Opcode::DEY,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 137
+    InstSpec {
+        code: 137,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 138
+    InstSpec {
+        code: 138,
         opcode: Opcode::TXA,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 139
+    InstSpec {
+        code: 139,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 140
+    InstSpec {
+        code: 140,
         opcode: Opcode::STY,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 141
+    InstSpec {
+        code: 141,
         opcode: Opcode::STA,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 142
+    InstSpec {
+        code: 142,
         opcode: Opcode::STX,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 143
+    InstSpec {
+        code: 143,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 144
+    InstSpec {
+        code: 144,
         opcode: Opcode::BCC,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 145
+    InstSpec {
+        code: 145,
         opcode: Opcode::STA,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 146
+    InstSpec {
+        code: 146,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 147
+    InstSpec {
+        code: 147,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 148
+    InstSpec {
+        code: 148,
         opcode: Opcode::STY,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 149
+    InstSpec {
+        code: 149,
         opcode: Opcode::STA,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 150
+    InstSpec {
+        code: 150,
         opcode: Opcode::STX,
         addr_mode: AddrMode::ZeroPageY(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 151
+    InstSpec {
+        code: 151,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 152
+    InstSpec {
+        code: 152,
         opcode: Opcode::TYA,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 153
+    InstSpec {
+        code: 153,
         opcode: Opcode::STA,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 154
+    InstSpec {
+        code: 154,
         opcode: Opcode::TXS,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 155
+    InstSpec {
+        code: 155,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 156
+    InstSpec {
+        code: 156,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 157
+    InstSpec {
+        code: 157,
         opcode: Opcode::STA,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 158
+    InstSpec {
+        code: 158,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 159
+    InstSpec {
+        code: 159,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 160
+    InstSpec {
+        code: 160,
         opcode: Opcode::LDY,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 161
+    InstSpec {
+        code: 161,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 162
+    InstSpec {
+        code: 162,
         opcode: Opcode::LDX,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 163
+    InstSpec {
+        code: 163,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 164
+    InstSpec {
+        code: 164,
         opcode: Opcode::LDY,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 165
+    InstSpec {
+        code: 165,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 166
+    InstSpec {
+        code: 166,
         opcode: Opcode::LDX,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 167
+    InstSpec {
+        code: 167,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 168
+    InstSpec {
+        code: 168,
         opcode: Opcode::TAY,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 169
+    InstSpec {
+        code: 169,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 170
+    InstSpec {
+        code: 170,
         opcode: Opcode::TAX,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 171
+    InstSpec {
+        code: 171,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 172
+    InstSpec {
+        code: 172,
         opcode: Opcode::LDY,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 173
+    InstSpec {
+        code: 173,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 174
+    InstSpec {
+        code: 174,
         opcode: Opcode::LDX,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 175
+    InstSpec {
+        code: 175,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 176
+    InstSpec {
+        code: 176,
         opcode: Opcode::BCS,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 177
+    InstSpec {
+        code: 177,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 178
+    InstSpec {
+        code: 178,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 179
+    InstSpec {
+        code: 179,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 180
+    InstSpec {
+        code: 180,
         opcode: Opcode::LDY,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 181
+    InstSpec {
+        code: 181,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 182
+    InstSpec {
+        code: 182,
         opcode: Opcode::LDX,
         addr_mode: AddrMode::ZeroPageY(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 183
+    InstSpec {
+        code: 183,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 184
+    InstSpec {
+        code: 184,
         opcode: Opcode::CLV,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 185
+    InstSpec {
+        code: 185,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 186
+    InstSpec {
+        code: 186,
         opcode: Opcode::TSX,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 187
+    InstSpec {
+        code: 187,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 188
+    InstSpec {
+        code: 188,
         opcode: Opcode::LDY,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 189
+    InstSpec {
+        code: 189,
         opcode: Opcode::LDA,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 190
+    InstSpec {
+        code: 190,
         opcode: Opcode::LDX,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 191
+    InstSpec {
+        code: 191,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 192
+    InstSpec {
+        code: 192,
         opcode: Opcode::CPY,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 193
+    InstSpec {
+        code: 193,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 194
+    InstSpec {
+        code: 194,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 195
+    InstSpec {
+        code: 195,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 196
+    InstSpec {
+        code: 196,
         opcode: Opcode::CPY,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 197
+    InstSpec {
+        code: 197,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 198
+    InstSpec {
+        code: 198,
         opcode: Opcode::DEC,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 199
+    InstSpec {
+        code: 199,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 200
+    InstSpec {
+        code: 200,
         opcode: Opcode::INY,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 201
+    InstSpec {
+        code: 201,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 202
+    InstSpec {
+        code: 202,
         opcode: Opcode::DEX,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 203
+    InstSpec {
+        code: 203,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 204
+    InstSpec {
+        code: 204,
         opcode: Opcode::CPY,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 205
+    InstSpec {
+        code: 205,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 206
+    InstSpec {
+        code: 206,
         opcode: Opcode::DEC,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 207
+    InstSpec {
+        code: 207,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 208
+    InstSpec {
+        code: 208,
         opcode: Opcode::BNE,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 209
+    InstSpec {
+        code: 209,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 210
+    InstSpec {
+        code: 210,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 211
+    InstSpec {
+        code: 211,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 212
+    InstSpec {
+        code: 212,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 213
+    InstSpec {
+        code: 213,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 214
+    InstSpec {
+        code: 214,
         opcode: Opcode::DEC,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 215
+    InstSpec {
+        code: 215,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 216
+    InstSpec {
+        code: 216,
         opcode: Opcode::CLD,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 217
+    InstSpec {
+        code: 217,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 218
+    InstSpec {
+        code: 218,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 219
+    InstSpec {
+        code: 219,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 220
+    InstSpec {
+        code: 220,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 221
+    InstSpec {
+        code: 221,
         opcode: Opcode::CMP,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 222
+    InstSpec {
+        code: 222,
         opcode: Opcode::DEC,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 223
+    InstSpec {
+        code: 223,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 224
+    InstSpec {
+        code: 224,
         opcode: Opcode::CPX,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 225
+    InstSpec {
+        code: 225,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::IndirectX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 226
+    InstSpec {
+        code: 226,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 227
+    InstSpec {
+        code: 227,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 228
+    InstSpec {
+        code: 228,
         opcode: Opcode::CPX,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 229
+    InstSpec {
+        code: 229,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 3,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 230
+    InstSpec {
+        code: 230,
         opcode: Opcode::INC,
         addr_mode: AddrMode::ZeroPage(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 231
+    InstSpec {
+        code: 231,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 232
+    InstSpec {
+        code: 232,
         opcode: Opcode::INX,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 233
+    InstSpec {
+        code: 233,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::Immediate(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 234
+    InstSpec {
+        code: 234,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 235
+    InstSpec {
+        code: 235,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 236
+    InstSpec {
+        code: 236,
         opcode: Opcode::CPX,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 237
+    InstSpec {
+        code: 237,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 238
+    InstSpec {
+        code: 238,
         opcode: Opcode::INC,
         addr_mode: AddrMode::Absolute(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 239
+    InstSpec {
+        code: 239,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 240
+    InstSpec {
+        code: 240,
         opcode: Opcode::BEQ,
         addr_mode: AddrMode::Relative(0),
         size: 2,
         cycle: 2,
         ext_cycle: ExtCycle::OneOrTwo,
     },
-    Inst {
-        // 241
+    InstSpec {
+        code: 241,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::IndirectY(0),
         size: 2,
         cycle: 5,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 242
+    InstSpec {
+        code: 242,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 243
+    InstSpec {
+        code: 243,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 244
+    InstSpec {
+        code: 244,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 245
+    InstSpec {
+        code: 245,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 4,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 246
+    InstSpec {
+        code: 246,
         opcode: Opcode::INC,
         addr_mode: AddrMode::ZeroPageX(0),
         size: 2,
         cycle: 6,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 247
+    InstSpec {
+        code: 247,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 248
+    InstSpec {
+        code: 248,
         opcode: Opcode::SED,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 249
+    InstSpec {
+        code: 249,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::AbsoluteY(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 250
+    InstSpec {
+        code: 250,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 251
+    InstSpec {
+        code: 251,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 252
+    InstSpec {
+        code: 252,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,
         cycle: 2,
         ext_cycle: ExtCycle::Zero,
     },
-    Inst {
-        // 253
+    InstSpec {
+        code: 253,
         opcode: Opcode::SBC,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 4,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 254
+    InstSpec {
+        code: 254,
         opcode: Opcode::INC,
         addr_mode: AddrMode::AbsoluteX(0),
         size: 3,
         cycle: 6,
         ext_cycle: ExtCycle::One,
     },
-    Inst {
-        // 255
+    InstSpec {
+        code: 255,
         opcode: Opcode::NOP,
         addr_mode: AddrMode::Implied,
         size: 1,

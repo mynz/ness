@@ -129,7 +129,8 @@ enum ExtCycle {
 }
 
 #[derive(Debug)]
-struct Inst {
+struct InstSpec {
+    code: u8,
     opcode: Opcode,
     addr_mode: AddrMode,
     size: u8,
