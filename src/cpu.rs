@@ -2,8 +2,8 @@
 
 mod inst_specs;
 
-use std::io::Cursor;
 use byteorder::{LittleEndian, ReadBytesExt};
+use std::io::Cursor;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -213,9 +213,20 @@ fn test_cpu() {
         (Opcode::LDA, Operand::Immediate(0)),
         (Opcode::STA, Operand::Absolute(8192)),
         (Opcode::STA, Operand::Absolute(8193)),
+        (Opcode::LDA, Operand::Immediate(63)),
+        (Opcode::STA, Operand::Absolute(8198)),
+        (Opcode::LDA, Operand::Immediate(0)),
+        (Opcode::STA, Operand::Absolute(8198)),
+        (Opcode::LDX, Operand::Immediate(0)),
+        (Opcode::LDY, Operand::Immediate(16)),
+        (Opcode::LDA, Operand::AbsoluteX(32849)),
+        (Opcode::STA, Operand::Absolute(8199)),
+        (Opcode::INX, Operand::Implied),
+        (Opcode::DEY, Operand::Implied),
+        (Opcode::BNE, Operand::Relative(246)),
     ];
 
-    for i in 0..6 {
+    for i in 0..17 {
         println!("i: {}", i);
 
         let op = cur.read_u8().unwrap();
@@ -224,7 +235,9 @@ fn test_cpu() {
 
         println!("inst: {:#?}", inst);
 
-        assert_eq!(inst.opcode, expect_insts[i].0);
-        assert_eq!(inst.operand, expect_insts[i].1);
+        if i < expect_insts.len() {
+            assert_eq!(inst.opcode, expect_insts[i].0);
+            assert_eq!(inst.operand, expect_insts[i].1);
+        }
     }
 }
