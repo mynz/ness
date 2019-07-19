@@ -9,42 +9,6 @@ fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
 
-struct StatusRegister {
-    negative: bool,
-    overflow: bool,
-    reserved: bool,
-    brk: bool, // break
-    decimal: bool,
-    interrupt: bool,
-    zero: bool,
-    carry: bool,
-}
-
-impl Default for StatusRegister {
-    fn default() -> Self {
-        StatusRegister {
-            negative: false,
-            overflow: false,
-            reserved: true,
-            brk: true, // break
-            decimal: false,
-            interrupt: true,
-            zero: false,
-            carry: false,
-        }
-    }
-}
-
-#[derive(Default)]
-struct Register {
-    a: u8, // accumelater
-    x: u8, // index register
-    y: u8, // index register
-    s: u8, // stack pointer
-    p: StatusRegister,
-    pc: u16,
-}
-
 impl Register {}
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -187,6 +151,66 @@ impl Inst {
         }
     }
 }
+
+struct StatusRegister {
+    negative: bool,
+    overflow: bool,
+    reserved: bool,
+    brk: bool, // break
+    decimal: bool,
+    interrupt: bool,
+    zero: bool,
+    carry: bool,
+}
+
+impl Default for StatusRegister {
+    fn default() -> Self {
+        StatusRegister {
+            negative: false,
+            overflow: false,
+            reserved: true,
+            brk: true, // break
+            decimal: false,
+            interrupt: true,
+            zero: false,
+            carry: false,
+        }
+    }
+}
+
+#[derive(Default)]
+struct Register {
+    a: u8, // accumelater
+    x: u8, // index register
+    y: u8, // index register
+    s: u8, // stack pointer
+    p: StatusRegister,
+    pc: u16,
+}
+
+#[derive(Default)]
+struct CpuState {
+    register: Register,
+}
+
+impl CpuState {
+
+    fn new() -> Self {
+        CpuState::default()
+    }
+
+    fn excecute() {
+        // TODO
+    }
+}
+
+#[test]
+fn test_cpu_state() {
+    let cpu_state = CpuState::new();
+    assert_eq!(0, cpu_state.register.a);
+
+}
+
 
 #[test]
 fn test_cpu() {
