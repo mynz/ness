@@ -207,6 +207,11 @@ impl Executer {
         self.rom = rom;
     }
 
+    fn read_byte(&self, addr: u16) -> u8 {
+        let word = self.read_word(addr);
+        (word & 0x00ff) as u8
+    }
+
     fn read_word(&self, addr: u16) -> u16 {
         if addr <= 0x07ff {
             let mut cur = Cursor::new(&self.wram);
@@ -241,6 +246,12 @@ impl Executer {
 
     fn execute(&mut self) {
         // TODO
+
+        let op = self.read_byte(self.register.pc);
+        self.register.pc += 1;
+
+        println!("xxx op: {:x}, {}", op, op);
+
     }
 }
 
