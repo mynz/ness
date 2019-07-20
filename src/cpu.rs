@@ -5,6 +5,8 @@ mod inst_specs;
 use byteorder::{LittleEndian, ReadBytesExt};
 use std::io::Cursor;
 
+use crate::rom::Rom;
+
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
@@ -189,26 +191,71 @@ struct Register {
 }
 
 #[derive(Default)]
-struct CpuState {
+struct Executer {
     register: Register,
+    wram: Box<[u8]>, // 2kb
+    rom: Box<Rom>,
 }
 
-impl CpuState {
+impl Executer {
 
     fn new() -> Self {
-        CpuState::default()
+        Executer::default()
     }
 
-    fn excecute() {
+    fn set_rom(&mut self, rom: Box<Rom>) {
+        self.rom = rom;
+    }
+
+    fn read_word(&self, addr: u16) -> u16 {
+        if addr <= 0x07ff {
+            let mut cur = Cursor::new(&self.wram);
+            cur.set_position(addr as u64);
+            return cur.read_u16::<LittleEndian>().unwrap();
+        }
+
+        // 0xffff まで有効
+        if addr >= 0x8000 {
+            let base = 0x8000;
+            let prg_size = self.rom.get_prg().len();
+            let mut ofs = (addr - base) as u64;
+
+            // prg が 16kb しかない場合は、0xc000 からの領域にミラーリングされていると見なす
+            if ofs >= 0x4000 && prg_size <= 0x4000 {
+                ofs -= 0x4000;
+            }
+
+            let mut cur = Cursor::new(self.rom.get_prg());
+            cur.set_position(ofs);
+            return cur.read_u16::<LittleEndian>().unwrap();
+        }
+
+        assert!(false, "yet to be implemented: {:x}", addr);
+        return 0;
+    }
+
+    fn hard_reset(&mut self) {
+        self.register = Register::default();
+        self.register.pc = self.read_word(0xfffc);
+    }
+
+    fn execute(&mut self) {
         // TODO
     }
 }
 
 #[test]
-fn test_cpu_state() {
-    let cpu_state = CpuState::new();
-    assert_eq!(0, cpu_state.register.a);
+fn test_executer() {
+    let mut exe = Executer::new();
+    assert_eq!(0, exe.register.a);
 
+    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    exe.set_rom(rom);
+
+    exe.hard_reset();
+    assert_eq!(0x8000, exe.register.pc);
+
+    exe.execute();
 }
 
 
