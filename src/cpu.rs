@@ -309,13 +309,13 @@ fn test_cpu() {
     ];
 
     for i in 0..17 {
-        println!("i: {}", i);
+        //println!("i: {}", i);
 
         let op = cur.read_u8().unwrap();
         let inst_spec = &INST_SPECS[op as usize];
         let inst = Inst::decode(&mut cur, inst_spec);
 
-        println!("inst: {:#?}", inst);
+        //println!("inst: {:#?}", inst);
 
         if i < expect_insts.len() {
             assert_eq!(inst.opcode, expect_insts[i].0);

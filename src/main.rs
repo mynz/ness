@@ -140,7 +140,7 @@ impl PpuUnit {
     }
 
     fn load_from_cpu(&mut self, addr: u16, data: u8) {
-        println!("ppu load_from_cpu: addr: {}, data: {}", addr, data);
+        //println!("ppu load_from_cpu: addr: {}, data: {}", addr, data);
         match addr {
             0 => {
                 self.register.ctrl = data;
@@ -167,10 +167,6 @@ impl PpuUnit {
                 } else {
                     self.register.ppuaddr = (self.register.ppuaddr & 0xff00) | w;
                 }
-                println!(
-                    "ppuaddr write: {:x}, toggle_ppuaddr: {}, w: {:x}",
-                    self.register.ppuaddr, self.register.toggle_ppuaddr, w
-                );
                 self.register.toggle_ppuaddr = !self.register.toggle_ppuaddr;
             }
             7 => {
@@ -190,7 +186,7 @@ impl PpuUnit {
     }
 
     fn write_to_ppu(&mut self, addr: u16, data: u8) {
-        println!("write_to_ppu: {:x}, {:x}", addr, data);
+        //println!("write_to_ppu: {:x}, {:x}", addr, data);
 
         //fn chk(addr: u16, base: u16, size: u16) -> bool {
         //return addr >= base && addr < base + size;
@@ -207,28 +203,28 @@ impl PpuUnit {
 
         match addr2 {
             a if a < 0x1000 => {
-                println!("ppu pattern_table0 write: {:x}, {:x}", a, data);
+                //println!("ppu pattern_table0 write: {:x}, {:x}", a, data);
                 self.pattern_table0[a as usize] = data;
             }
             a if a >= 0x2000 && a < 0x2000 + 0x3c0 => {
                 let idx = (a - 0x2000) as usize;
-                println!("ppu name_table0 write: {:x}, {:x}", a, data);
+                //println!("ppu name_table0 write: {:x}, {:x}", a, data);
                 self.name_table0[idx] = data;
             }
             a if a >= 0x23c0 && a < 0x23c0 + 0x040 => {
                 let idx = (a - 0x23c0) as usize;
-                println!("ppu name_table0 write: {:x}, {:x}", a, data);
+                //println!("ppu name_table0 write: {:x}, {:x}", a, data);
                 self.attr_table0[idx] = data;
             }
             a if a >= 0x3f00 && a < 0x3f00 + 0x10 => {
                 let idx = (a - 0x3f00) as usize;
                 self.bg_palette[idx] = data;
-                println!("ppu bg_palette write: {:x}, {:x}, {:x}", a, addr2, data);
+                //println!("ppu bg_palette write: {:x}, {:x}, {:x}", a, addr2, data);
             }
             a if a >= 0x3f10 && a < 0x3f10 + 0x10 => {
                 let idx = (a - 0x3f10) as usize;
                 self.sprite_palette[idx] = data;
-                println!("ppu sprite_palette write: {:x}, {:x}", a, data);
+                //println!("ppu sprite_palette write: {:x}, {:x}", a, data);
             }
             _ => {
                 panic!("yet to be implemented to write addr: {:x}", addr);
@@ -332,8 +328,6 @@ impl Machine {
         let op = self.read_byte(pc);
         self.register.pc += 1;
 
-        //println!("XXX op: {:x} from {:x}", op, self.register.pc);
-
         match op {
             0x4c => {
                 // JMP Absolute
@@ -387,7 +381,7 @@ impl Machine {
                 let addr = self.fetch_word();
                 let data = self.read_byte(addr);
                 self.register.a = data;
-                println!("LDA abs: {:x}, {:x}", addr, data);
+                //println!("LDA abs: {:x}, {:x}", addr, data);
             }
             0xbd => {
                 // LDA Absolute, X
@@ -396,7 +390,7 @@ impl Machine {
                 let addr = abs + x;
                 let data = self.read_byte(addr);
                 self.register.a = data;
-                println!("LDA abs, x, addr: {}, {}, {}, data; {}", abs, x, addr, data);
+                //println!("LDA abs, x, addr: {}, {}, {}, data; {}", abs, x, addr, data);
             }
             0xe8 => {
                 // INX
@@ -410,7 +404,7 @@ impl Machine {
             0xd0 => {
                 // BNE
                 let rel = u8_to_i8(self.fetch_byte());
-                println!("BNE: {}", rel);
+                //println!("BNE: {}", rel);
                 if self.register.p.zero == false {
                     let pc = self.register.pc as i16 + rel as i16;
                     self.register.pc = pc as u16;
@@ -428,7 +422,7 @@ impl Machine {
 
     fn step(&mut self, frame_buffer: &mut FrameBuffer) {
         self.step_count += 1;
-        println!("step: {}", self.step_count);
+        //println!("step: {}", self.step_count);
 
         for y in 0..DISPLAY_SIZE.1 {
             let mut cycle = 0;
@@ -468,8 +462,6 @@ fn test_machine() {
     let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
     let mut machine = Machine::new();
     machine.set_rom(rom);
-
-    println!("XXX: {:x?}", machine.read_word(0x8000));
 
     assert_eq!(0x00, machine.read_word(0));
     assert_eq!(0x00, machine.read_word(0));
