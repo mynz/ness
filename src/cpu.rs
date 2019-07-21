@@ -254,47 +254,21 @@ impl Executer {
 
         let inst_spec = &INST_SPECS[op as usize];
 
-        let mut bytes = [0; 2];
-        let mut rest: &[u8];
+        let mut bytes = [0_u8; 2];
         {
             let nrest = inst_spec.size - 1;
-
-            rest = if nrest == 1 {
-                //&[1]
-
+            if nrest == 1 {
                 let b = self.read_byte(self.register.pc);
                 bytes[0] = b;
-                &bytes
-
             } else if nrest == 2 {
-                //&[1, 1]
-
                 let w = self.read_word(self.register.pc);
-                //bytes.ref.write_u16::<LittleEndian>(w);
                 (&mut bytes[0..2]).write_u16::<LittleEndian>(w).unwrap();
-                &bytes
-
-            } else {
-                &[]
             };
 
             self.register.pc += nrest as u16;
-
-            //match inst_spec.size - 1 {
-                //0 => ,
-                //1 => {
-                    //self.register += 1;
-                    //self.read_byte(self.register.pc-1)
-                //}
-                //2 => ,
-            //}
         }
-
-        let inst = Inst::decode(&mut rest, inst_spec);
-
-        //println!("xxx op: {:x}, {}", op, op);
+        let inst = Inst::decode(&mut &bytes[0..2], inst_spec);
         println!("xxx {:#?}: ", inst);
-
     }
 }
 
@@ -309,6 +283,12 @@ fn test_executer() {
     exe.hard_reset();
     assert_eq!(0x8000, exe.register.pc);
 
+    exe.execute();
+    exe.execute();
+    exe.execute();
+    exe.execute();
+    exe.execute();
+    exe.execute();
     exe.execute();
 }
 
