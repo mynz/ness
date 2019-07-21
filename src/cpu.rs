@@ -2,10 +2,11 @@
 
 mod inst_specs;
 
-use byteorder::{LittleEndian, ReadBytesExt};
+use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
 use crate::rom::Rom;
+use self::inst_specs::INST_SPECS;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -127,7 +128,8 @@ struct Inst {
 }
 
 impl Inst {
-    fn decode(cur: &mut Cursor<&[u8]>, spec: &InstSpec) -> Self {
+
+    fn decode<T: std::io::Read>(cur: &mut T, spec: &InstSpec) -> Self {
         //let n = (spec.size - 1) as usize;
 
         let operand = match spec.operand {
@@ -250,7 +252,48 @@ impl Executer {
         let op = self.read_byte(self.register.pc);
         self.register.pc += 1;
 
-        println!("xxx op: {:x}, {}", op, op);
+        let inst_spec = &INST_SPECS[op as usize];
+
+        let mut bytes = [0; 2];
+        let mut rest: &[u8];
+        {
+            let nrest = inst_spec.size - 1;
+
+            rest = if nrest == 1 {
+                //&[1]
+
+                let b = self.read_byte(self.register.pc);
+                bytes[0] = b;
+                &bytes
+
+            } else if nrest == 2 {
+                //&[1, 1]
+
+                let w = self.read_word(self.register.pc);
+                //bytes.ref.write_u16::<LittleEndian>(w);
+                (&mut bytes[0..2]).write_u16::<LittleEndian>(w).unwrap();
+                &bytes
+
+            } else {
+                &[]
+            };
+
+            self.register.pc += nrest as u16;
+
+            //match inst_spec.size - 1 {
+                //0 => ,
+                //1 => {
+                    //self.register += 1;
+                    //self.read_byte(self.register.pc-1)
+                //}
+                //2 => ,
+            //}
+        }
+
+        let inst = Inst::decode(&mut rest, inst_spec);
+
+        //println!("xxx op: {:x}, {}", op, op);
+        println!("xxx {:#?}: ", inst);
 
     }
 }
