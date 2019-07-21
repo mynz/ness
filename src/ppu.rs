@@ -17,7 +17,7 @@ struct PpuRegister {
 
 impl PpuRegister {}
 
-struct PpuUnit {
+pub struct PpuUnit {
     register: PpuRegister,
     pattern_table0: Box<[u8]>,  // 0x1000 byte
     name_table0: Box<[u8]>,     // 0x03c0 byte
@@ -125,5 +125,11 @@ impl PpuUnit {
             }
         }
     }
-
 }
+
+impl Default for PpuUnit {
+    fn default() -> Self {
+        Self::new()
+    }
+}
+

@@ -7,6 +7,7 @@ use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
 use crate::rom::Rom;
+use crate::ppu::PpuUnit;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -195,8 +196,7 @@ struct Register {
 struct Executer {
     register: Register,
     wram: Box<[u8]>, // 2kb
-    // TODO
-    //ppu_unit: PpuUnit,
+    ppu_unit: PpuUnit,
     rom: Box<Rom>,
 }
 
@@ -242,14 +242,11 @@ impl Executer {
     }
 
     fn write_byte(&mut self, addr: u16, data: u8) {
-        /*
-         * TODO
         if addr >= 0x2000 && addr < 0x2008 {
             let a = addr - 0x2000;
             self.ppu_unit.store_ppu_register(a, data);
             return;
         }
-         */
         assert!(false, "yet to be implemented");
     }
 
