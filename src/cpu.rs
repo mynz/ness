@@ -195,6 +195,8 @@ struct Register {
 struct Executer {
     register: Register,
     wram: Box<[u8]>, // 2kb
+    // TODO
+    //ppu_unit: PpuUnit,
     rom: Box<Rom>,
 }
 
@@ -239,6 +241,18 @@ impl Executer {
         return 0;
     }
 
+    fn write_byte(&mut self, addr: u16, data: u8) {
+        /*
+         * TODO
+        if addr >= 0x2000 && addr < 0x2008 {
+            let a = addr - 0x2000;
+            self.ppu_unit.store_ppu_register(a, data);
+            return;
+        }
+         */
+        assert!(false, "yet to be implemented");
+    }
+
     fn hard_reset(&mut self) {
         self.register = Register::default();
         self.register.pc = self.read_word(0xfffc);
@@ -278,6 +292,16 @@ impl Executer {
                 };
                 self.register.x = v;
             }
+            Opcode::LDA => {
+                let v = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    _ => panic!("yet to be implemented"),
+                };
+                self.register.a = v;
+            }
+            Opcode::TXS => {
+                self.register.s = self.register.x;
+            }
             _ => {
                 panic!("yet to not impl: {:#?}", inst);
             }
@@ -308,12 +332,14 @@ fn test_executer() {
     assert_eq!(exe.register.x, 0x00);
     exe.execute();
     assert_eq!(exe.register.x, 0xff);
-
-    //exe.execute();
-    //exe.execute();
-    //exe.execute();
-    //exe.execute();
-    //exe.execute();
+    assert_eq!(exe.register.s, 0x00);
+    exe.execute(); // TXS
+    assert_eq!(exe.register.s, 0xff);
+    exe.execute(); // LDA
+    assert_eq!(exe.register.a, 0x00);
+    exe.execute(); // STA
+    exe.execute(); // STA
+    exe.execute(); // LDA
 }
 
 #[test]
