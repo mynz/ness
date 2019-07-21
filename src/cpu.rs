@@ -266,11 +266,31 @@ impl Executer {
         Inst::decode(&mut bytes.as_ref(), inst_spec)
     }
 
+    fn execute_inst(&mut self, inst: &Inst) {
+        match inst.opcode {
+            Opcode::SEI => {
+                self.register.p.interrupt = true;
+            }
+            Opcode::LDX => {
+                let v = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    _ => panic!("yet to be implemented"),
+                };
+                self.register.x = v;
+            }
+            _ => {
+                panic!("yet to not impl: {:#?}", inst);
+            }
+        }
+    }
+
     fn execute(&mut self) {
         // TODO
         let inst = self.fetch_inst();
 
         println!("xxx: inst {:#?}: ", inst);
+
+        self.execute_inst(&inst);
     }
 }
 
@@ -283,15 +303,17 @@ fn test_executer() {
     exe.set_rom(rom);
 
     exe.hard_reset();
-    assert_eq!(0x8000, exe.register.pc);
+    assert_eq!(exe.register.pc, 0x8000);
+    exe.execute();
+    assert_eq!(exe.register.x, 0x00);
+    exe.execute();
+    assert_eq!(exe.register.x, 0xff);
 
-    exe.execute();
-    exe.execute();
-    exe.execute();
-    exe.execute();
-    exe.execute();
-    exe.execute();
-    exe.execute();
+    //exe.execute();
+    //exe.execute();
+    //exe.execute();
+    //exe.execute();
+    //exe.execute();
 }
 
 #[test]
