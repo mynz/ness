@@ -5,8 +5,8 @@ mod inst_specs;
 use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
-use crate::rom::Rom;
 use self::inst_specs::INST_SPECS;
+use crate::rom::Rom;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -128,7 +128,6 @@ struct Inst {
 }
 
 impl Inst {
-
     fn decode<T: std::io::Read>(cur: &mut T, spec: &InstSpec) -> Self {
         //let n = (spec.size - 1) as usize;
 
@@ -200,7 +199,6 @@ struct Executer {
 }
 
 impl Executer {
-
     fn new() -> Self {
         Executer::default()
     }
@@ -246,9 +244,7 @@ impl Executer {
         self.register.pc = self.read_word(0xfffc);
     }
 
-    fn execute(&mut self) {
-        // TODO
-
+    fn fetch_inst(&mut self) -> Inst {
         let op = self.read_byte(self.register.pc);
         self.register.pc += 1;
 
@@ -267,8 +263,14 @@ impl Executer {
 
             self.register.pc += nrest as u16;
         }
-        let inst = Inst::decode(&mut bytes.as_ref(), inst_spec);
-        println!("xxx {:#?}: ", inst);
+        Inst::decode(&mut bytes.as_ref(), inst_spec)
+    }
+
+    fn execute(&mut self) {
+        // TODO
+        let inst = self.fetch_inst();
+
+        println!("xxx: inst {:#?}: ", inst);
     }
 }
 
@@ -291,7 +293,6 @@ fn test_executer() {
     exe.execute();
     exe.execute();
 }
-
 
 #[test]
 fn test_cpu() {
