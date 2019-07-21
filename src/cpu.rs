@@ -6,8 +6,8 @@ use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
-use crate::rom::Rom;
 use crate::ppu::PpuUnit;
+use crate::rom::Rom;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -285,16 +285,23 @@ impl Executer {
             Opcode::LDX => {
                 let v = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => panic!("yet to be implemented"),
+                    _ => unimplemented!(),
                 };
                 self.register.x = v;
             }
             Opcode::LDA => {
                 let v = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => panic!("yet to be implemented"),
+                    _ => unimplemented!(),
                 };
                 self.register.a = v;
+            }
+            Opcode::STA => {
+                let addr = match inst.operand {
+                    Operand::Absolute(a) => a,
+                    _ => unimplemented!(),
+                };
+                self.write_byte(addr, self.register.a);
             }
             Opcode::TXS => {
                 self.register.s = self.register.x;
@@ -334,6 +341,7 @@ fn test_executer() {
     assert_eq!(exe.register.s, 0xff);
     exe.execute(); // LDA
     assert_eq!(exe.register.a, 0x00);
+
     exe.execute(); // STA
     exe.execute(); // STA
     exe.execute(); // LDA
