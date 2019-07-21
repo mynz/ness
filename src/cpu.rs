@@ -344,7 +344,15 @@ fn test_executer() {
 
     exe.execute(); // STA
     exe.execute(); // STA
+
+    assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x0000);
+
     exe.execute(); // LDA
+    exe.execute(); // STA
+    exe.execute(); // LDA
+    exe.execute(); // STA
+
+    assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x3f00);
 }
 
 #[test]

@@ -1,15 +1,15 @@
 #![allow(dead_code)]
 
 #[derive(Default)]
-struct PpuRegister {
-    ctrl: u8,     // w
-    mask: u8,     // w
-    status: u8,   // r
-    oamaddr: u8,  // w
-    oamdata: u8,  // rw
-    scroll: u8,   // w
-    ppuaddr: u16, // w
-    ppudata: u8,  // rw
+pub struct PpuRegister {
+    pub ctrl: u8,     // w
+    pub mask: u8,     // w
+    pub status: u8,   // r
+    pub oamaddr: u8,  // w
+    pub oamdata: u8,  // rw
+    pub scroll: u8,   // w
+    pub ppuaddr: u16, // w
+    pub ppudata: u8,  // rw
 
     // ppuaddr の2会書き込み用のトグルフラグ
     toggle_ppuaddr: bool,
@@ -47,7 +47,13 @@ impl PpuUnit {
         }
     }
 
+    pub fn get_ppu_register(&self) -> &PpuRegister {
+        &self.register
+    }
+
     pub fn store_ppu_register(&mut self, addr: u16, data: u8) {
+        //println!("xxx store_ppu_register: addr: {}, data: {}", addr, data);
+
         match addr {
             0 => {
                 self.register.ctrl = data;
