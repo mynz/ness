@@ -262,12 +262,12 @@ impl Executer {
                 bytes[0] = b;
             } else if nrest == 2 {
                 let w = self.read_word(self.register.pc);
-                (&mut bytes[0..2]).write_u16::<LittleEndian>(w).unwrap();
+                bytes.as_mut().write_u16::<LittleEndian>(w).unwrap();
             };
 
             self.register.pc += nrest as u16;
         }
-        let inst = Inst::decode(&mut &bytes[0..2], inst_spec);
+        let inst = Inst::decode(&mut bytes.as_ref(), inst_spec);
         println!("xxx {:#?}: ", inst);
     }
 }
