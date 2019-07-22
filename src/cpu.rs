@@ -111,13 +111,14 @@ struct InstSpec {
 
 #[derive(Debug, PartialEq, Copy, Clone)]
 struct Inst {
+    pc: u16, // プログラムカウンタの位置
     code: u8,
     opcode: Opcode,
     operand: Operand,
 }
 
 impl Inst {
-    fn decode<T: std::io::Read>(cur: &mut T, spec: &InstSpec) -> Self {
+    fn decode<T: std::io::Read>(cur: &mut T, spec: &InstSpec, pc: u16) -> Self {
         //let n = (spec.size - 1) as usize;
 
         let operand = match spec.operand {
@@ -137,6 +138,7 @@ impl Inst {
         };
 
         Inst {
+            pc: pc,
             code: spec.code,
             opcode: spec.opcode,
             operand,
@@ -147,6 +149,7 @@ impl Inst {
 impl Default for Inst {
     fn default() -> Inst {
         Inst {
+            pc: 0x0000,
             code: 255,
             opcode: Opcode::NOP,
             operand: Operand::Implied,
@@ -255,7 +258,8 @@ impl Executer {
     }
 
     fn fetch_inst(&mut self) -> Inst {
-        let op = self.read_byte(self.register.pc);
+        let pc = self.register.pc;
+        let op = self.read_byte(pc);
         self.register.pc += 1;
 
         let inst_spec = &INST_SPECS[op as usize];
@@ -273,7 +277,7 @@ impl Executer {
 
             self.register.pc += nrest as u16;
         }
-        Inst::decode(&mut bytes.as_ref(), inst_spec)
+        Inst::decode(&mut bytes.as_ref(), inst_spec, pc)
     }
 
     fn execute_inst(&mut self, inst: &Inst) {
@@ -376,7 +380,12 @@ mod tests {
         assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x3f00);
 
         exe.execute(); // LDX
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
         exe.execute(); // LDY
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDY);
+        assert_eq!(exe.last_exec_inst.operand, Operand::Immediate(0x10));
+
+        //println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
 
     #[test]
@@ -416,13 +425,10 @@ mod tests {
         ];
 
         for i in 0..17 {
-            //println!("i: {}", i);
-
             let op = cur.read_u8().unwrap();
             let inst_spec = &INST_SPECS[op as usize];
-            let inst = Inst::decode(&mut cur, inst_spec);
-
-            //println!("inst: {:#?}", inst);
+            let pc = i as u16; // dummy for pc
+            let inst = Inst::decode(&mut cur, inst_spec, pc);
 
             if i < expect_insts.len() {
                 assert_eq!(inst.opcode, expect_insts[i].0);
