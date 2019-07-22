@@ -322,89 +322,92 @@ impl Executer {
     }
 }
 
-#[test]
-fn test_executer() {
-    let mut exe = Executer::new();
-    assert_eq!(0, exe.register.a);
+#[cfg(test)]
+mod tests {
+    use super::*;
 
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
-    exe.set_rom(rom);
+    #[test]
+    fn test_executer() {
+        let mut exe = Executer::new();
+        assert_eq!(0, exe.register.a);
 
-    exe.hard_reset();
-    assert_eq!(exe.register.pc, 0x8000);
-    exe.execute();
-    assert_eq!(exe.register.x, 0x00);
-    exe.execute();
-    assert_eq!(exe.register.x, 0xff);
-    assert_eq!(exe.register.s, 0x00);
-    exe.execute(); // TXS
-    assert_eq!(exe.register.s, 0xff);
-    exe.execute(); // LDA
-    assert_eq!(exe.register.a, 0x00);
+        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+        exe.set_rom(rom);
 
-    exe.execute(); // STA
-    exe.execute(); // STA
+        exe.hard_reset();
+        assert_eq!(exe.register.pc, 0x8000);
+        exe.execute();
+        assert_eq!(exe.register.x, 0x00);
+        exe.execute();
+        assert_eq!(exe.register.x, 0xff);
+        assert_eq!(exe.register.s, 0x00);
+        exe.execute(); // TXS
+        assert_eq!(exe.register.s, 0xff);
+        exe.execute(); // LDA
+        assert_eq!(exe.register.a, 0x00);
 
-    assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x0000);
+        exe.execute(); // STA
+        exe.execute(); // STA
 
-    exe.execute(); // LDA
-    exe.execute(); // STA
-    exe.execute(); // LDA
-    exe.execute(); // STA
+        assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x0000);
 
-    assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x3f00);
-}
+        exe.execute(); // LDA
+        exe.execute(); // STA
+        exe.execute(); // LDA
+        exe.execute(); // STA
 
-#[test]
-fn test_cpu() {
-    use crate::rom::Rom;
+        assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x3f00);
+    }
 
-    assert!(true);
-    assert_eq!(1, 1);
+    #[test]
+    fn test_cpu() {
+        use crate::rom::Rom;
 
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+        assert!(true);
+        assert_eq!(1, 1);
 
-    let prg = rom.get_prg();
-    assert_eq!(rom.get_bytes_of_prg(), prg.len());
+        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
 
-    println!("prog len: {}", prg.len());
+        let prg = rom.get_prg();
+        assert_eq!(rom.get_bytes_of_prg(), prg.len());
 
-    let mut cur = std::io::Cursor::new(prg);
+        println!("prog len: {}", prg.len());
 
-    use self::inst_specs::INST_SPECS;
+        let mut cur = std::io::Cursor::new(prg);
 
-    let expect_insts = &[
-        (Opcode::SEI, Operand::Implied),
-        (Opcode::LDX, Operand::Immediate(255)),
-        (Opcode::TXS, Operand::Implied),
-        (Opcode::LDA, Operand::Immediate(0)),
-        (Opcode::STA, Operand::Absolute(8192)),
-        (Opcode::STA, Operand::Absolute(8193)),
-        (Opcode::LDA, Operand::Immediate(63)),
-        (Opcode::STA, Operand::Absolute(8198)),
-        (Opcode::LDA, Operand::Immediate(0)),
-        (Opcode::STA, Operand::Absolute(8198)),
-        (Opcode::LDX, Operand::Immediate(0)),
-        (Opcode::LDY, Operand::Immediate(16)),
-        (Opcode::LDA, Operand::AbsoluteX(32849)),
-        (Opcode::STA, Operand::Absolute(8199)),
-        (Opcode::INX, Operand::Implied),
-        (Opcode::DEY, Operand::Implied),
-        (Opcode::BNE, Operand::Relative(246)),
-    ];
+        let expect_insts = &[
+            (Opcode::SEI, Operand::Implied),
+            (Opcode::LDX, Operand::Immediate(255)),
+            (Opcode::TXS, Operand::Implied),
+            (Opcode::LDA, Operand::Immediate(0)),
+            (Opcode::STA, Operand::Absolute(8192)),
+            (Opcode::STA, Operand::Absolute(8193)),
+            (Opcode::LDA, Operand::Immediate(63)),
+            (Opcode::STA, Operand::Absolute(8198)),
+            (Opcode::LDA, Operand::Immediate(0)),
+            (Opcode::STA, Operand::Absolute(8198)),
+            (Opcode::LDX, Operand::Immediate(0)),
+            (Opcode::LDY, Operand::Immediate(16)),
+            (Opcode::LDA, Operand::AbsoluteX(32849)),
+            (Opcode::STA, Operand::Absolute(8199)),
+            (Opcode::INX, Operand::Implied),
+            (Opcode::DEY, Operand::Implied),
+            (Opcode::BNE, Operand::Relative(246)),
+        ];
 
-    for i in 0..17 {
-        //println!("i: {}", i);
+        for i in 0..17 {
+            //println!("i: {}", i);
 
-        let op = cur.read_u8().unwrap();
-        let inst_spec = &INST_SPECS[op as usize];
-        let inst = Inst::decode(&mut cur, inst_spec);
+            let op = cur.read_u8().unwrap();
+            let inst_spec = &INST_SPECS[op as usize];
+            let inst = Inst::decode(&mut cur, inst_spec);
 
-        //println!("inst: {:#?}", inst);
+            //println!("inst: {:#?}", inst);
 
-        if i < expect_insts.len() {
-            assert_eq!(inst.opcode, expect_insts[i].0);
-            assert_eq!(inst.operand, expect_insts[i].1);
+            if i < expect_insts.len() {
+                assert_eq!(inst.opcode, expect_insts[i].0);
+                assert_eq!(inst.operand, expect_insts[i].1);
+            }
         }
     }
 }
