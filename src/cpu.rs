@@ -109,18 +109,6 @@ struct InstSpec {
     ext_cycle: ExtCycle,
 }
 
-#[test]
-fn test_inst() {
-    use self::inst_specs::INST_SPECS;
-
-    for i in 0..256 {
-        let inst_spec = &INST_SPECS[i];
-        assert!(inst_spec.size > 0);
-    }
-
-    assert!(INST_SPECS[0].opcode == Opcode::BRK);
-}
-
 #[derive(Debug, PartialEq, Copy, Clone)]
 struct Inst {
     code: u8,
@@ -152,6 +140,16 @@ impl Inst {
             code: spec.code,
             opcode: spec.opcode,
             operand,
+        }
+    }
+}
+
+impl Default for Inst {
+    fn default() -> Inst {
+        Inst {
+            code: 255,
+            opcode: Opcode::NOP,
+            operand: Operand::Implied,
         }
     }
 }
@@ -198,6 +196,7 @@ struct Executer {
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
     rom: Box<Rom>,
+    last_exec_inst: Inst,
 }
 
 impl Executer {
@@ -317,6 +316,8 @@ impl Executer {
                 panic!("yet to not impl: {:#?}", inst);
             }
         }
+
+        self.last_exec_inst = *inst;
     }
 
     fn execute(&mut self) {
@@ -332,6 +333,15 @@ impl Executer {
 #[cfg(test)]
 mod tests {
     use super::*;
+
+    #[test]
+    fn test_inst() {
+        for i in 0..256 {
+            let inst_spec = &INST_SPECS[i];
+            assert!(inst_spec.size > 0);
+        }
+        assert!(INST_SPECS[0].opcode == Opcode::BRK);
+    }
 
     #[test]
     fn test_executer() {
