@@ -289,6 +289,13 @@ impl Executer {
                 };
                 self.register.x = v;
             }
+            Opcode::LDY => {
+                let v = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    _ => unimplemented!(),
+                };
+                self.register.y = v;
+            }
             Opcode::LDA => {
                 let v = match inst.operand {
                     Operand::Immediate(v) => v,
@@ -357,6 +364,9 @@ mod tests {
         exe.execute(); // STA
 
         assert_eq!(exe.ppu_unit.get_ppu_register().ppuaddr, 0x3f00);
+
+        exe.execute(); // LDX
+        exe.execute(); // LDY
     }
 
     #[test]
