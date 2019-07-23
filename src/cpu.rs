@@ -302,6 +302,10 @@ impl Executer {
             Opcode::LDA => {
                 let v = match inst.operand {
                     Operand::Immediate(v) => v,
+                    Operand::AbsoluteX(v) => {
+                        let addr = v + self.register.x as u16;
+                        self.read_byte(addr)
+                    }
                     _ => unimplemented!(),
                 };
                 self.register.a = v;
@@ -384,6 +388,9 @@ mod tests {
         exe.execute(); // LDY
         assert_eq!(exe.last_exec_inst.opcode, Opcode::LDY);
         assert_eq!(exe.last_exec_inst.operand, Operand::Immediate(0x10));
+
+        exe.execute(); // LDA
+        assert_eq!(exe.register.a, 0x0f);
 
         //println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
