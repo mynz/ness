@@ -410,6 +410,9 @@ mod tests {
         exe.set_rom(rom);
 
         exe.hard_reset();
+
+        let cycles_beg = exe.cycles;
+
         assert_eq!(exe.register.pc, 0x8000);
         exe.execute();
         assert_eq!(exe.register.x, 0x00);
@@ -420,6 +423,8 @@ mod tests {
         assert_eq!(exe.register.s, 0xff);
         exe.execute(); // LDA
         assert_eq!(exe.register.a, 0x00);
+
+        println!("cycles_dt: {}", exe.cycles - cycles_beg);
 
         exe.execute(); // STA
         exe.execute(); // STA
@@ -504,13 +509,15 @@ mod tests {
         exe.execute(); // STA
         assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
 
+        println!("cycles_dt: {}", exe.cycles - cycles_beg);
+
         // 無限ループ
         for _ in 0..16 {
             exe.execute(); // JMP
             assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
         }
 
-        println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
+        //println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
 
     #[test]
