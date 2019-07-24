@@ -282,6 +282,20 @@ impl Executer {
 
     fn execute_inst(&mut self, inst: &Inst) {
         match inst.opcode {
+            Opcode::DEY => {
+                let s = self.register.y;
+                let d = if s == 0 { 0xff } else { s - 1 };
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
+                self.register.y = d;
+            }
+            Opcode::INX => {
+                let s = self.register.x;
+                let d = if s == 0xff { 0 } else { s + 1 };
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
+                self.register.x = d;
+            }
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
@@ -392,7 +406,11 @@ mod tests {
         exe.execute(); // LDA
         assert_eq!(exe.register.a, 0x0f);
 
-        //println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
+        exe.execute(); // STA
+        exe.execute(); // INX
+        exe.execute(); // DEY
+
+        println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
 
     #[test]
