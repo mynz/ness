@@ -296,36 +296,40 @@ impl Executer {
             Opcode::DEY => {
                 let s = self.register.y;
                 let d = if s == 0 { 0xff } else { s - 1 };
+                self.register.y = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
-                self.register.y = d;
             }
             Opcode::INX => {
                 let s = self.register.x;
                 let d = if s == 0xff { 0 } else { s + 1 };
+                self.register.x = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
-                self.register.x = d;
             }
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
             Opcode::LDX => {
-                let v = match inst.operand {
+                let d = match inst.operand {
                     Operand::Immediate(v) => v,
                     _ => unimplemented!(),
                 };
-                self.register.x = v;
+                self.register.x = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
             }
             Opcode::LDY => {
-                let v = match inst.operand {
+                let d = match inst.operand {
                     Operand::Immediate(v) => v,
                     _ => unimplemented!(),
                 };
-                self.register.y = v;
+                self.register.y = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
             }
             Opcode::LDA => {
-                let v = match inst.operand {
+                let d = match inst.operand {
                     Operand::Immediate(v) => v,
                     Operand::AbsoluteX(v) => {
                         let addr = v + self.register.x as u16;
@@ -333,7 +337,9 @@ impl Executer {
                     }
                     _ => unimplemented!(),
                 };
-                self.register.a = v;
+                self.register.a = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
             }
             Opcode::STA => {
                 let addr = match inst.operand {
@@ -430,6 +436,35 @@ mod tests {
         exe.execute(); // DEY
 
         exe.execute(); // BNE
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::BNE);
+
+        for _ in 1..16 {
+            exe.execute(); // LDA
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+            exe.execute(); // STA
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+            exe.execute(); // INX
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::INX);
+            exe.execute(); // DEY
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::DEY);
+            exe.execute(); // BNE
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::BNE);
+        }
+
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute(); // LDX
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
+        exe.execute(); // LDY
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDY);
+
+
 
         println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
