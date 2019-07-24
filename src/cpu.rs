@@ -282,6 +282,17 @@ impl Executer {
 
     fn execute_inst(&mut self, inst: &Inst) {
         match inst.opcode {
+            Opcode::BNE => {
+                if !self.register.p.zero {
+                    let r = match inst.operand {
+                        Operand::Relative(r) => r,
+                        _ => unimplemented!(),
+                    };
+                    let base = self.register.pc as i16;
+                    let rr = u8_to_i8(r) as i16;
+                    self.register.pc = (base + rr) as u16;
+                }
+            }
             Opcode::DEY => {
                 let s = self.register.y;
                 let d = if s == 0 { 0xff } else { s - 1 };
@@ -357,6 +368,14 @@ mod tests {
     use super::*;
 
     #[test]
+    fn test_conv() {
+        assert_eq!(u8_to_i8(0x00), 0);
+        assert_eq!(u8_to_i8(0xff), -1);
+        assert_eq!(u8_to_i8(0x7f), 0x7f);
+        assert_eq!(u8_to_i8(0x80), -128);
+    }
+
+    #[test]
     fn test_inst() {
         for i in 0..256 {
             let inst_spec = &INST_SPECS[i];
@@ -409,6 +428,8 @@ mod tests {
         exe.execute(); // STA
         exe.execute(); // INX
         exe.execute(); // DEY
+
+        exe.execute(); // BNE
 
         println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
