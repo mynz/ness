@@ -307,6 +307,14 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
+            Opcode::JMP => {
+                let d = match inst.operand {
+                    Operand::Absolute(v) => v,
+                    Operand::Indirect(v) => self.read_word(v),
+                    _ => unimplemented!(),
+                };
+                self.register.pc = d;
+            }
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
@@ -464,7 +472,40 @@ mod tests {
         exe.execute(); // LDY
         assert_eq!(exe.last_exec_inst.opcode, Opcode::LDY);
 
+        for _ in 0..0x0d {
+            exe.execute(); // LDA
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+            exe.execute(); // STA
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+            exe.execute(); // INX
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::INX);
+            exe.execute(); // DEY
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::DEY);
+            exe.execute(); // BNE
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::BNE);
+        }
 
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute(); // STA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+
+        // 無限ループ
+        for _ in 0..16 {
+            exe.execute(); // JMP
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
+        }
 
         println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }
