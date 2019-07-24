@@ -199,7 +199,9 @@ struct Executer {
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
     rom: Box<Rom>,
+
     last_exec_inst: Inst,
+    cycles: u32,
 }
 
 impl Executer {
@@ -257,7 +259,7 @@ impl Executer {
         self.register.pc = self.read_word(0xfffc);
     }
 
-    fn fetch_inst(&mut self) -> Inst {
+    fn fetch_inst(&mut self) -> (Inst, &'static InstSpec) {
         let pc = self.register.pc;
         let op = self.read_byte(pc);
         self.register.pc += 1;
@@ -277,7 +279,8 @@ impl Executer {
 
             self.register.pc += nrest as u16;
         }
-        Inst::decode(&mut bytes.as_ref(), inst_spec, pc)
+
+        (Inst::decode(&mut bytes.as_ref(), inst_spec, pc), inst_spec)
     }
 
     fn execute_inst(&mut self, inst: &Inst) {
@@ -367,13 +370,13 @@ impl Executer {
         self.last_exec_inst = *inst;
     }
 
-    fn execute(&mut self) {
-        // TODO
-        let inst = self.fetch_inst();
-
-        println!("xxx: inst {:#?}: ", inst);
-
+    fn execute(&mut self) -> u8 {
+        let (inst, spec) = self.fetch_inst();
+        //println!("xxx: inst {:#?}: ", inst);
         self.execute_inst(&inst);
+
+        self.cycles += spec.cycle as u32;
+        spec.cycle
     }
 }
 
