@@ -93,7 +93,7 @@ enum Operand {
 }
 
 #[derive(Debug)]
-enum ExtCycle {
+enum ExtCycles {
     Zero,
     One,
     OneOrTwo,
@@ -105,8 +105,8 @@ struct InstSpec {
     opcode: Opcode,
     operand: Operand,
     size: u8,
-    cycle: u8,
-    ext_cycle: ExtCycle,
+    cycles: u8,
+    ext_cycles: ExtCycles,
 }
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -375,8 +375,8 @@ impl Executer {
         //println!("xxx: inst {:#?}: ", inst);
         self.execute_inst(&inst);
 
-        self.cycles += spec.cycle as u32;
-        spec.cycle
+        self.cycles += spec.cycles as u32;
+        spec.cycles
     }
 }
 

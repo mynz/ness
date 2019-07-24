@@ -7,8 +7,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BRK,
         operand: Operand::Implied,
         size: 1,
-        cycle: 7,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 7,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 1
@@ -16,8 +16,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 2
@@ -25,8 +25,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 3
@@ -34,8 +34,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 4
@@ -43,8 +43,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 5
@@ -52,8 +52,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 6
@@ -61,8 +61,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ASL,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 7
@@ -70,8 +70,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 8
@@ -79,8 +79,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::PHP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 9
@@ -88,8 +88,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 10
@@ -97,8 +97,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ASL,
         operand: Operand::Accumulator,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 11
@@ -106,8 +106,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 12
@@ -115,8 +115,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 13
@@ -124,8 +124,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 14
@@ -133,8 +133,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ASL,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 15
@@ -142,8 +142,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 16
@@ -151,8 +151,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BPL,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 17
@@ -160,8 +160,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 18
@@ -169,8 +169,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 19
@@ -178,8 +178,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 20
@@ -187,8 +187,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 21
@@ -196,8 +196,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 22
@@ -205,8 +205,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ASL,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 23
@@ -214,8 +214,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 24
@@ -223,8 +223,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CLC,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 25
@@ -232,8 +232,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 26
@@ -241,8 +241,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 27
@@ -250,8 +250,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 28
@@ -259,8 +259,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 29
@@ -268,8 +268,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ORA,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 30
@@ -277,8 +277,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ASL,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 31
@@ -286,8 +286,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 32
@@ -295,8 +295,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::JSR,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 33
@@ -304,8 +304,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 34
@@ -313,8 +313,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 35
@@ -322,8 +322,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 36
@@ -331,8 +331,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BIT,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 37
@@ -340,8 +340,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 38
@@ -349,8 +349,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROL,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 39
@@ -358,8 +358,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 40
@@ -367,8 +367,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::PLP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 41
@@ -376,8 +376,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 42
@@ -385,8 +385,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROL,
         operand: Operand::Accumulator,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 43
@@ -394,8 +394,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 44
@@ -403,8 +403,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BIT,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 45
@@ -412,8 +412,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 46
@@ -421,8 +421,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROL,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 47
@@ -430,8 +430,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 48
@@ -439,8 +439,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BMI,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 49
@@ -448,8 +448,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 50
@@ -457,8 +457,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 51
@@ -466,8 +466,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 52
@@ -475,8 +475,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 53
@@ -484,8 +484,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 54
@@ -493,8 +493,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROL,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 55
@@ -502,8 +502,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 56
@@ -511,8 +511,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SEC,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 57
@@ -520,8 +520,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 58
@@ -529,8 +529,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 59
@@ -538,8 +538,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 60
@@ -547,8 +547,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 61
@@ -556,8 +556,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::AND,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 62
@@ -565,8 +565,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROL,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 63
@@ -574,8 +574,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 64
@@ -583,8 +583,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::RTI,
         operand: Operand::Implied,
         size: 1,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 65
@@ -592,8 +592,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 66
@@ -601,8 +601,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 67
@@ -610,8 +610,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 68
@@ -619,8 +619,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 69
@@ -628,8 +628,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 70
@@ -637,8 +637,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LSR,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 71
@@ -646,8 +646,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 72
@@ -655,8 +655,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::PHA,
         operand: Operand::Implied,
         size: 1,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 73
@@ -664,8 +664,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 74
@@ -673,8 +673,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LSR,
         operand: Operand::Accumulator,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 75
@@ -682,8 +682,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 76
@@ -691,8 +691,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::JMP,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 77
@@ -700,8 +700,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 78
@@ -709,8 +709,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LSR,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 79
@@ -718,8 +718,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 80
@@ -727,8 +727,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BVC,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 81
@@ -736,8 +736,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 82
@@ -745,8 +745,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 83
@@ -754,8 +754,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 84
@@ -763,8 +763,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 85
@@ -772,8 +772,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 86
@@ -781,8 +781,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LSR,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 87
@@ -790,8 +790,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 88
@@ -799,8 +799,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CLI,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 89
@@ -808,8 +808,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 90
@@ -817,8 +817,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 91
@@ -826,8 +826,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 92
@@ -835,8 +835,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 93
@@ -844,8 +844,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::EOR,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 94
@@ -853,8 +853,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LSR,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 95
@@ -862,8 +862,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 96
@@ -871,8 +871,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::RTS,
         operand: Operand::Implied,
         size: 1,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 97
@@ -880,8 +880,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 98
@@ -889,8 +889,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 99
@@ -898,8 +898,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 100
@@ -907,8 +907,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 101
@@ -916,8 +916,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 102
@@ -925,8 +925,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROR,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 103
@@ -934,8 +934,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 104
@@ -943,8 +943,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::PLA,
         operand: Operand::Implied,
         size: 1,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 105
@@ -952,8 +952,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 106
@@ -961,8 +961,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROR,
         operand: Operand::Accumulator,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 107
@@ -970,8 +970,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 108
@@ -979,8 +979,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::JMP,
         operand: Operand::Indirect(0),
         size: 3,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 109
@@ -988,8 +988,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 110
@@ -997,8 +997,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROR,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 111
@@ -1006,8 +1006,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 112
@@ -1015,8 +1015,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BVS,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 113
@@ -1024,8 +1024,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 114
@@ -1033,8 +1033,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 115
@@ -1042,8 +1042,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 116
@@ -1051,8 +1051,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 117
@@ -1060,8 +1060,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 118
@@ -1069,8 +1069,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROR,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 119
@@ -1078,8 +1078,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 120
@@ -1087,8 +1087,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SEI,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 121
@@ -1096,8 +1096,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 122
@@ -1105,8 +1105,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 123
@@ -1114,8 +1114,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 124
@@ -1123,8 +1123,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 125
@@ -1132,8 +1132,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ADC,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 126
@@ -1141,8 +1141,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::ROR,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 127
@@ -1150,8 +1150,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 128
@@ -1159,8 +1159,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 129
@@ -1168,8 +1168,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 130
@@ -1177,8 +1177,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 131
@@ -1186,8 +1186,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 132
@@ -1195,8 +1195,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STY,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 133
@@ -1204,8 +1204,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 134
@@ -1213,8 +1213,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STX,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 135
@@ -1222,8 +1222,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 136
@@ -1231,8 +1231,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEY,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 137
@@ -1240,8 +1240,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 138
@@ -1249,8 +1249,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TXA,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 139
@@ -1258,8 +1258,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 140
@@ -1267,8 +1267,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STY,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 141
@@ -1276,8 +1276,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 142
@@ -1285,8 +1285,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STX,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 143
@@ -1294,8 +1294,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 144
@@ -1303,8 +1303,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BCC,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 145
@@ -1312,8 +1312,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 146
@@ -1321,8 +1321,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 147
@@ -1330,8 +1330,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 148
@@ -1339,8 +1339,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STY,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 149
@@ -1348,8 +1348,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 150
@@ -1357,8 +1357,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STX,
         operand: Operand::ZeroPageY(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 151
@@ -1366,8 +1366,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 152
@@ -1375,8 +1375,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TYA,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 153
@@ -1384,8 +1384,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 154
@@ -1393,8 +1393,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TXS,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 155
@@ -1402,8 +1402,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 156
@@ -1411,8 +1411,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 157
@@ -1420,8 +1420,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::STA,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 158
@@ -1429,8 +1429,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 159
@@ -1438,8 +1438,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 160
@@ -1447,8 +1447,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDY,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 161
@@ -1456,8 +1456,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 162
@@ -1465,8 +1465,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDX,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 163
@@ -1474,8 +1474,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 164
@@ -1483,8 +1483,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDY,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 165
@@ -1492,8 +1492,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 166
@@ -1501,8 +1501,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDX,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 167
@@ -1510,8 +1510,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 168
@@ -1519,8 +1519,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TAY,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 169
@@ -1528,8 +1528,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 170
@@ -1537,8 +1537,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TAX,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 171
@@ -1546,8 +1546,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 172
@@ -1555,8 +1555,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDY,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 173
@@ -1564,8 +1564,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 174
@@ -1573,8 +1573,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDX,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 175
@@ -1582,8 +1582,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 176
@@ -1591,8 +1591,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BCS,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 177
@@ -1600,8 +1600,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 178
@@ -1609,8 +1609,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 179
@@ -1618,8 +1618,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 180
@@ -1627,8 +1627,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDY,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 181
@@ -1636,8 +1636,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 182
@@ -1645,8 +1645,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDX,
         operand: Operand::ZeroPageY(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 183
@@ -1654,8 +1654,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 184
@@ -1663,8 +1663,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CLV,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 185
@@ -1672,8 +1672,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 186
@@ -1681,8 +1681,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::TSX,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 187
@@ -1690,8 +1690,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 188
@@ -1699,8 +1699,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDY,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 189
@@ -1708,8 +1708,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDA,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 190
@@ -1717,8 +1717,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::LDX,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 191
@@ -1726,8 +1726,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 192
@@ -1735,8 +1735,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPY,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 193
@@ -1744,8 +1744,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 194
@@ -1753,8 +1753,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 195
@@ -1762,8 +1762,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 196
@@ -1771,8 +1771,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPY,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 197
@@ -1780,8 +1780,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 198
@@ -1789,8 +1789,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEC,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 199
@@ -1798,8 +1798,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 200
@@ -1807,8 +1807,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INY,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 201
@@ -1816,8 +1816,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 202
@@ -1825,8 +1825,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEX,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 203
@@ -1834,8 +1834,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 204
@@ -1843,8 +1843,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPY,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 205
@@ -1852,8 +1852,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 206
@@ -1861,8 +1861,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEC,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 207
@@ -1870,8 +1870,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 208
@@ -1879,8 +1879,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BNE,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 209
@@ -1888,8 +1888,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 210
@@ -1897,8 +1897,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 211
@@ -1906,8 +1906,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 212
@@ -1915,8 +1915,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 213
@@ -1924,8 +1924,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 214
@@ -1933,8 +1933,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEC,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 215
@@ -1942,8 +1942,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 216
@@ -1951,8 +1951,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CLD,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 217
@@ -1960,8 +1960,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 218
@@ -1969,8 +1969,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 219
@@ -1978,8 +1978,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 220
@@ -1987,8 +1987,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 221
@@ -1996,8 +1996,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CMP,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 222
@@ -2005,8 +2005,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::DEC,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 223
@@ -2014,8 +2014,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 224
@@ -2023,8 +2023,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPX,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 225
@@ -2032,8 +2032,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::IndirectX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 226
@@ -2041,8 +2041,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 227
@@ -2050,8 +2050,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 228
@@ -2059,8 +2059,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPX,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 229
@@ -2068,8 +2068,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 3,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 3,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 230
@@ -2077,8 +2077,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INC,
         operand: Operand::ZeroPage(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 5,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 231
@@ -2086,8 +2086,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 232
@@ -2095,8 +2095,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INX,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 233
@@ -2104,8 +2104,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::Immediate(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 234
@@ -2113,8 +2113,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 235
@@ -2122,8 +2122,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 236
@@ -2131,8 +2131,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::CPX,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 237
@@ -2140,8 +2140,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 238
@@ -2149,8 +2149,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INC,
         operand: Operand::Absolute(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 239
@@ -2158,8 +2158,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 240
@@ -2167,8 +2167,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::BEQ,
         operand: Operand::Relative(0),
         size: 2,
-        cycle: 2,
-        ext_cycle: ExtCycle::OneOrTwo,
+        cycles: 2,
+        ext_cycles: ExtCycles::OneOrTwo,
     },
     InstSpec {
         // 241
@@ -2176,8 +2176,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::IndirectY(0),
         size: 2,
-        cycle: 5,
-        ext_cycle: ExtCycle::One,
+        cycles: 5,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 242
@@ -2185,8 +2185,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 243
@@ -2194,8 +2194,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 244
@@ -2203,8 +2203,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 245
@@ -2212,8 +2212,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 4,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 4,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 246
@@ -2221,8 +2221,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INC,
         operand: Operand::ZeroPageX(0),
         size: 2,
-        cycle: 6,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 6,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 247
@@ -2230,8 +2230,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 248
@@ -2239,8 +2239,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SED,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 249
@@ -2248,8 +2248,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::AbsoluteY(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 250
@@ -2257,8 +2257,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 251
@@ -2266,8 +2266,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 252
@@ -2275,8 +2275,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 253
@@ -2284,8 +2284,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::SBC,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 4,
-        ext_cycle: ExtCycle::One,
+        cycles: 4,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 254
@@ -2293,8 +2293,8 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::INC,
         operand: Operand::AbsoluteX(0),
         size: 3,
-        cycle: 6,
-        ext_cycle: ExtCycle::One,
+        cycles: 6,
+        ext_cycles: ExtCycles::One,
     },
     InstSpec {
         // 255
@@ -2302,7 +2302,7 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         opcode: Opcode::NOP,
         operand: Operand::Implied,
         size: 1,
-        cycle: 2,
-        ext_cycle: ExtCycle::Zero,
+        cycles: 2,
+        ext_cycles: ExtCycles::Zero,
     },
 ];
