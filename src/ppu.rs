@@ -96,6 +96,14 @@ impl PpuUnit {
         }
     }
 
+    pub fn load_byte(&mut self, addr: u16) -> u8 {
+        panic!("yet to be implemented: {:x}", addr);
+    }
+
+    pub fn load_word(&mut self, addr: u16) -> u16 {
+        panic!("yet to be implemented: {:x}", addr);
+    }
+
     fn store_memory(&mut self, addr: u16, data: u8) {
         // solve mirror mapping
         let addr2 = if addr >= 0x3000 && addr <= 0x3eff {

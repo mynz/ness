@@ -213,16 +213,24 @@ impl Executer {
         self.rom = rom;
     }
 
-    fn read_byte(&self, addr: u16) -> u8 {
+    fn read_byte(&mut self, addr: u16) -> u8 {
+        if addr >= 0x2000 && addr < 0x4000 {
+            return self.ppu_unit.load_byte(addr);
+        }
+
         let word = self.read_word(addr);
         (word & 0x00ff) as u8
     }
 
-    fn read_word(&self, addr: u16) -> u16 {
+    fn read_word(&mut self, addr: u16) -> u16 {
         if addr <= 0x07ff {
             let mut cur = Cursor::new(&self.wram);
             cur.set_position(addr as u64);
             return cur.read_u16::<LittleEndian>().unwrap();
+        }
+
+        if addr >= 0x2000 && addr < 0x4000 {
+            return self.ppu_unit.load_word(addr);
         }
 
         // 0xffff まで有効
@@ -342,11 +350,14 @@ impl Executer {
             Opcode::LDA => {
                 let d = match inst.operand {
                     Operand::Immediate(v) => v,
-                    Operand::AbsoluteX(v) => {
-                        let addr = v + self.register.x as u16;
-                        self.read_byte(addr)
+                    Operand::Absolute(addr) => self.read_byte(addr),
+                    Operand::AbsoluteX(addr) => {
+                        self.read_byte(addr + self.register.x as u16)
                     }
-                    _ => unimplemented!(),
+                    Operand::AbsoluteY(addr) => {
+                        self.read_byte(addr + self.register.y as u16)
+                    }
+                    _ => panic!("no impl: {:#?}", inst.operand),
                 };
                 self.register.a = d;
                 self.register.p.zero = d == 0;
@@ -402,7 +413,26 @@ mod tests {
     }
 
     #[test]
-    fn test_executer() {
+    fn test_executer_01() {
+        let mut exe = Executer::new();
+        assert_eq!(0, exe.register.a);
+
+        let rom = Rom::load_image("static/roms/giko005.nes".to_string());
+        exe.set_rom(rom);
+
+        exe.hard_reset();
+
+        //let cycles_beg = exe.cycles;
+
+        assert_eq!(exe.register.pc, 0x8000);
+        exe.execute(); // LDA
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
+
+        println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
+    }
+
+    #[test]
+    fn test_executer_00() {
         let mut exe = Executer::new();
         assert_eq!(0, exe.register.a);
 
