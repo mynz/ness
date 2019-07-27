@@ -16,6 +16,12 @@ fn u8_to_i16(u: u8) -> i16 {
     u8_to_i8(u) as i16
 }
 
+fn add_rel_to_pc(pc: u16, r: u8) -> u16 {
+    let base = pc as i16;
+    let rr = u8_to_i8(r) as i16;
+    (base + rr) as u16
+}
+
 impl Register {}
 
 #[derive(Debug, PartialEq, Copy, Clone)]
@@ -300,11 +306,18 @@ impl Executer {
                 if !self.register.p.zero {
                     let r = match inst.operand {
                         Operand::Relative(r) => r,
-                        _ => unimplemented!(),
+                        _ => unreachable!(),
                     };
-                    let base = self.register.pc as i16;
-                    let rr = u8_to_i8(r) as i16;
-                    self.register.pc = (base + rr) as u16;
+                    self.register.pc = add_rel_to_pc(self.register.pc, r);
+                }
+            }
+            Opcode::BPL => {
+                if !self.register.p.negative {
+                    let r = match inst.operand {
+                        Operand::Relative(v) => v,
+                        _ => unreachable!(),
+                    };
+                    self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
             }
             Opcode::DEY => {
@@ -429,7 +442,11 @@ mod tests {
 
         assert_eq!(exe.register.pc, 0x8000);
         exe.execute(); // LDA
-        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+
+        exe.execute(); // BPL
+
+        // TODO
 
         println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
     }

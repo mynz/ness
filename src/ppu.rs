@@ -11,7 +11,9 @@ pub struct PpuRegister {
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
 
-    // ppuaddr の2会書き込み用のトグルフラグ
+    // for scroll
+    toggle_ppuscroll: bool,
+    // for addr
     toggle_ppuaddr: bool,
 }
 
@@ -97,6 +99,17 @@ impl PpuUnit {
     }
 
     pub fn load_byte(&mut self, addr: u16) -> u8 {
+        match addr {
+            0x2002 => {
+                let r = self.register.status;
+                self.register.status &= 0x80;
+                self.register.toggle_ppuaddr = false;
+                self.register.toggle_ppuscroll = false;
+                return r;
+            }
+            _ => {}
+        }
+
         panic!("yet to be implemented: {:x}", addr);
     }
 
