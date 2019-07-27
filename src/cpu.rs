@@ -216,16 +216,16 @@ impl Executer {
         self.rom = rom;
     }
 
-    fn read_byte(&mut self, addr: u16) -> u8 {
+    fn load_byte(&mut self, addr: u16) -> u8 {
         if addr >= 0x2000 && addr < 0x4000 {
             return self.ppu_unit.load_byte(addr);
         }
 
-        let word = self.read_word(addr);
+        let word = self.load_word(addr);
         (word & 0x00ff) as u8
     }
 
-    fn read_word(&mut self, addr: u16) -> u16 {
+    fn load_word(&mut self, addr: u16) -> u16 {
         if addr <= 0x07ff {
             let mut cur = Cursor::new(&self.wram);
             cur.set_position(addr as u64);
@@ -256,7 +256,7 @@ impl Executer {
         return 0;
     }
 
-    fn write_byte(&mut self, addr: u16, data: u8) {
+    fn store_byte(&mut self, addr: u16, data: u8) {
         if addr >= 0x2000 && addr < 0x2008 {
             let a = addr - 0x2000;
             self.ppu_unit.store_ppu_register(a, data);
@@ -267,12 +267,12 @@ impl Executer {
 
     fn hard_reset(&mut self) {
         self.register = Register::default();
-        self.register.pc = self.read_word(0xfffc);
+        self.register.pc = self.load_word(0xfffc);
     }
 
     fn fetch_inst(&mut self) -> (Inst, &'static InstSpec) {
         let pc = self.register.pc;
-        let op = self.read_byte(pc);
+        let op = self.load_byte(pc);
         self.register.pc += 1;
 
         let inst_spec = &INST_SPECS[op as usize];
@@ -281,10 +281,10 @@ impl Executer {
         {
             let nrest = inst_spec.size - 1;
             if nrest == 1 {
-                let b = self.read_byte(self.register.pc);
+                let b = self.load_byte(self.register.pc);
                 bytes[0] = b;
             } else if nrest == 2 {
-                let w = self.read_word(self.register.pc);
+                let w = self.load_word(self.register.pc);
                 bytes.as_mut().write_u16::<LittleEndian>(w).unwrap();
             };
 
@@ -324,7 +324,7 @@ impl Executer {
             Opcode::JMP => {
                 let d = match inst.operand {
                     Operand::Absolute(v) => v,
-                    Operand::Indirect(v) => self.read_word(v),
+                    Operand::Indirect(v) => self.load_word(v),
                     _ => unimplemented!(),
                 };
                 self.register.pc = d;
@@ -353,12 +353,12 @@ impl Executer {
             Opcode::LDA => {
                 let d = match inst.operand {
                     Operand::Immediate(v) => v,
-                    Operand::Absolute(addr) => self.read_byte(addr),
+                    Operand::Absolute(addr) => self.load_byte(addr),
                     Operand::AbsoluteX(addr) => {
-                        self.read_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
+                        self.load_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
                     }
                     Operand::AbsoluteY(addr) => {
-                        self.read_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
+                        self.load_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
                     }
                     _ => panic!("no impl: {:#?}", inst.operand),
                 };
@@ -371,7 +371,7 @@ impl Executer {
                     Operand::Absolute(a) => a,
                     _ => unimplemented!(),
                 };
-                self.write_byte(addr, self.register.a);
+                self.store_byte(addr, self.register.a);
             }
             Opcode::TXS => {
                 self.register.s = self.register.x;
