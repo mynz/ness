@@ -12,6 +12,9 @@ use crate::rom::Rom;
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
 }
+fn u8_to_i16(u: u8) -> i16 {
+    u8_to_i8(u) as i16
+}
 
 impl Register {}
 
@@ -352,10 +355,10 @@ impl Executer {
                     Operand::Immediate(v) => v,
                     Operand::Absolute(addr) => self.read_byte(addr),
                     Operand::AbsoluteX(addr) => {
-                        self.read_byte(addr + self.register.x as u16)
+                        self.read_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
                     }
                     Operand::AbsoluteY(addr) => {
-                        self.read_byte(addr + self.register.y as u16)
+                        self.read_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
                     }
                     _ => panic!("no impl: {:#?}", inst.operand),
                 };
