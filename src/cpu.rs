@@ -445,6 +445,16 @@ mod tests {
         assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
 
         exe.execute(); // BPL
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::BPL);
+
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
 
         // TODO
 
