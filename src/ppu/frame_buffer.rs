@@ -54,5 +54,4 @@ mod tests {
         fb.set_pixel(2, 1, &RGB(0, 0xff, 0xff));
         fb.save_in_png("test_image00.png");
     }
-
 }
