@@ -1,10 +1,10 @@
-extern crate rustness;
 extern crate quicksilver;
+extern crate rustness;
 
 use quicksilver::{
-    Result,
     geom::Vector,
-    lifecycle::{State, run},
+    lifecycle::{run, State},
+    Result,
 };
 
 struct Screen;
