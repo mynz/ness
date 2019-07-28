@@ -1,10 +1,16 @@
 #![allow(dead_code)]
 
 #[derive(Default)]
+struct Status {
+    vblank: bool,
+    sprite_hit: bool,
+}
+
+#[derive(Default)]
 pub struct PpuRegister {
     pub ctrl: u8,     // w
     pub mask: u8,     // w
-    pub status: u8,   // r
+    status: Status,   // r
     pub oamaddr: u8,  // w
     pub oamdata: u8,  // rw
     pub scroll: u8,   // w
@@ -99,8 +105,16 @@ impl PpuUnit {
     pub fn load_byte(&mut self, addr: u16) -> u8 {
         match addr {
             0x2002 => {
-                let r = self.register.status;
-                self.register.status &= 0x80;
+                let mut r = 0;
+                if self.register.status.vblank {
+                    r |= 0x80
+                }
+                if self.register.status.sprite_hit {
+                    r |= 0x40
+                }
+
+                self.register.status.vblank = false;
+
                 self.register.toggle_ppuaddr = false;
                 self.register.toggle_ppuscroll = false;
                 return r;
