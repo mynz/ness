@@ -114,7 +114,6 @@ impl PpuUnit {
                 }
 
                 self.reg.status.vblank = false;
-
                 self.reg.toggle_ppuaddr = false;
                 self.reg.toggle_ppuscroll = false;
                 return r;
@@ -169,5 +168,14 @@ impl PpuUnit {
 impl Default for PpuUnit {
     fn default() -> Self {
         Self::new()
+    }
+}
+
+#[cfg(test)]
+mod tests {
+    //use super::*;
+
+    fn test_ppu() {
+        assert!(true);
     }
 }
