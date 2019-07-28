@@ -1,3 +1,4 @@
 /target
+/screenshot
 **/*.rs.bk
 tmp

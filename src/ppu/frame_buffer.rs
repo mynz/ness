@@ -52,6 +52,6 @@ mod tests {
         fb.set_pixel(0, 1, &RGB(0, 0xff, 0));
         fb.set_pixel(1, 1, &RGB(0, 0, 0xff));
         fb.set_pixel(2, 1, &RGB(0, 0xff, 0xff));
-        fb.save_in_png("test_image00.png");
+        fb.save_in_png("screenshot/ss_test00.png");
     }
 }
