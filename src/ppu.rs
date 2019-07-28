@@ -11,10 +11,8 @@ pub struct PpuRegister {
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
 
-    // for scroll
-    toggle_ppuscroll: bool,
-    // for addr
-    toggle_ppuaddr: bool,
+    toggle_ppuscroll: bool, // for scroll
+    toggle_ppuaddr: bool,   // for addr
 }
 
 impl PpuRegister {}
