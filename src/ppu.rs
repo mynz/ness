@@ -24,7 +24,7 @@ pub struct PpuRegister {
 impl PpuRegister {}
 
 pub struct PpuUnit {
-    register: PpuRegister,
+    reg: PpuRegister,
     pattern_table0: Box<[u8]>,  // 0x1000 byte
     name_table0: Box<[u8]>,     // 0x03c0 byte
     attr_table0: Box<[u8]>,     // 0x0040 byte
@@ -35,7 +35,7 @@ pub struct PpuUnit {
 
 impl PpuUnit {
     pub fn new() -> PpuUnit {
-        let register = PpuRegister::default();
+        let reg = PpuRegister::default();
         let pattern_table0 = Box::new([0_u8; 0x1000]);
         let name_table0 = Box::new([0_u8; 0x03c0]);
         let attr_table0 = Box::new([0_u8; 0x0040]);
@@ -43,7 +43,7 @@ impl PpuUnit {
         let sprite_palette = [0_u8; 0x10];
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
         PpuUnit {
-            register,
+            reg,
             pattern_table0,
             name_table0,
             attr_table0,
@@ -54,7 +54,7 @@ impl PpuUnit {
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
-        &self.register
+        &self.reg
     }
 
     pub fn store_ppu_register(&mut self, addr: u16, data: u8) {
@@ -62,39 +62,39 @@ impl PpuUnit {
 
         match addr {
             0 => {
-                self.register.ctrl = data;
+                self.reg.ctrl = data;
             }
             1 => {
-                self.register.mask = data;
+                self.reg.mask = data;
             }
             2 => {
                 panic!("Try to write read only register on ppu");
             }
             3 => {
-                self.register.oamaddr = data;
+                self.reg.oamaddr = data;
             }
             4 => {
-                self.register.oamdata = data;
+                self.reg.oamdata = data;
             }
             5 => {
-                self.register.scroll = data;
+                self.reg.scroll = data;
             }
             6 => {
                 let w = data as u16;
-                if !self.register.toggle_ppuaddr {
-                    self.register.ppuaddr = (self.register.ppuaddr & 0xff) | w << 8;
+                if !self.reg.toggle_ppuaddr {
+                    self.reg.ppuaddr = (self.reg.ppuaddr & 0xff) | w << 8;
                 } else {
-                    self.register.ppuaddr = (self.register.ppuaddr & 0xff00) | w;
+                    self.reg.ppuaddr = (self.reg.ppuaddr & 0xff00) | w;
                 }
-                self.register.toggle_ppuaddr = !self.register.toggle_ppuaddr;
+                self.reg.toggle_ppuaddr = !self.reg.toggle_ppuaddr;
             }
             7 => {
-                let addr = self.register.ppuaddr;
+                let addr = self.reg.ppuaddr;
                 self.store_memory(addr, data);
 
                 // アドレスのインクリメント
-                let inc = if self.register.ctrl & 0x4 == 0 { 1 } else { 32 };
-                self.register.ppuaddr += inc;
+                let inc = if self.reg.ctrl & 0x4 == 0 { 1 } else { 32 };
+                self.reg.ppuaddr += inc;
             }
             _ => {
                 assert!(false, "yet to be implemented");
@@ -106,17 +106,17 @@ impl PpuUnit {
         match addr {
             0x2002 => {
                 let mut r = 0;
-                if self.register.status.vblank {
+                if self.reg.status.vblank {
                     r |= 0x80
                 }
-                if self.register.status.sprite_hit {
+                if self.reg.status.sprite_hit {
                     r |= 0x40
                 }
 
-                self.register.status.vblank = false;
+                self.reg.status.vblank = false;
 
-                self.register.toggle_ppuaddr = false;
-                self.register.toggle_ppuscroll = false;
+                self.reg.toggle_ppuaddr = false;
+                self.reg.toggle_ppuscroll = false;
                 return r;
             }
             _ => {}
