@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+mod frame_buffer;
+
 #[derive(Default)]
 struct Status {
     vblank: bool,
