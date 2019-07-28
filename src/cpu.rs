@@ -429,7 +429,7 @@ mod tests {
     }
 
     #[test]
-    fn test_executer_01() {
+    fn test_giko005() {
         let mut exe = Executer::new();
         assert_eq!(0, exe.register.a);
 
@@ -438,8 +438,6 @@ mod tests {
 
         exe.hard_reset();
 
-        //let cycles_beg = exe.cycles;
-
         assert_eq!(exe.register.pc, 0x8000);
         exe.execute(); // LDA
         assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
@@ -447,18 +445,7 @@ mod tests {
         exe.execute(); // BPL
         assert_eq!(exe.last_exec_inst.opcode, Opcode::BPL);
 
-        exe.execute();
-        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
-
-        exe.execute();
-        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
-
-        exe.execute();
-        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
-
-        // TODO
-
-        println!("xxx: last_exec_inst: {:#?}", exe.last_exec_inst);
+        // XXX: ここから先はVBLANKが有効にならないと実行されない.
     }
 
     #[test]
