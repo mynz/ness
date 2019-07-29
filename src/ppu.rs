@@ -6,7 +6,7 @@ const WIDTH: u32 = 256;
 const HEIGHT: u32 = 240 + 20;
 
 // 240 ライン目からVBLANK
-const VBLANK_AHEAD: u32 = 240;
+const VBLANK_AHEAD: u32 = 241;
 
 // １ラインに掛かるサイクル数
 const LINE_CYCLES: u32 = 341;
@@ -74,6 +74,8 @@ impl PpuUnit {
 
     pub fn execute(&mut self, cycles: u32) {
         // TODO
+        assert!(cycles <= LINE_CYCLES);
+
         self.cur_exec_cycles += cycles;
 
         if self.rest_cycles_line > cycles {
@@ -83,6 +85,7 @@ impl PpuUnit {
             // ライン処理の終了を検知.
             let delta = cycles - self.rest_cycles_line;
             self.rest_cycles_line = LINE_CYCLES - delta;
+
             // ラインを進める
             self.cur_line_exec += 1;
             if self.cur_line_exec == HEIGHT {
@@ -90,8 +93,9 @@ impl PpuUnit {
                 self.cur_line_exec = 0;
             }
         }
-        // VBLANKに入っているか.
-        self.reg.status.vblank = self.cur_line_exec >= VBLANK_AHEAD;
+        // 241ラインからVBLANK
+        // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
+        self.reg.status.vblank = self.cur_line_exec == VBLANK_AHEAD;
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
@@ -214,9 +218,24 @@ impl Default for PpuUnit {
 
 #[cfg(test)]
 mod tests {
-    //use super::*;
+    use super::*;
 
     fn test_ppu() {
         assert!(true);
+    }
+
+    #[test]
+    fn test_vblank() {
+        let mut ppu = PpuUnit::new();
+        let mut count = 0;
+        loop {
+            count += 1;
+            ppu.execute(LINE_CYCLES);
+            if ppu.reg.status.vblank {
+                break;
+            }
+        }
+        assert!(true);
+        assert_eq!(count, 241);
     }
 }
