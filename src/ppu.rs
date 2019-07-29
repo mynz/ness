@@ -2,6 +2,15 @@
 
 mod frame_buffer;
 
+const WIDTH: u32 = 256;
+const HEIGHT: u32 = 240 + 20;
+
+// 240 ライン目からVBLANK
+const VBLANK_AHEAD: u32 = 240;
+
+// １ラインに掛かるサイクル数
+const LINE_CYCLES: u32 = 341;
+
 #[derive(Default)]
 struct Status {
     vblank: bool,
@@ -33,6 +42,10 @@ pub struct PpuUnit {
     bg_palette: [u8; 0x10],     // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
     vram: Box<[u8]>,            // 0x2000 byte
+
+    cur_exec_cycles: u32,
+    rest_cycles_line: u32,
+    cur_line_exec: u32,
 }
 
 impl PpuUnit {
@@ -52,7 +65,33 @@ impl PpuUnit {
             bg_palette,
             sprite_palette,
             vram,
+
+            cur_exec_cycles: 0,
+            rest_cycles_line: LINE_CYCLES,
+            cur_line_exec: 0,
         }
+    }
+
+    pub fn execute(&mut self, cycles: u32) {
+        // TODO
+        self.cur_exec_cycles += cycles;
+
+        if self.rest_cycles_line > cycles {
+            // まだラインの処理中.
+            self.rest_cycles_line -= cycles;
+        } else {
+            // ライン処理の終了を検知.
+            let delta = cycles - self.rest_cycles_line;
+            self.rest_cycles_line = LINE_CYCLES - delta;
+            // ラインを進める
+            self.cur_line_exec += 1;
+            if self.cur_line_exec == HEIGHT {
+                // ライン0へ折り返す.
+                self.cur_line_exec = 0;
+            }
+        }
+        // VBLANKに入っているか.
+        self.reg.status.vblank = self.cur_line_exec >= VBLANK_AHEAD;
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
