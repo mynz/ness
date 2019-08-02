@@ -402,7 +402,11 @@ impl Executer {
         //println!("xxx: inst {:#?}: ", inst);
         self.execute_inst(&inst);
 
-        self.cycles += spec.cycles as u32;
+        // PPUは3倍で進む
+        let cycles_delta = spec.cycles as u32;
+        self.ppu_unit.execute(3 * cycles_delta);
+
+        self.cycles += cycles_delta;
         spec.cycles
     }
 }
@@ -438,14 +442,44 @@ mod tests {
 
         exe.hard_reset();
 
-        assert_eq!(exe.register.pc, 0x8000);
-        exe.execute(); // LDA
+        let mut loop_count = 0;
+        loop {
+            exe.execute(); // LDA
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+
+            exe.execute(); // BPL
+            assert_eq!(exe.last_exec_inst.opcode, Opcode::BPL);
+
+            //println!("pc: {}", exe.register.pc);
+            if exe.register.pc != 32768 {
+                break;
+            }
+            loop_count += 1;
+        }
+        println!("break loop: loop_count: {}", loop_count);
+
+        exe.execute();
         assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
 
-        exe.execute(); // BPL
-        assert_eq!(exe.last_exec_inst.opcode, Opcode::BPL);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDX);
 
-        // XXX: ここから先はVBLANKが有効にならないと実行されない.
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
+
+        // TODO
     }
 
     #[test]
