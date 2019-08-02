@@ -9,7 +9,7 @@ const HEIGHT: u32 = 240 + 20;
 const VBLANK_AHEAD: u32 = 241;
 
 // １ラインに掛かるサイクル数
-const LINE_CYCLES: u32 = 341;
+const CYCLES_PER_LINE: u32 = 341;
 
 #[derive(Default)]
 struct Status {
@@ -67,14 +67,17 @@ impl PpuUnit {
             vram,
 
             cur_exec_cycles: 0,
-            rest_cycles_line: LINE_CYCLES,
+            rest_cycles_line: CYCLES_PER_LINE,
             cur_line_exec: 0,
         }
     }
 
     pub fn execute(&mut self, cycles: u32) {
+        // 1 frame = 341 * 262 = 89342 PPU cycles
+        // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
+
         // TODO
-        assert!(cycles <= LINE_CYCLES);
+        assert!(cycles <= CYCLES_PER_LINE);
 
         self.cur_exec_cycles += cycles;
 
@@ -84,18 +87,17 @@ impl PpuUnit {
         } else {
             // ライン処理の終了を検知.
             let delta = cycles - self.rest_cycles_line;
-            self.rest_cycles_line = LINE_CYCLES - delta;
+            self.rest_cycles_line = CYCLES_PER_LINE - delta;
 
             // ラインを進める
             self.cur_line_exec += 1;
-            if self.cur_line_exec == HEIGHT {
+            if self.cur_line_exec == 262 {
                 // ライン0へ折り返す.
                 self.cur_line_exec = 0;
             }
         }
         // 241ラインからVBLANK
-        // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
-        self.reg.status.vblank = self.cur_line_exec == VBLANK_AHEAD;
+        self.reg.status.vblank = self.cur_line_exec == 241;
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
@@ -225,17 +227,35 @@ mod tests {
     }
 
     #[test]
-    fn test_vblank() {
+    fn test_vblank0() {
         let mut ppu = PpuUnit::new();
         let mut count = 0;
         loop {
             count += 1;
-            ppu.execute(LINE_CYCLES);
+            ppu.execute(CYCLES_PER_LINE);
             if ppu.reg.status.vblank {
                 break;
             }
         }
         assert!(true);
         assert_eq!(count, 241);
+    }
+
+    #[test]
+    fn test_vblank1() {
+        let mut ppu = PpuUnit::new();
+        let mut cycles = 0;
+        let mut count = 0;
+        for _ in 0..262 {
+            ppu.execute(CYCLES_PER_LINE);
+            count += 1;
+            cycles += CYCLES_PER_LINE;
+        }
+        assert!(true);
+        assert_eq!(count, 262);
+        assert_eq!(cycles, 89342);
+
+        assert_eq!(ppu.cur_line_exec, 0);
+        println!("cur_line_exec: {}", ppu.cur_line_exec);
     }
 }
