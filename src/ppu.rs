@@ -43,9 +43,9 @@ pub struct PpuUnit {
     sprite_palette: [u8; 0x10], // 0x0010 byte
     vram: Box<[u8]>,            // 0x2000 byte
 
-    cur_exec_cycles: u32,
+    cur_exec_cycles: u32, // x
+    cur_line_exec: u32,   // y
     rest_cycles_line: u32,
-    cur_line_exec: u32,
 }
 
 impl PpuUnit {
@@ -67,9 +67,13 @@ impl PpuUnit {
             vram,
 
             cur_exec_cycles: 0,
-            rest_cycles_line: CYCLES_PER_LINE,
             cur_line_exec: 0,
+            rest_cycles_line: CYCLES_PER_LINE,
         }
+    }
+
+    pub fn get_cur_exec_pos(&self) -> (u32, u32) {
+        (self.cur_exec_cycles, self.cur_line_exec)
     }
 
     pub fn execute(&mut self, cycles: u32) {
@@ -79,7 +83,7 @@ impl PpuUnit {
         // TODO
         assert!(cycles <= CYCLES_PER_LINE);
 
-        self.cur_exec_cycles += cycles;
+        self.cur_exec_cycles = (self.cur_exec_cycles + cycles) % CYCLES_PER_LINE;
 
         if self.rest_cycles_line > cycles {
             // まだラインの処理中.
@@ -255,7 +259,7 @@ mod tests {
         assert_eq!(count, 262);
         assert_eq!(cycles, 89342);
 
-        assert_eq!(ppu.cur_line_exec, 0);
-        println!("cur_line_exec: {}", ppu.cur_line_exec);
+        let pos = ppu.get_cur_exec_pos();
+        assert_eq!(pos, (0, 0));
     }
 }
