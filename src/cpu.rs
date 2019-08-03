@@ -497,10 +497,19 @@ mod tests {
         exe.execute();
         assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
 
-        // TODO
-        for _ in 0..10 {
+        // 最後に JMP でループするまで回す
+        loop {
             exe.execute();
+            if exe.last_exec_inst.pc == 32834 {
+                assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
+                break;
+            }
+            //println!("pc: {:#?}", exe.last_exec_inst);
         }
+
+        // もう一度､ JMP を確認する
+        exe.execute();
+        assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
     }
 
     #[test]
