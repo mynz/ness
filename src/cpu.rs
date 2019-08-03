@@ -320,6 +320,20 @@ impl Executer {
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
             }
+            Opcode::CPX => {
+                let m = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    Operand::ZeroPage(v) => self.load_byte(v as u16),
+                    Operand::Absolute(v) => self.load_byte(v),
+                    _ => unreachable!(),
+                };
+
+                let s = self.register.x;
+
+                self.register.p.zero = s == m;
+                self.register.p.negative = s < m;
+                self.register.p.carry = s >= m;
+            }
             Opcode::DEY => {
                 let s = self.register.y;
                 let d = if s == 0 { 0xff } else { s - 1 };
@@ -480,6 +494,9 @@ mod tests {
         assert_eq!(exe.last_exec_inst.opcode, Opcode::STA);
 
         // TODO
+        for _ in 0..10 {
+            exe.execute();
+        }
     }
 
     #[test]
