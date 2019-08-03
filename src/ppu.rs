@@ -30,18 +30,19 @@ pub struct PpuRegister {
 
     toggle_ppuscroll: bool, // for scroll
     toggle_ppuaddr: bool,   // for addr
+    oamdata_counter: u8,    // [0-3] for oamdata
 }
 
 impl PpuRegister {}
 
 pub struct PpuUnit {
     reg: PpuRegister,
-    pattern_table0: Box<[u8]>,  // 0x1000 byte
-    name_table0: Box<[u8]>,     // 0x03c0 byte
-    attr_table0: Box<[u8]>,     // 0x0040 byte
-    bg_palette: [u8; 0x10],     // 0x0010 byte
+    pattern_table0: Box<[u8]>, // 0x1000 byte (4kb), from 0x0000, スプライト用パターンテーブル
+    name_table0: Box<[u8]>,    // 0x03c0 byte
+    attr_table0: Box<[u8]>,    // 0x0040 byte
+    bg_palette: [u8; 0x10],    // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
-    vram: Box<[u8]>,            // 0x2000 byte
+    vram: Box<[u8]>,           // 0x2000 byte
 
     cur_exec_cycles: u32, // x
     cur_line_exec: u32,   // y
