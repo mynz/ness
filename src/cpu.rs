@@ -264,8 +264,7 @@ impl Executer {
 
     fn store_byte(&mut self, addr: u16, data: u8) {
         if addr >= 0x2000 && addr < 0x2008 {
-            let a = addr - 0x2000;
-            self.ppu_unit.store_ppu_register(a, data);
+            self.ppu_unit.store_from_cpu(addr, data);
             return;
         }
         assert!(false, "yet to be implemented");

@@ -108,29 +108,29 @@ impl PpuUnit {
         &self.reg
     }
 
-    pub fn store_ppu_register(&mut self, addr: u16, data: u8) {
-        //println!("xxx store_ppu_register: addr: {}, data: {}", addr, data);
+    pub fn store_from_cpu(&mut self, addr: u16, data: u8) {
+        //println!("xxx store_from_cpu: addr: {}, data: {}", addr, data);
 
         match addr {
-            0 => {
+            0x2000 => {
                 self.reg.ctrl = data;
             }
-            1 => {
+            0x2001 => {
                 self.reg.mask = data;
             }
-            2 => {
+            0x2002 => {
                 panic!("Try to write read only register on ppu");
             }
-            3 => {
+            0x2003 => {
                 self.reg.oamaddr = data;
             }
-            4 => {
+            0x2004 => {
                 self.reg.oamdata = data;
             }
-            5 => {
+            0x2005 => {
                 self.reg.scroll = data;
             }
-            6 => {
+            0x2006 => {
                 let w = data as u16;
                 if !self.reg.toggle_ppuaddr {
                     self.reg.ppuaddr = (self.reg.ppuaddr & 0xff) | w << 8;
@@ -139,9 +139,9 @@ impl PpuUnit {
                 }
                 self.reg.toggle_ppuaddr = !self.reg.toggle_ppuaddr;
             }
-            7 => {
-                let addr = self.reg.ppuaddr;
-                self.store_memory(addr, data);
+            0x2007 => {
+                let ppuaddr = self.reg.ppuaddr;
+                self.store_memory(ppuaddr, data);
 
                 // アドレスのインクリメント
                 let inc = if self.reg.ctrl & 0x4 == 0 { 1 } else { 32 };
@@ -169,10 +169,12 @@ impl PpuUnit {
                 self.reg.toggle_ppuscroll = false;
                 return r;
             }
-            _ => {}
+            _ => {
+                panic!("yet to implement ppu addr: {}", addr);
+            }
         }
 
-        panic!("yet to be implemented: {:x}", addr);
+        //panic!("yet to be implemented: {:x}", addr);
     }
 
     pub fn load_word(&mut self, addr: u16) -> u16 {
