@@ -320,7 +320,7 @@ impl Executer {
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
             }
-            Opcode::CPX => {
+            Opcode::CPX | Opcode::CPY => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
                     Operand::ZeroPage(v) => self.load_byte(v as u16),
@@ -328,7 +328,11 @@ impl Executer {
                     _ => unreachable!(),
                 };
 
-                let s = self.register.x;
+                let s = match inst.opcode {
+                    Opcode::CPX => self.register.x,
+                    Opcode::CPY => self.register.y,
+                    _ => unreachable!(),
+                };
 
                 self.register.p.zero = s == m;
                 self.register.p.negative = s < m;
