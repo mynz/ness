@@ -259,5 +259,4 @@ fn test_render_bg() {
         println!("xxx: render[{}]: {:#?}", i, exe.last_exec_inst);
     }
     assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
-
 }

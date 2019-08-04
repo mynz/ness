@@ -26,7 +26,7 @@ impl FrameBuffer {
         self.buf[p + 2] = c.2;
     }
 
-    fn save_in_png<P: AsRef<Path>>(&self, path: P) {
+    fn save_as_png<P: AsRef<Path>>(&self, path: P) {
         image::save_buffer(path, &self.buf, self.w, self.h, image::RGB(8)).unwrap();
     }
 }
@@ -44,7 +44,7 @@ mod tests {
     }
 
     #[test]
-    fn test_save_in_png() {
+    fn test_save_as_png() {
         let mut fb = FrameBuffer::new(32, 24);
         fb.set_pixel(0, 0, &RGB(0xff, 0, 0));
         fb.set_pixel(1, 0, &RGB(0xff, 0, 0));
@@ -52,6 +52,6 @@ mod tests {
         fb.set_pixel(0, 1, &RGB(0, 0xff, 0));
         fb.set_pixel(1, 1, &RGB(0, 0, 0xff));
         fb.set_pixel(2, 1, &RGB(0, 0xff, 0xff));
-        fb.save_in_png("screenshot/ss_test00.png");
+        fb.save_as_png("screenshot/ss_test00.png");
     }
 }
