@@ -9,3 +9,8 @@ fn test_integration_sample() {
     let r = PpuRegister::default();
     assert_eq!(r.ctrl, PpuRegister::default().ctrl);
 }
+
+#[test]
+fn test_render_bg() {
+    assert!(true);
+}
