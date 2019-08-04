@@ -212,8 +212,6 @@ fn test_cpu() {
     let prg = rom.get_prg();
     assert_eq!(rom.get_bytes_of_prg(), prg.len());
 
-    println!("prog len: {}", prg.len());
-
     let mut cur = std::io::Cursor::new(prg);
 
     let expect_insts = &[
@@ -236,16 +234,14 @@ fn test_cpu() {
         (Opcode::BNE, Operand::Relative(246)),
     ];
 
-    for i in 0..17 {
+    for (i, item) in expect_insts.into_iter().enumerate() {
         let op = cur.read_u8().unwrap();
         let inst_spec = &INST_SPECS[op as usize];
         let pc = i as u16; // dummy for pc
         let inst = Inst::decode(&mut cur, inst_spec, pc);
 
-        if i < expect_insts.len() {
-            assert_eq!(inst.opcode, expect_insts[i].0);
-            assert_eq!(inst.operand, expect_insts[i].1);
-        }
+        assert_eq!(inst.opcode, item.0);
+        assert_eq!(inst.operand, item.1);
     }
 }
 
