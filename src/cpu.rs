@@ -203,7 +203,7 @@ struct Register {
 }
 
 #[derive(Default)]
-struct Executer {
+pub struct Executer {
     register: Register,
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
@@ -214,11 +214,11 @@ struct Executer {
 }
 
 impl Executer {
-    fn new() -> Self {
+    pub fn new() -> Self {
         Executer::default()
     }
 
-    fn set_rom(&mut self, rom: Box<Rom>) {
+    pub fn set_rom(&mut self, rom: Box<Rom>) {
         self.rom = rom;
     }
 
@@ -270,7 +270,7 @@ impl Executer {
         assert!(false, "yet to be implemented");
     }
 
-    fn hard_reset(&mut self) {
+    pub fn hard_reset(&mut self) {
         self.register = Register::default();
         self.register.pc = self.load_word(0xfffc);
     }
@@ -414,7 +414,7 @@ impl Executer {
         self.last_exec_inst = *inst;
     }
 
-    fn execute(&mut self) -> u8 {
+    pub fn execute(&mut self) -> u8 {
         let (inst, spec) = self.fetch_inst();
         //println!("xxx: inst {:#?}: ", inst);
         self.execute_inst(&inst);
