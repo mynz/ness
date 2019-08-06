@@ -26,7 +26,7 @@ impl FrameBuffer {
         self.buf[p + 2] = c.2;
     }
 
-    fn save_as_png<P: AsRef<Path>>(&self, path: P) {
+    pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
         image::save_buffer(path, &self.buf, self.w, self.h, image::RGB(8)).unwrap();
     }
 }

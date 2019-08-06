@@ -2,6 +2,7 @@
 
 mod frame_buffer;
 
+use std::path::Path;
 use crate::color_palette::COLOR_PALETTE;
 use frame_buffer::FrameBuffer;
 
@@ -279,6 +280,10 @@ impl PpuUnit {
                 }
             }
         }
+    }
+
+    pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
+        self.frame_buffer.save_as_png(path);
     }
 }
 

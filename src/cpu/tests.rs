@@ -260,5 +260,7 @@ fn test_render_bg() {
     }
     assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
 
+    exe.ppu_unit.save_as_png("screenshot/ss_test_render_bg.png");
+
     // TODO: 描画が正しく出来ているか確認する
 }
