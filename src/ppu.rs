@@ -2,14 +2,21 @@
 
 mod frame_buffer;
 
+use crate::color_palette::COLOR_PALETTE;
+use frame_buffer::FrameBuffer;
+
 const WIDTH: u32 = 256;
 const HEIGHT: u32 = 240 + 20;
+
+const DISPLAY_SIZE: (u32, u32) = (256, 240);
 
 // 240 ライン目からVBLANK
 const VBLANK_AHEAD: u32 = 241;
 
 // １ラインに掛かるサイクル数
 const CYCLES_PER_LINE: u32 = 341;
+
+pub struct RGB(u8, u8, u8);
 
 #[derive(Default)]
 struct Status {
@@ -214,6 +221,60 @@ impl PpuUnit {
             }
             _ => {
                 panic!("yet to be implemented to write addr: {:x}", addr);
+            }
+        }
+    }
+
+    // TODO
+    fn render_line(&self, frame_buffer: &mut FrameBuffer, chr_table: &[u8], y: u32) {
+        let name_table = &self.name_table0;
+        let attr_table = &self.attr_table0;
+        let bg_palette = &self.bg_palette;
+        //let chr_table = &machine.rom.get_chr();
+
+        let block_base = y % 32;
+        let subblock_y = if y / 8 % 2 == 0 { 0 } else { 1 };
+
+        let tile_base_idx = (y / 8) * 32;
+        let y_in_tile = (y % 8) as usize;
+
+        // ブロックは一列に16個
+        for ib in 0..16 {
+            let block_idx = ib + block_base;
+            let attr = attr_table[block_idx as usize];
+
+            for subblock_x in 0..2 {
+                let subblock_idx = (subblock_y << 1) | subblock_x;
+                assert!(subblock_idx < 4, "subblock_idx is {}", subblock_idx);
+
+                let palette_idx = attr >> (subblock_idx * 2) & 0x03;
+                assert!(palette_idx < 4);
+
+                let palette_ofs = (palette_idx * 4) as usize;
+                let palette = &bg_palette[palette_ofs..palette_ofs + 4];
+
+                let tile_idx = (tile_base_idx + 2 * ib + subblock_x) as usize;
+                let chr_idx = name_table[tile_idx] as usize;
+                let chr_ofs = 16 * chr_idx + y_in_tile;
+                let name0 = chr_table[chr_ofs];
+                let name1 = chr_table[chr_ofs + 8];
+
+                let x_base = (8 * subblock_x) + (16 * ib);
+
+                for x_in_block in 0..8 {
+                    let x = x_base + x_in_block;
+                    assert!(x < DISPLAY_SIZE.0);
+                    assert!(y < DISPLAY_SIZE.1);
+                    let pos = (x, y);
+
+                    let mask = 0x01u8 << (7 - x_in_block);
+                    let b0 = if name0 & mask != 0 { 1 } else { 0 };
+                    let b1 = if name1 & mask != 0 { 1 } else { 0 };
+                    let color_idx = (b1 << 1) + b0;
+                    let c = COLOR_PALETTE[palette[color_idx] as usize];
+
+                    frame_buffer.set_pixel(pos, &RGB(c.0, c.1, c.2));
+                }
             }
         }
     }
