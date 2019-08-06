@@ -10,7 +10,7 @@ pub struct FrameBuffer {
 }
 
 impl FrameBuffer {
-    fn new(w: u32, h: u32) -> Self {
+    pub fn new(w: u32, h: u32) -> Self {
         let s = w * h * 3;
         FrameBuffer {
             w,
