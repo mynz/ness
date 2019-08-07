@@ -161,7 +161,7 @@ impl PpuUnit {
                 self.register.scroll = data;
             }
             6 => {
-                let w = data as u16;
+                let w = u16::from(data);
                 if !self.register.toggle_ppuaddr {
                     self.register.ppuaddr = (self.register.ppuaddr & 0xff) | w << 8;
                 } else {
@@ -180,7 +180,7 @@ impl PpuUnit {
                 self.register.ppuaddr += inc;
             }
             _ => {
-                assert!(false, "yet to be implemented");
+                panic!("yet to be implemented");
             }
         }
     }
@@ -263,15 +263,15 @@ impl Machine {
         self.register.pc = self.read_word(0xfffc);
     }
 
-    fn set_rom(&mut self, rom: Box<Rom>) {
-        self.rom = rom;
+    fn set_rom(&mut self, rom: Rom) {
+        self.rom = Box::new(rom);
         self.hard_reset();
     }
 
     fn read_word(&self, addr: u16) -> u16 {
         if addr <= 0x07ff {
             let mut cur = Cursor::new(&self.wram);
-            cur.set_position(addr as u64);
+            cur.set_position(u64::from(addr));
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
@@ -279,7 +279,7 @@ impl Machine {
         if addr >= 0x8000 {
             let base = 0x8000;
             let prg_size = self.rom.get_prg().len();
-            let mut ofs = (addr - base) as u64;
+            let mut ofs = u64::from(addr - base);
 
             // prg が 16kb しかない場合は、0xc000 からの領域にミラーリングされていると見なす
             if ofs >= 0x4000 && prg_size <= 0x4000 {
@@ -292,7 +292,7 @@ impl Machine {
         }
 
         assert!(false, "yet to be implemented: {:x}", addr);
-        return 0;
+        0
     }
 
     fn read_byte(&self, addr: u16) -> u8 {
@@ -386,7 +386,7 @@ impl Machine {
             0xbd => {
                 // LDA Absolute, X
                 let abs = self.fetch_word();
-                let x = self.register.x as u16;
+                let x = u16::from(self.register.x);
                 let addr = abs + x;
                 let data = self.read_byte(addr);
                 self.register.a = data;
@@ -404,9 +404,8 @@ impl Machine {
             0xd0 => {
                 // BNE
                 let rel = u8_to_i8(self.fetch_byte());
-                //println!("BNE: {}", rel);
-                if self.register.p.zero == false {
-                    let pc = self.register.pc as i16 + rel as i16;
+                if !self.register.p.zero {
+                    let pc = self.register.pc as i16 + i16::from(rel);
                     self.register.pc = pc as u16;
                 }
             }
@@ -417,7 +416,7 @@ impl Machine {
             }
         }
 
-        return cycle;
+        cycle
     }
 
     fn step(&mut self, frame_buffer: &mut FrameBuffer) {
@@ -518,7 +517,7 @@ impl FrameBuffer {
     fn clear(&mut self, rgb: Rgb) {
         let n = self.buf.len() / 3;
         for i in 0..n {
-            self.buf[i * 3 + 0] = rgb.0;
+            self.buf[i * 3] = rgb.0;
             self.buf[i * 3 + 1] = rgb.1;
             self.buf[i * 3 + 2] = rgb.2;
         }
@@ -526,7 +525,7 @@ impl FrameBuffer {
 
     fn set_pixel(&mut self, pos: (u32, u32), rgb: (u8, u8, u8)) {
         let ofs = 3 * (pos.1 * self.sizes.0 + pos.0) as usize;
-        self.buf[ofs + 0] = rgb.0;
+        self.buf[ofs] = rgb.0;
         self.buf[ofs + 1] = rgb.1;
         self.buf[ofs + 2] = rgb.2;
     }
@@ -626,7 +625,7 @@ impl App {
         })
     }
 
-    fn new_with_params(display_size: (u32, u32), pixel_rate: u32, rom: Box<Rom>) -> Result<Self> {
+    fn new_with_params(display_size: (u32, u32), pixel_rate: u32, rom: Rom) -> Result<Self> {
         let mut machine = Machine::new();
         machine.set_rom(rom);
 
@@ -646,7 +645,7 @@ impl App {
         Ok(app)
     }
 
-    fn run(rom: Box<Rom>) {
+    fn run(rom: Rom) {
         let pixel_rate = 2;
         let display_size = (DISPLAY_SIZE.0 * pixel_rate, DISPLAY_SIZE.1 * pixel_rate);
         let v = Vector::new(display_size.0, display_size.1);
@@ -706,7 +705,7 @@ impl State for App {
 }
 
 fn main() {
-    //let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
-    let rom = Rom::load_image("static/roms/giko005.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    //let rom = Rom::load_image("static/roms/giko005.nes".to_string());
     App::run(rom);
 }

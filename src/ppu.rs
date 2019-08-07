@@ -2,9 +2,9 @@
 
 mod frame_buffer;
 
-use std::path::Path;
 use crate::color_palette::COLOR_PALETTE;
 use frame_buffer::FrameBuffer;
+use std::path::Path;
 
 const WIDTH: u32 = 256;
 const HEIGHT: u32 = 240 + 20;

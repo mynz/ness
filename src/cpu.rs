@@ -219,8 +219,8 @@ impl Executer {
         Executer::default()
     }
 
-    pub fn set_rom(&mut self, rom: Box<Rom>) {
-        self.rom = rom;
+    pub fn set_rom(&mut self, rom: Rom) {
+        self.rom = Box::new(rom);
     }
 
     fn load_byte(&mut self, addr: u16) -> u8 {

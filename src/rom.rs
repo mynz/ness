@@ -14,12 +14,12 @@ impl Rom {
         Self { bin: Vec::new() }
     }
 
-    pub fn load_image(filename: String) -> Box<Rom> {
+    pub fn load_image(filename: String) -> Rom {
         let fp = File::open(filename).unwrap();
         let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
         let mut reader = std::io::BufReader::new(fp);
         reader.read_to_end(&mut bin).unwrap();
-        Box::new(Rom { bin: bin })
+        Rom { bin }
     }
 
     fn get_signature(&self) -> [u8; 4] {
