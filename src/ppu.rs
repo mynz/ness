@@ -91,17 +91,16 @@ impl PpuUnit {
         // 1 frame = 341 * 262 = 89342 PPU cycles
         // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
 
-        // TODO
         assert!(cycles <= CYCLES_PER_LINE);
-
-        self.cur_exec_cycles = (self.cur_exec_cycles + cycles) % CYCLES_PER_LINE;
 
         if self.rest_cycles_line > cycles {
             // まだラインの処理中.
+            self.cur_exec_cycles += cycles;
             self.rest_cycles_line -= cycles;
         } else {
             // ライン処理の終了を検知.
             let delta = cycles - self.rest_cycles_line;
+            self.cur_exec_cycles = delta;
             self.rest_cycles_line = CYCLES_PER_LINE - delta;
 
             // ラインを進める
@@ -142,7 +141,7 @@ impl PpuUnit {
                 self.reg.scroll = data;
             }
             0x2006 => {
-                let w = data as u16;
+                let w = u16::from(data);
                 if !self.reg.toggle_ppuaddr {
                     self.reg.ppuaddr = (self.reg.ppuaddr & 0xff) | w << 8;
                 } else {
