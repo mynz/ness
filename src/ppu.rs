@@ -2,7 +2,6 @@
 
 mod frame_buffer;
 
-use crate::color_palette::COLOR_PALETTE;
 use frame_buffer::FrameBuffer;
 use std::path::Path;
 
@@ -227,7 +226,18 @@ impl PpuUnit {
         }
     }
 
-    // TODO
+    #[allow(unused)]
+    fn render_line(&self, frame_buffer: &mut FrameBuffer, chr_table: &[u8], pos: (u32, u32)) {
+        // TODO
+        //use crate::color_palette::COLOR_PALETTE;
+
+
+
+        let c = (0xff, 0x00, 0x00);
+        frame_buffer.set_pixel(pos, &RGB(c.0, c.1, c.2));
+    }
+
+    /*
     fn render_line(&self, frame_buffer: &mut FrameBuffer, chr_table: &[u8], y: u32) {
         let name_table = &self.name_table0;
         let attr_table = &self.attr_table0;
@@ -280,6 +290,7 @@ impl PpuUnit {
             }
         }
     }
+    */
 
     pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
         self.frame_buffer.save_as_png(path);
