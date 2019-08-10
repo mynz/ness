@@ -256,11 +256,15 @@ fn test_render_bg() {
     for i in 0..180 {
         exe.execute();
 
-        println!("xxx: render[{}]: {:#?}", i, exe.last_exec_inst);
+        //println!("xxx: render[{}]: {:#?}", i, exe.last_exec_inst);
+
+        if i % 30 == 0 {
+            let path = format!("screenshot/ss_test_render_bg_{:>04}.png", i);
+            println!("save_as_png: {}", path);
+            exe.ppu_unit.save_as_png(path);
+        }
     }
     assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
-
-    exe.ppu_unit.save_as_png("screenshot/ss_test_render_bg.png");
 
     // TODO: 描画が正しく出来ているか確認する
 }
