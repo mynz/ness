@@ -55,8 +55,8 @@ pub struct PpuUnit {
 
     frame_buffer: FrameBuffer,
 
-    cur_exec_cycles: u32, // x
-    cur_line_exec: u32,   // y
+    cur_render_x: u32, // x
+    cur_render_y: u32,   // y
     rest_cycles_line: u32,
 }
 
@@ -78,19 +78,19 @@ impl PpuUnit {
             sprite_palette,
             vram,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
-            cur_exec_cycles: 0,
-            cur_line_exec: 0,
+            cur_render_x: 0,
+            cur_render_y: 0,
             rest_cycles_line: CYCLES_PER_LINE,
         }
     }
 
     pub fn get_cur_exec_pos(&self) -> (u32, u32) {
-        (self.cur_exec_cycles, self.cur_line_exec)
+        (self.cur_render_x, self.cur_render_y)
     }
 
-    fn render(&mut self, _pos: &Pos, _pixel_count: u32) { }
+    fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) { }
 
-    pub fn execute(&mut self, cycles: u32, _rom: &Rom) {
+    pub fn execute(&mut self, cycles: u32, rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
         // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
 
@@ -98,23 +98,27 @@ impl PpuUnit {
 
         if self.rest_cycles_line > cycles {
             // まだラインの処理中.
-            self.cur_exec_cycles += cycles;
+
+            let pos = Pos(self.cur_render_x, self.cur_render_y);
+            self.render(&pos, cycles, rom);
+
+            self.cur_render_x += cycles;
             self.rest_cycles_line -= cycles;
         } else {
             // ライン処理の終了を検知.
             let delta = cycles - self.rest_cycles_line;
-            self.cur_exec_cycles = delta;
+            self.cur_render_x = delta;
             self.rest_cycles_line = CYCLES_PER_LINE - delta;
 
             // ラインを進める
-            self.cur_line_exec += 1;
-            if self.cur_line_exec == 262 {
+            self.cur_render_y += 1;
+            if self.cur_render_y == 262 {
                 // ライン0へ折り返す.
-                self.cur_line_exec = 0;
+                self.cur_render_y = 0;
             }
         }
         // 241ラインからVBLANK
-        self.reg.status.vblank = self.cur_line_exec == 241;
+        self.reg.status.vblank = self.cur_render_y == 241;
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
