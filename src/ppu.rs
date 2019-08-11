@@ -13,7 +13,7 @@ const HEIGHT: u32 = 240 + 20;
 const DISPLAY_SIZE: (u32, u32) = (256, 240);
 
 // 240 ライン目からVBLANK
-const VBLANK_AHEAD: u32 = 241;
+//const VBLANK_AHEAD: u32 = 241;
 
 // １ラインに掛かるサイクル数
 const CYCLES_PER_LINE: u32 = 341;
@@ -57,7 +57,7 @@ pub struct PpuUnit {
 
     cur_render_x: u32, // x
     cur_render_y: u32,   // y
-    rest_cycles_line: u32,
+    rest_cycles_in_line: u32,
 }
 
 impl PpuUnit {
@@ -80,7 +80,7 @@ impl PpuUnit {
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             cur_render_x: 0,
             cur_render_y: 0,
-            rest_cycles_line: CYCLES_PER_LINE,
+            rest_cycles_in_line: 0,
         }
     }
 
@@ -96,29 +96,46 @@ impl PpuUnit {
 
         assert!(cycles <= CYCLES_PER_LINE);
 
-        if self.rest_cycles_line > cycles {
+        if cycles <= self.rest_cycles_in_line {
             // まだラインの処理中.
 
-            let pos = Pos(self.cur_render_x, self.cur_render_y);
-            self.render(&pos, cycles, rom);
+            let pos_ofs = Pos(self.cur_render_x, self.cur_render_y);
+            self.render(&pos_ofs, cycles, rom);
 
             self.cur_render_x += cycles;
-            self.rest_cycles_line -= cycles;
+            self.rest_cycles_in_line -= cycles;
         } else {
             // ライン処理の終了を検知.
-            let delta = cycles - self.rest_cycles_line;
-            self.cur_render_x = delta;
-            self.rest_cycles_line = CYCLES_PER_LINE - delta;
+            let excess = cycles - self.rest_cycles_in_line;
 
-            // ラインを進める
+            // ラインの残りをレンダリングする.
+            if self.rest_cycles_in_line > 0 {
+                let pos_ofs = Pos(self.cur_render_x, self.cur_render_y);
+                self.render(&pos_ofs, self.rest_cycles_in_line, rom);
+            }
+
+            // 次のラインに進める.
             self.cur_render_y += 1;
-            if self.cur_render_y == 262 {
+            if self.cur_render_y >= 262 {
                 // ライン0へ折り返す.
                 self.cur_render_y = 0;
             }
+
+            // 新ラインの初期化処理を行う.
+            {
+                // TODO
+
+                // 241ラインからVBLANK
+                self.reg.status.vblank = self.cur_render_y == 241;
+            }
+
+            // 新しいラインのレンダリング.
+            let pos_ofs = Pos(0, self.cur_render_y);
+            self.render(&pos_ofs, excess, rom);
+
+            self.cur_render_x = excess;
+            self.rest_cycles_in_line = CYCLES_PER_LINE - excess;
         }
-        // 241ラインからVBLANK
-        self.reg.status.vblank = self.cur_render_y == 241;
     }
 
     pub fn get_ppu_register(&self) -> &PpuRegister {
