@@ -4,6 +4,7 @@ mod frame_buffer;
 
 use self::frame_buffer::FrameBuffer;
 use crate::rom::Rom;
+use crate::Pos;
 use std::path::Path;
 
 const WIDTH: u32 = 256;
@@ -87,7 +88,9 @@ impl PpuUnit {
         (self.cur_exec_cycles, self.cur_line_exec)
     }
 
-    pub fn execute(&mut self, cycles: u32) {
+    fn render(&mut self, _pos: &Pos, _pixel_count: u32) { }
+
+    pub fn execute(&mut self, cycles: u32, _rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
         // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
 
@@ -234,7 +237,6 @@ impl PpuUnit {
 
         //let chr_table = &rom.get_chr();
 
-
         let c = (0xff, 0x00, 0x00);
         frame_buffer.set_pixel(pos, &RGB(c.0, c.1, c.2));
     }
@@ -315,11 +317,12 @@ mod tests {
 
     #[test]
     fn test_vblank0() {
+        let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
         let mut count = 0;
         loop {
             count += 1;
-            ppu.execute(CYCLES_PER_LINE);
+            ppu.execute(CYCLES_PER_LINE, &rom);
             if ppu.reg.status.vblank {
                 break;
             }
@@ -330,11 +333,12 @@ mod tests {
 
     #[test]
     fn test_vblank1() {
+        let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
         let mut cycles = 0;
         let mut count = 0;
         for _ in 0..262 {
-            ppu.execute(CYCLES_PER_LINE);
+            ppu.execute(CYCLES_PER_LINE, &rom);
             count += 1;
             cycles += CYCLES_PER_LINE;
         }
