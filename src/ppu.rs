@@ -2,7 +2,8 @@
 
 mod frame_buffer;
 
-use frame_buffer::FrameBuffer;
+use self::frame_buffer::FrameBuffer;
+use crate::rom::Rom;
 use std::path::Path;
 
 const WIDTH: u32 = 256;
@@ -227,10 +228,11 @@ impl PpuUnit {
     }
 
     #[allow(unused)]
-    fn render_line(&self, frame_buffer: &mut FrameBuffer, chr_table: &[u8], pos: (u32, u32)) {
+    fn render_line(&self, frame_buffer: &mut FrameBuffer, rom: &Rom, pos: (u32, u32)) {
         // TODO
         //use crate::color_palette::COLOR_PALETTE;
 
+        //let chr_table = &rom.get_chr();
 
 
         let c = (0xff, 0x00, 0x00);
