@@ -56,8 +56,9 @@ pub struct PpuUnit {
     frame_buffer: FrameBuffer,
 
     cur_render_x: u32, // x
-    cur_render_y: u32,   // y
+    cur_render_y: u32, // y
     rest_cycles_in_line: u32,
+    is_first_line: bool,
 }
 
 impl PpuUnit {
@@ -81,6 +82,7 @@ impl PpuUnit {
             cur_render_x: 0,
             cur_render_y: 0,
             rest_cycles_in_line: 0,
+            is_first_line: true,
         }
     }
 
@@ -88,7 +90,7 @@ impl PpuUnit {
         (self.cur_render_x, self.cur_render_y)
     }
 
-    fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) { }
+    fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) {}
 
     pub fn execute(&mut self, cycles: u32, rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
@@ -115,7 +117,12 @@ impl PpuUnit {
             }
 
             // 次のラインに進める.
-            self.cur_render_y += 1;
+            self.cur_render_y += if self.is_first_line {
+                self.is_first_line = false;
+                0
+            } else {
+                1
+            };
             if self.cur_render_y >= 262 {
                 // ライン0へ折り返す.
                 self.cur_render_y = 0;
@@ -352,7 +359,6 @@ mod tests {
             ppu.execute(1, &rom);
             assert_eq!(ppu.get_cur_exec_pos(), (1, 0));
         }
-
     }
 
     #[test]
