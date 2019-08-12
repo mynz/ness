@@ -55,8 +55,8 @@ pub struct PpuUnit {
 
     frame_buffer: FrameBuffer,
 
-    cur_render_x: u32, // x
-    cur_render_y: u32, // y
+    next_render_x: u32, // x
+    next_render_y: u32, // y
     rest_cycles_in_line: u32,
     is_first_line: bool,
 }
@@ -79,15 +79,15 @@ impl PpuUnit {
             sprite_palette,
             vram,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
-            cur_render_x: 0,
-            cur_render_y: 0,
+            next_render_x: 0,
+            next_render_y: 0,
             rest_cycles_in_line: 0,
             is_first_line: true,
         }
     }
 
-    pub fn get_cur_exec_pos(&self) -> (u32, u32) {
-        (self.cur_render_x, self.cur_render_y)
+    pub fn get_next_render_pos(&self) -> (u32, u32) {
+        (self.next_render_x, self.next_render_y)
     }
 
     fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) {}
@@ -101,10 +101,10 @@ impl PpuUnit {
         if cycles <= self.rest_cycles_in_line {
             // まだラインの処理中.
 
-            let pos_ofs = Pos(self.cur_render_x, self.cur_render_y);
+            let pos_ofs = Pos(self.next_render_x, self.next_render_y);
             self.render(&pos_ofs, cycles, rom);
 
-            self.cur_render_x += cycles;
+            self.next_render_x += cycles;
             self.rest_cycles_in_line -= cycles;
         } else {
             // ライン処理の終了を検知.
@@ -112,20 +112,20 @@ impl PpuUnit {
 
             // ラインの残りをレンダリングする.
             if self.rest_cycles_in_line > 0 {
-                let pos_ofs = Pos(self.cur_render_x, self.cur_render_y);
+                let pos_ofs = Pos(self.next_render_x, self.next_render_y);
                 self.render(&pos_ofs, self.rest_cycles_in_line, rom);
             }
 
             // 次のラインに進める.
-            self.cur_render_y += if self.is_first_line {
+            self.next_render_y += if self.is_first_line {
                 self.is_first_line = false;
                 0
             } else {
                 1
             };
-            if self.cur_render_y >= 262 {
+            if self.next_render_y >= 262 {
                 // ライン0へ折り返す.
-                self.cur_render_y = 0;
+                self.next_render_y = 0;
             }
 
             // 新ラインの初期化処理を行う.
@@ -137,19 +137,19 @@ impl PpuUnit {
                 // 240 line: post-render-scanline アイドル状態
 
                 // 241-260 line: VBlank
-                self.reg.status.vblank = self.cur_render_y == 241;
+                self.reg.status.vblank = self.next_render_y == 241;
 
                 // 261 line: pre-render-scanling VBLANKフラグが下ろされる
-                if self.cur_render_y == 261 {
+                if self.next_render_y == 261 {
                     self.reg.status.vblank = false;
                 }
             }
 
             // 新しいラインのレンダリング.
-            let pos_ofs = Pos(0, self.cur_render_y);
+            let pos_ofs = Pos(0, self.next_render_y);
             self.render(&pos_ofs, excess, rom);
 
-            self.cur_render_x = excess;
+            self.next_render_x = excess;
             self.rest_cycles_in_line = CYCLES_PER_LINE - excess;
         }
     }
@@ -358,15 +358,15 @@ mod tests {
 
         {
             let mut ppu = PpuUnit::new();
-            assert_eq!(ppu.get_cur_exec_pos(), (0, 0));
+            assert_eq!(ppu.get_next_render_pos(), (0, 0));
             ppu.execute(0, &rom);
-            assert_eq!(ppu.get_cur_exec_pos(), (0, 0));
+            assert_eq!(ppu.get_next_render_pos(), (0, 0));
         }
 
         {
             let mut ppu = PpuUnit::new();
             ppu.execute(1, &rom);
-            assert_eq!(ppu.get_cur_exec_pos(), (1, 0));
+            assert_eq!(ppu.get_next_render_pos(), (1, 0));
         }
     }
 
@@ -402,8 +402,8 @@ mod tests {
         assert_eq!(cycles, 89342);
 
         // この時点で最終ピクセルに到達
-        assert_eq!(ppu.get_cur_exec_pos(), (341, 261));
+        assert_eq!(ppu.get_next_render_pos(), (341, 261));
         ppu.execute(1, &rom); // さらに1ピクセル進める.
-        assert_eq!(ppu.get_cur_exec_pos(), (1, 0));
+        assert_eq!(ppu.get_next_render_pos(), (1, 0));
     }
 }
