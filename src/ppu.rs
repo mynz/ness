@@ -337,6 +337,25 @@ mod tests {
     }
 
     #[test]
+    fn test_pos() {
+        let rom = Rom::dummy();
+
+        {
+            let mut ppu = PpuUnit::new();
+            assert_eq!(ppu.get_cur_exec_pos(), (0, 0));
+            ppu.execute(0, &rom);
+            assert_eq!(ppu.get_cur_exec_pos(), (0, 0));
+        }
+
+        {
+            let mut ppu = PpuUnit::new();
+            ppu.execute(1, &rom);
+            assert_eq!(ppu.get_cur_exec_pos(), (1, 0));
+        }
+
+    }
+
+    #[test]
     fn test_vblank0() {
         let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
@@ -353,6 +372,7 @@ mod tests {
     }
 
     #[test]
+    #[ignore]
     fn test_vblank1() {
         let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
