@@ -8,7 +8,7 @@ use crate::Pos;
 use std::path::Path;
 
 const WIDTH: u32 = 256;
-const HEIGHT: u32 = 240 + 20;
+const HEIGHT: u32 = 240;
 
 const DISPLAY_SIZE: (u32, u32) = (256, 240);
 
@@ -90,7 +90,25 @@ impl PpuUnit {
         Pos(self.next_render_x, self.next_render_y)
     }
 
-    fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) {}
+    fn render(&mut self, pos: &Pos, pixel_count: u32, _rom: &Rom) {
+        if pos.0 >= WIDTH || pos.1 >= HEIGHT {
+            return; // out of screen.
+        }
+
+        for i in 0..pixel_count {
+            let p = Pos(pos.0 + i, pos.1);
+            if p.0 >= WIDTH {
+                break;
+            }
+
+            let rgb = if i == 0 {
+                RGB(0xff, 0x00, 0x00)
+            } else {
+                RGB(0xff, 0xff, 0x00)
+            };
+            self.frame_buffer.set_pixel(&p, &rgb);
+        }
+    }
 
     pub fn execute(&mut self, cycles: u32, rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
