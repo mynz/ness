@@ -374,20 +374,19 @@ mod tests {
     fn test_vblank0() {
         let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
-        let mut count = 0;
+        let mut line_count = 0;
         loop {
-            count += 1;
             ppu.execute(CYCLES_PER_LINE, &rom);
             if ppu.reg.status.vblank {
                 break;
             }
+            line_count += 1;
         }
-        // 
-        assert_eq!(count, 241);
+        assert_eq!(line_count, 241);
     }
 
     #[test]
-    #[ignore]
+    //#[ignore]
     fn test_vblank1() {
         let rom = Rom::dummy();
         let mut ppu = PpuUnit::new();
@@ -402,7 +401,9 @@ mod tests {
         assert_eq!(count, 262);
         assert_eq!(cycles, 89342);
 
-        let pos = ppu.get_cur_exec_pos();
-        assert_eq!(pos, (0, 0));
+        // この時点で最終ピクセルに到達
+        assert_eq!(ppu.get_cur_exec_pos(), (341, 261));
+        ppu.execute(1, &rom); // さらに1ピクセル進める.
+        assert_eq!(ppu.get_cur_exec_pos(), (1, 0));
     }
 }
