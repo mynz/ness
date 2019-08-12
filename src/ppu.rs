@@ -132,8 +132,17 @@ impl PpuUnit {
             {
                 // TODO
 
-                // 241ラインからVBLANK
+                // 0-239 line: visible scanline
+
+                // 240 line: post-render-scanline アイドル状態
+
+                // 241-260 line: VBlank
                 self.reg.status.vblank = self.cur_render_y == 241;
+
+                // 261 line: pre-render-scanling VBLANKフラグが下ろされる
+                if self.cur_render_y == 261 {
+                    self.reg.status.vblank = false;
+                }
             }
 
             // 新しいラインのレンダリング.
@@ -373,7 +382,7 @@ mod tests {
                 break;
             }
         }
-        assert!(true);
+        // 
         assert_eq!(count, 241);
     }
 
