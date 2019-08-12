@@ -86,8 +86,8 @@ impl PpuUnit {
         }
     }
 
-    pub fn get_next_render_pos(&self) -> (u32, u32) {
-        (self.next_render_x, self.next_render_y)
+    pub fn get_next_render_pos(&self) -> Pos {
+        Pos(self.next_render_x, self.next_render_y)
     }
 
     fn render(&mut self, _pos: &Pos, _pixel_count: u32, _rom: &Rom) {}
@@ -268,7 +268,7 @@ impl PpuUnit {
     }
 
     #[allow(unused)]
-    fn render_line(&self, frame_buffer: &mut FrameBuffer, rom: &Rom, pos: (u32, u32)) {
+    fn render_line(&self, frame_buffer: &mut FrameBuffer, rom: &Rom, pos: &Pos) {
         // TODO
         //use crate::color_palette::COLOR_PALETTE;
 
@@ -358,15 +358,15 @@ mod tests {
 
         {
             let mut ppu = PpuUnit::new();
-            assert_eq!(ppu.get_next_render_pos(), (0, 0));
+            assert_eq!(ppu.get_next_render_pos(), Pos(0, 0));
             ppu.execute(0, &rom);
-            assert_eq!(ppu.get_next_render_pos(), (0, 0));
+            assert_eq!(ppu.get_next_render_pos(), Pos(0, 0));
         }
 
         {
             let mut ppu = PpuUnit::new();
             ppu.execute(1, &rom);
-            assert_eq!(ppu.get_next_render_pos(), (1, 0));
+            assert_eq!(ppu.get_next_render_pos(), Pos(1, 0));
         }
     }
 
@@ -402,8 +402,8 @@ mod tests {
         assert_eq!(cycles, 89342);
 
         // この時点で最終ピクセルに到達
-        assert_eq!(ppu.get_next_render_pos(), (341, 261));
+        assert_eq!(ppu.get_next_render_pos(), Pos(341, 261));
         ppu.execute(1, &rom); // さらに1ピクセル進める.
-        assert_eq!(ppu.get_next_render_pos(), (1, 0));
+        assert_eq!(ppu.get_next_render_pos(), Pos(1, 0));
     }
 }
