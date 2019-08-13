@@ -273,14 +273,18 @@ impl PpuUnit {
             return; // out of screen.
         }
 
+        let Pos(_, y) = pos;
+        let y = pos.1;
+
         let name_table = &self.name_table0;
-        let name_base_idx = (pos.1 / 8) * 32;
+        let name_idx_in_line = (y / 8) * 32;
 
         //let Pos(x, y) = pos;
 
         for i in 0..pixel_count {
-            let p = Pos(pos.0 + i, pos.1);
-            if p.0 >= WIDTH {
+            let x = pos.0 + i;
+            let p = Pos(x, y);
+            if x >= WIDTH {
                 break;
             }
 
@@ -290,10 +294,12 @@ impl PpuUnit {
                 //RGB(0xff, 0xff, 0x00)
             //};
 
-            let rgb = RGB(name_base_idx as u8, 0x00, 0x00);
+            let name_idx_row = x / 8;
+            let name_idx = (name_idx_row + name_idx_in_line) as usize;
 
+            let rgb = RGB(name_table[name_idx], 0, 0);
 
-            self.frame_buffer.set_pixel(&p, &rgb);
+            self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
     }
 
