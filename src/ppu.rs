@@ -58,7 +58,6 @@ pub struct PpuUnit {
     next_render_x: u32, // x
     next_render_y: u32, // y
     rest_cycles_in_line: u32,
-    is_first_line: bool,
 
     frame_count: u32,
 }
@@ -83,9 +82,7 @@ impl PpuUnit {
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             next_render_x: 0,
             next_render_y: 0,
-            rest_cycles_in_line: 0,
-            is_first_line: true,
-
+            rest_cycles_in_line: CYCLES_PER_LINE,
             frame_count: 0,
         }
     }
@@ -124,7 +121,7 @@ impl PpuUnit {
 
         assert!(cycles <= CYCLES_PER_LINE);
 
-        if cycles <= self.rest_cycles_in_line {
+        if cycles < self.rest_cycles_in_line {
             // まだラインの処理中.
 
             let pos_ofs = Pos(self.next_render_x, self.next_render_y);
@@ -143,12 +140,7 @@ impl PpuUnit {
             }
 
             // 次のラインに進める.
-            self.next_render_y += if self.is_first_line {
-                self.is_first_line = false;
-                0
-            } else {
-                1
-            };
+            self.next_render_y += 1;
             if self.next_render_y >= 262 {
                 // ライン0へ折り返す.
                 self.next_render_y = 0;
@@ -395,6 +387,12 @@ mod tests {
             let mut ppu = PpuUnit::new();
             ppu.execute(1, &rom);
             assert_eq!(ppu.get_next_render_pos(), Pos(1, 0));
+        }
+
+        {
+            let mut ppu = PpuUnit::new();
+            ppu.execute(CYCLES_PER_LINE, &rom);
+            assert_eq!(ppu.get_next_render_pos(), Pos(0, 1));
         }
     }
 
