@@ -59,6 +59,8 @@ pub struct PpuUnit {
     next_render_y: u32, // y
     rest_cycles_in_line: u32,
     is_first_line: bool,
+
+    frame_count: u32,
 }
 
 impl PpuUnit {
@@ -83,7 +85,13 @@ impl PpuUnit {
             next_render_y: 0,
             rest_cycles_in_line: 0,
             is_first_line: true,
+
+            frame_count: 0,
         }
+    }
+
+    pub fn get_frame_count(&self) -> u32 {
+        self.frame_count
     }
 
     pub fn get_next_render_pos(&self) -> Pos {
@@ -144,6 +152,8 @@ impl PpuUnit {
             if self.next_render_y >= 262 {
                 // ライン0へ折り返す.
                 self.next_render_y = 0;
+                // フレームが完成.
+                self.frame_count += 1;
             }
 
             // 新ラインの初期化処理を行う.

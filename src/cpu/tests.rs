@@ -253,18 +253,19 @@ fn test_render_bg() {
     exe.set_rom(rom);
     exe.hard_reset();
 
-    for i in 0..180 {
+    assert_eq!(exe.ppu_unit.get_frame_count(), 0);
+
+    loop {
         exe.execute();
-
-        //println!("xxx: render[{}]: {:#?}", i, exe.last_exec_inst);
-
-        if i % 30 == 0 {
-            let path = format!("screenshot/ss_test_render_bg_{:>04}.png", i);
-            println!("save_as_png: {}", path);
-            exe.ppu_unit.save_as_png(path);
+        if exe.ppu_unit.get_frame_count() == 1 {
+            break;
         }
     }
     assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
 
-    // TODO: 描画が正しく出来ているか確認する
+    let cycles = exe.cycles;
+    exe.ppu_unit
+        .save_as_png(format!("screenshot/ss_test_render_bg_{:>04}.png", cycles));
+
+    // TODO: 正しく描画できているか確認.
 }
