@@ -403,10 +403,10 @@ mod tests {
         let mut line_count = 0;
         loop {
             ppu.execute(CYCLES_PER_LINE, &rom);
+            line_count += 1;
             if ppu.reg.status.vblank {
                 break;
             }
-            line_count += 1;
         }
         assert_eq!(line_count, 241);
     }
@@ -428,8 +428,6 @@ mod tests {
         assert_eq!(cycles, 89342);
 
         // この時点で最終ピクセルに到達
-        assert_eq!(ppu.get_next_render_pos(), Pos(341, 261));
-        ppu.execute(1, &rom); // さらに1ピクセル進める.
-        assert_eq!(ppu.get_next_render_pos(), Pos(1, 0));
+        assert_eq!(ppu.get_next_render_pos(), Pos(0, 0));
     }
 }
