@@ -44,6 +44,11 @@ pub struct PpuRegister {
 
 impl PpuRegister {}
 
+// パターン
+struct Pat<'a> {
+    pat: &'a [u8],
+}
+
 pub struct PpuUnit {
     reg: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte (4kb), from 0x0000, スプライト用パターンテーブル
@@ -267,19 +272,25 @@ impl PpuUnit {
         }
     }
 
+    fn fetch_from_name_table(&self, pat_idx: u8) -> RGB {
+        let rgb = RGB(pat_idx, pat_idx, 0);
+
+        rgb
+    }
+
     #[allow(unused)] // TODO: remove this
-    fn render(&mut self, pos: &Pos, pixel_count: u32, _rom: &Rom) {
+    fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
         if pos.0 >= WIDTH || pos.1 >= HEIGHT {
             return; // out of screen.
         }
+
+        let chr_table = &rom.get_chr();
 
         let Pos(_, y) = pos;
         let y = pos.1;
 
         let name_table = &self.name_table0;
         let name_idx_in_line = (y / 8) * 32;
-
-        //let Pos(x, y) = pos;
 
         for i in 0..pixel_count {
             let x = pos.0 + i;
@@ -288,16 +299,14 @@ impl PpuUnit {
                 break;
             }
 
-            //let rgb = if i == 0 {
-                //RGB(0xff, 0x00, 0x00)
-            //} else {
-                //RGB(0xff, 0xff, 0x00)
-            //};
-
             let name_idx_row = x / 8;
             let name_idx = (name_idx_row + name_idx_in_line) as usize;
 
-            let rgb = RGB(name_table[name_idx], 0, 0);
+            let pat_idx = name_table[name_idx];
+            // 背景の場合は chr_table にアクセス
+            //let chr = chr_table[pat_idx * 16];
+
+            let rgb = self.fetch_from_name_table(pat_idx);
 
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
@@ -379,7 +388,7 @@ mod tests {
 
     #[test]
     fn test_pos() {
-        let rom = Rom::dummy();
+        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
 
         {
             let mut ppu = PpuUnit::new();
@@ -403,7 +412,7 @@ mod tests {
 
     #[test]
     fn test_vblank0() {
-        let rom = Rom::dummy();
+        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
         let mut ppu = PpuUnit::new();
         let mut line_count = 0;
         loop {
@@ -419,7 +428,7 @@ mod tests {
     #[test]
     //#[ignore]
     fn test_vblank1() {
-        let rom = Rom::dummy();
+        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
         let mut ppu = PpuUnit::new();
         let mut cycles = 0;
         let mut count = 0;
