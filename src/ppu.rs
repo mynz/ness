@@ -46,13 +46,12 @@ pub struct PpuRegister {
 impl PpuRegister {}
 
 // パターン
-fn access_pat(pat: &[u8], x: u8, y: u8) -> u8 {
+fn access_pat(pat: &[u8], pos_in_pat: &Pos) -> u8 {
+    let Pos(x, y) = *pos_in_pat;
     let l0 = pat[y as usize];
     let l1 = pat[y as usize + 8];
-    let p0 = (l0 >> x) & 0x1;
-    let p1 = (l1 >> x) & 0x1;
-    //assert!(p0 == 0);
-    //assert!(p1 == 0);
+    let p0 = (l0 >> (7 - x)) & 0x1;
+    let p1 = (l1 >> (7 - x)) & 0x1;
     (p1 << 0x1) + p0
 }
 
@@ -307,7 +306,8 @@ impl PpuUnit {
             // 背景の場合は chr_table にアクセス
             let pat_ofs = pat_idx * 16;
             let cur = &chr_table[pat_ofs..pat_ofs + 16];
-            let palette_idx: u8 = access_pat(cur, 3, 3);
+            let pos_in_pat = Pos(x % 8, y % 8);
+            let palette_idx: u8 = access_pat(cur, &pos_in_pat);
 
             let rgb = [
                 RGB(0xff, 0, 0),
