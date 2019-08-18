@@ -290,7 +290,10 @@ impl PpuUnit {
         let y = pos.1;
 
         let name_table = &self.name_table0;
-        let name_idx_in_line = (y / 8) * 32;
+        let attr_table = &self.attr_table0;
+
+        let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
+        let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
         for i in 0..pixel_count {
             let x = pos.0 + i;
@@ -305,9 +308,12 @@ impl PpuUnit {
             let pat_idx = name_table[name_idx] as usize;
             // 背景の場合は chr_table にアクセス
             let pat_ofs = pat_idx * 16;
-            let cur = &chr_table[pat_ofs..pat_ofs + 16];
+            let chr = &chr_table[pat_ofs..pat_ofs + 16];
             let pos_in_pat = Pos(x % 8, y % 8);
-            let palette_idx: u8 = access_pat(cur, &pos_in_pat);
+            let palette_idx: u8 = access_pat(chr, &pos_in_pat);
+
+            let attr_idx = x / 32 + attr_idx_in_line;
+            attr_table[attr_idx as usize];
 
             let rgb = [
                 RGB(0xff, 0, 0),
