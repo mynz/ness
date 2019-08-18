@@ -311,8 +311,7 @@ impl PpuUnit {
                 break;
             }
 
-            let name_idx_row = x / 8;
-            let name_idx = (name_idx_row + name_idx_in_line) as usize;
+            let name_idx = (name_idx_in_line + x / 8) as usize;
 
             let pat_idx = name_table[name_idx] as usize;
             // 背景の場合は chr_table にアクセス
@@ -326,17 +325,8 @@ impl PpuUnit {
             let attr = access_attr(attr_table[attr_idx as usize], pos);
 
             let pal_ofs = 4 * attr as usize;
-            //let palette = &bg_palette[pal_ofs..pal_ofs + 4];
             let col_idx = bg_palette[pal_ofs + palette_idx as usize];
             let rgb = COLOR_PALETTE[col_idx as usize];
-            //let rgb = RGB(COLOR_PALETTE[col_idx as usize]);
-
-            //let rgb = [
-                //RGB(0xff, 0, 0),
-                //RGB(0, 0xff, 0),
-                //RGB(0, 0, 0xff),
-                //RGB(0x77, 0x77, 0x77),
-            //][palette_idx as usize];
 
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }

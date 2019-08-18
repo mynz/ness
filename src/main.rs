@@ -10,8 +10,8 @@ use std::path::Path;
 extern crate rustness;
 use rustness::rom::Rom;
 
-use rustness::RGB;
 use rustness::color_palette::COLOR_PALETTE;
+use rustness::RGB;
 
 extern crate quicksilver;
 use quicksilver::{
