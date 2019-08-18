@@ -1,10 +1,9 @@
 #![allow(dead_code)]
 
 mod frame_buffer;
-mod color_palette;
 
 use self::frame_buffer::FrameBuffer;
-use self::color_palette::COLOR_PALETTE;
+use crate::color_palette::COLOR_PALETTE;
 use crate::rom::Rom;
 use crate::Pos;
 use std::path::Path;
@@ -19,9 +18,6 @@ const DISPLAY_SIZE: (u32, u32) = (256, 240);
 
 // １ラインに掛かるサイクル数
 const CYCLES_PER_LINE: u32 = 341;
-
-#[derive(Debug, Copy, Clone, PartialEq)]
-pub struct RGB(u8, u8, u8);
 
 #[derive(Default)]
 struct Status {

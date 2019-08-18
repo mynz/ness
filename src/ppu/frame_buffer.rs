@@ -1,8 +1,8 @@
 extern crate image;
 use std::path::Path;
 
-use crate::ppu::RGB;
 use crate::Pos;
+use crate::RGB;
 
 pub struct FrameBuffer {
     w: u32,

@@ -10,8 +10,8 @@ use std::path::Path;
 extern crate rustness;
 use rustness::rom::Rom;
 
-//use rustness::ppu::RGB; // TODO: remove this
-//use rustness::ppu::color_palette::COLOR_PALETTE; // TODO: remove this
+use rustness::RGB;
+use rustness::color_palette::COLOR_PALETTE;
 
 extern crate quicksilver;
 use quicksilver::{
@@ -525,7 +525,7 @@ impl FrameBuffer {
         }
     }
 
-    fn set_pixel(&mut self, pos: (u32, u32), rgb: (u8, u8, u8)) {
+    fn set_pixel(&mut self, pos: (u32, u32), rgb: &RGB) {
         let ofs = 3 * (pos.1 * self.sizes.0 + pos.0) as usize;
         self.buf[ofs] = rgb.0;
         self.buf[ofs + 1] = rgb.1;
@@ -595,8 +595,8 @@ impl FrameBuffer {
                     let b1 = if name1 & mask != 0 { 1 } else { 0 };
                     let color_idx = (b1 << 1) + b0;
 
-                    //let rgb = COLOR_PALETTE[palette[color_idx] as usize];
-                    //self.set_pixel(pos, rgb);
+                    let rgb = COLOR_PALETTE[palette[color_idx] as usize];
+                    self.set_pixel(pos, &rgb);
                 }
             }
         }
