@@ -18,6 +18,7 @@ const DISPLAY_SIZE: (u32, u32) = (256, 240);
 // １ラインに掛かるサイクル数
 const CYCLES_PER_LINE: u32 = 341;
 
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub struct RGB(u8, u8, u8);
 
 #[derive(Default)]
@@ -45,11 +46,14 @@ pub struct PpuRegister {
 impl PpuRegister {}
 
 // パターン
-struct Pat<'a> {
-    buf: &'a [u8],
-}
-
-impl<'a> Pat<'a> {
+fn access_pat(pat: &[u8], x: u8, y: u8) -> u8 {
+    let l0 = pat[y as usize];
+    let l1 = pat[y as usize + 8];
+    let p0 = (l0 >> x) & 0x1;
+    let p1 = (l1 >> x) & 0x1;
+    //assert!(p0 == 0);
+    //assert!(p1 == 0);
+    (p1 << 0x1) + p0
 }
 
 pub struct PpuUnit {
@@ -275,14 +279,6 @@ impl PpuUnit {
         }
     }
 
-    fn fetch_from_name_table(&self, pat_idx: usize) -> RGB {
-        let i = pat_idx as u8;
-
-        let rgb = RGB(i, i, 0);
-
-        rgb
-    }
-
     #[allow(unused)] // TODO: remove this
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
         if pos.0 >= WIDTH || pos.1 >= HEIGHT {
@@ -309,13 +305,16 @@ impl PpuUnit {
 
             let pat_idx = name_table[name_idx] as usize;
             // 背景の場合は chr_table にアクセス
-            //let chr = chr_table[pat_idx * 16];
-            let pat = Pat{
-                //buf: &chr_table[pat_idx as usize * 16],
-                buf: &chr_table[pat_idx..pat_idx+16],
-            };
+            let pat_ofs = pat_idx * 16;
+            let cur = &chr_table[pat_ofs..pat_ofs + 16];
+            let palette_idx: u8 = access_pat(cur, 3, 3);
 
-            let rgb = self.fetch_from_name_table(pat_idx);
+            let rgb = [
+                RGB(0xff, 0, 0),
+                RGB(0, 0xff, 0),
+                RGB(0, 0, 0xff),
+                RGB(0x77, 0x77, 0x77),
+            ][palette_idx as usize];
 
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
