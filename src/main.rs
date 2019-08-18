@@ -8,8 +8,10 @@ use std::io::Cursor;
 use std::path::Path;
 
 extern crate rustness;
-use rustness::color_palette::COLOR_PALETTE;
 use rustness::rom::Rom;
+
+//use rustness::ppu::RGB; // TODO: remove this
+//use rustness::ppu::color_palette::COLOR_PALETTE; // TODO: remove this
 
 extern crate quicksilver;
 use quicksilver::{
@@ -592,9 +594,9 @@ impl FrameBuffer {
                     let b0 = if name0 & mask != 0 { 1 } else { 0 };
                     let b1 = if name1 & mask != 0 { 1 } else { 0 };
                     let color_idx = (b1 << 1) + b0;
-                    let rgb = COLOR_PALETTE[palette[color_idx] as usize];
 
-                    self.set_pixel(pos, rgb);
+                    //let rgb = COLOR_PALETTE[palette[color_idx] as usize];
+                    //self.set_pixel(pos, rgb);
                 }
             }
         }

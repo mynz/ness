@@ -1,11 +1,12 @@
 #![allow(dead_code)]
 
 mod frame_buffer;
+mod color_palette;
 
 use self::frame_buffer::FrameBuffer;
+use self::color_palette::COLOR_PALETTE;
 use crate::rom::Rom;
 use crate::Pos;
-use crate::color_palette::COLOR_PALETTE;
 use std::path::Path;
 
 const WIDTH: u32 = 256;
