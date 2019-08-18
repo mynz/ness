@@ -46,7 +46,10 @@ impl PpuRegister {}
 
 // パターン
 struct Pat<'a> {
-    pat: &'a [u8],
+    buf: &'a [u8],
+}
+
+impl<'a> Pat<'a> {
 }
 
 pub struct PpuUnit {
@@ -272,8 +275,10 @@ impl PpuUnit {
         }
     }
 
-    fn fetch_from_name_table(&self, pat_idx: u8) -> RGB {
-        let rgb = RGB(pat_idx, pat_idx, 0);
+    fn fetch_from_name_table(&self, pat_idx: usize) -> RGB {
+        let i = pat_idx as u8;
+
+        let rgb = RGB(i, i, 0);
 
         rgb
     }
@@ -302,9 +307,13 @@ impl PpuUnit {
             let name_idx_row = x / 8;
             let name_idx = (name_idx_row + name_idx_in_line) as usize;
 
-            let pat_idx = name_table[name_idx];
+            let pat_idx = name_table[name_idx] as usize;
             // 背景の場合は chr_table にアクセス
             //let chr = chr_table[pat_idx * 16];
+            let pat = Pat{
+                //buf: &chr_table[pat_idx as usize * 16],
+                buf: &chr_table[pat_idx..pat_idx+16],
+            };
 
             let rgb = self.fetch_from_name_table(pat_idx);
 
