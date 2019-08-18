@@ -390,10 +390,6 @@ impl Default for PpuUnit {
 mod tests {
     use super::*;
 
-    fn test_ppu() {
-        assert!(true);
-    }
-
     #[test]
     fn test_pos() {
         let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
