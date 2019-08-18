@@ -5,6 +5,7 @@ mod frame_buffer;
 use self::frame_buffer::FrameBuffer;
 use crate::rom::Rom;
 use crate::Pos;
+use crate::color_palette::COLOR_PALETTE;
 use std::path::Path;
 
 const WIDTH: u32 = 256;
@@ -53,6 +54,16 @@ fn access_pat(pat: &[u8], pos_in_pat: &Pos) -> u8 {
     let p0 = (l0 >> (7 - x)) & 0x1;
     let p1 = (l1 >> (7 - x)) & 0x1;
     (p1 << 0x1) + p0
+}
+
+fn access_attr(attr: u8, pos_in_screen: &Pos) -> u8 {
+    let Pos(x, y) = *pos_in_screen;
+    let s0 = (x / 16) % 2;
+    let s1 = (y / 16) % 2;
+    let idx = s1 * 2 + s0; // [0, 3]
+    let shift = 2 * (3 - idx); // 2 bit each
+    let a = (attr >> shift) & 0x3;
+    a
 }
 
 pub struct PpuUnit {
@@ -291,6 +302,7 @@ impl PpuUnit {
 
         let name_table = &self.name_table0;
         let attr_table = &self.attr_table0;
+        let bg_palette = &self.bg_palette;
 
         let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
         let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
@@ -310,17 +322,24 @@ impl PpuUnit {
             let pat_ofs = pat_idx * 16;
             let chr = &chr_table[pat_ofs..pat_ofs + 16];
             let pos_in_pat = Pos(x % 8, y % 8);
-            let palette_idx: u8 = access_pat(chr, &pos_in_pat);
+            let palette_idx: u8 = access_pat(chr, &pos_in_pat); // [0, 3]
 
+            // アトリビュートの取り出し
             let attr_idx = x / 32 + attr_idx_in_line;
-            attr_table[attr_idx as usize];
+            let attr = access_attr(attr_table[attr_idx as usize], pos);
 
-            let rgb = [
-                RGB(0xff, 0, 0),
-                RGB(0, 0xff, 0),
-                RGB(0, 0, 0xff),
-                RGB(0x77, 0x77, 0x77),
-            ][palette_idx as usize];
+            let pal_ofs = 4 * attr as usize;
+            //let palette = &bg_palette[pal_ofs..pal_ofs + 4];
+            let col_idx = bg_palette[pal_ofs + palette_idx as usize];
+            let rgb = COLOR_PALETTE[col_idx as usize];
+            //let rgb = RGB(COLOR_PALETTE[col_idx as usize]);
+
+            //let rgb = [
+                //RGB(0xff, 0, 0),
+                //RGB(0, 0xff, 0),
+                //RGB(0, 0, 0xff),
+                //RGB(0x77, 0x77, 0x77),
+            //][palette_idx as usize];
 
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
