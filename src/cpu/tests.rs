@@ -24,7 +24,7 @@ fn test_giko005() {
     let mut exe = Executer::new();
     assert_eq!(0, exe.register.a);
 
-    let rom = Rom::load_image("static/roms/giko005.nes".to_string());
+    let rom = Rom::load_image("static/roms/giko005.nes");
     exe.set_rom(rom);
 
     exe.hard_reset();
@@ -86,7 +86,7 @@ fn test_executer_00() {
     let mut exe = Executer::new();
     assert_eq!(0, exe.register.a);
 
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
     exe.set_rom(rom);
 
     exe.hard_reset();
@@ -207,7 +207,7 @@ fn test_cpu() {
     assert!(true);
     assert_eq!(1, 1);
 
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
 
     let prg = rom.get_prg();
     assert_eq!(rom.get_bytes_of_prg(), prg.len());
@@ -249,7 +249,7 @@ fn test_cpu() {
 fn test_render_bg() {
     let mut exe = Executer::new();
 
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
     exe.set_rom(rom);
     exe.hard_reset();
 
@@ -266,6 +266,4 @@ fn test_render_bg() {
     let cycles = exe.cycles;
     exe.ppu_unit
         .save_as_png(format!("screenshot/ss_test_render_bg_{:>04}.png", cycles));
-
-    // TODO: 正しく描画できているか確認.
 }

@@ -400,7 +400,7 @@ mod tests {
 
     #[test]
     fn test_pos() {
-        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+        let rom = Rom::load_image("static/sample1/sample1.nes");
 
         {
             let mut ppu = PpuUnit::new();
@@ -424,7 +424,7 @@ mod tests {
 
     #[test]
     fn test_vblank0() {
-        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+        let rom = Rom::load_image("static/sample1/sample1.nes");
         let mut ppu = PpuUnit::new();
         let mut line_count = 0;
         loop {
@@ -440,7 +440,7 @@ mod tests {
     #[test]
     //#[ignore]
     fn test_vblank1() {
-        let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+        let rom = Rom::load_image("static/sample1/sample1.nes");
         let mut ppu = PpuUnit::new();
         let mut cycles = 0;
         let mut count = 0;

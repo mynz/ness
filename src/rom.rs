@@ -14,8 +14,8 @@ impl Rom {
         Self { bin: Vec::new() }
     }
 
-    pub fn load_image(filename: String) -> Rom {
-        let fp = File::open(filename).unwrap();
+    pub fn load_image<P: AsRef<Path>>(path: P) -> Rom {
+        let fp = File::open(path).unwrap();
         let mut bin: Vec<u8> = Vec::with_capacity(1024 * 1024);
         let mut reader = std::io::BufReader::new(fp);
         reader.read_to_end(&mut bin).unwrap();
@@ -110,7 +110,7 @@ impl Rom {
 
 #[test]
 fn test_rom() {
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
     let sig = rom.get_signature();
     assert_eq!(sig, "NES\u{1a}".as_bytes());
 

@@ -460,7 +460,7 @@ impl Machine {
 
 #[test]
 fn test_machine() {
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
     let mut machine = Machine::new();
     machine.set_rom(rom);
 
@@ -707,7 +707,7 @@ impl State for App {
 }
 
 fn main() {
-    let rom = Rom::load_image("static/sample1/sample1.nes".to_string());
-    //let rom = Rom::load_image("static/roms/giko005.nes".to_string());
+    let rom = Rom::load_image("static/sample1/sample1.nes");
+    //let rom = Rom::load_image("static/roms/giko005.nes");
     App::run(rom);
 }
