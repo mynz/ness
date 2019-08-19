@@ -27,11 +27,11 @@ struct Status {
 
 #[derive(Default)]
 pub struct PpuRegister {
-    pub ctrl: u8,     // w
-    pub mask: u8,     // w
-    status: Status,   // r
-    pub oamaddr: u8,  // w
-    pub oamdata: u8,  // rw
+    pub ctrl: u8,    // w
+    pub mask: u8,    // w
+    status: Status,  // r
+    pub oamaddr: u8, // w
+    //pub oamdata: u8,  // rw
     pub scroll: u8,   // w
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
@@ -207,7 +207,16 @@ impl PpuUnit {
                 self.reg.oamaddr = data;
             }
             0x2004 => {
-                self.reg.oamdata = data;
+                let addr = self.reg.oamaddr;
+                let ith = addr as usize / 4;
+                match addr % 4 {
+                    0 => self.sprites[ith].y = data,
+                    1 => self.sprites[ith].tile = data,
+                    2 => self.sprites[ith].attr = data,
+                    3 => self.sprites[ith].x = data,
+                    _ => panic!("no way"),
+                }
+                self.reg.oamaddr += 1;
             }
             0x2005 => {
                 self.reg.scroll = data;
