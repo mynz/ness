@@ -204,9 +204,6 @@ fn test_executer_00() {
 fn test_cpu() {
     use crate::rom::Rom;
 
-    assert!(true);
-    assert_eq!(1, 1);
-
     let rom = Rom::load_image("static/sample1/sample1.nes");
 
     let prg = rom.get_prg();
@@ -266,4 +263,24 @@ fn test_render_bg() {
     let cycles = exe.cycles;
     exe.ppu_unit
         .save_as_png(format!("screenshot/ss_test_render_bg_{:>04}.png", cycles));
+}
+
+#[test]
+fn test_render_sprite() {
+    let mut exe = Executer::new();
+
+    exe.set_rom(Rom::load_image("static/roms/giko005.nes"));
+    exe.hard_reset();
+
+    assert_eq!(exe.ppu_unit.get_frame_count(), 0);
+
+    loop {
+        exe.execute();
+        if exe.ppu_unit.get_frame_count() == 1 {
+            break;
+        }
+    }
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::JMP);
+    exe.ppu_unit
+        .save_as_png("screenshot/ss_test_render_sprite.png");
 }
