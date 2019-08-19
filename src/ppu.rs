@@ -292,21 +292,17 @@ impl PpuUnit {
             return; // out of screen.
         }
 
-        let chr_table = &rom.get_chr();
-
-        let Pos(_, y) = pos;
-        let y = pos.1;
-
         let name_table = &self.name_table0;
         let attr_table = &self.attr_table0;
         let bg_palette = &self.bg_palette;
+        let chr_table = &rom.get_chr();
 
+        let y = pos.1;
         let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
         let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
         for i in 0..pixel_count {
             let x = pos.0 + i;
-            let p = Pos(x, y);
             if x >= WIDTH {
                 break;
             }
