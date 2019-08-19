@@ -63,6 +63,14 @@ fn access_attr(attr: u8, pos_in_screen: &Pos) -> u8 {
     a
 }
 
+#[derive(Copy, Clone, Default)]
+struct Sprite {
+    y: u8,
+    tile: u8,
+    attr: u8,
+    x: u8,
+}
+
 pub struct PpuUnit {
     reg: PpuRegister,
     pattern_table0: Box<[u8]>, // 0x1000 byte (4kb), from 0x0000, スプライト用パターンテーブル
@@ -71,6 +79,8 @@ pub struct PpuUnit {
     bg_palette: [u8; 0x10],    // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
     vram: Box<[u8]>,           // 0x2000 byte
+
+    sprites: Box<[Sprite]>, // 64 elems: 256 bytes
 
     frame_buffer: FrameBuffer,
 
@@ -90,6 +100,8 @@ impl PpuUnit {
         let bg_palette = [0_u8; 0x10];
         let sprite_palette = [0_u8; 0x10];
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
+        let sprites = Box::new([Sprite::default(); 64]);
+
         PpuUnit {
             reg,
             pattern_table0,
@@ -98,6 +110,7 @@ impl PpuUnit {
             bg_palette,
             sprite_palette,
             vram,
+            sprites,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             next_render_x: 0,
             next_render_y: 0,
