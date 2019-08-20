@@ -38,7 +38,7 @@ pub struct PpuRegister {
 
     toggle_ppuscroll: bool, // for scroll
     toggle_ppuaddr: bool,   // for addr
-    oamdata_counter: u8,    // [0-3] for oamdata
+    //oamdata_counter: u8,    // [0-3] for oamdata
 }
 
 impl PpuRegister {}
@@ -82,6 +82,9 @@ pub struct PpuUnit {
 
     sprites: Box<[Sprite]>, // 64 elems: 256 bytes
 
+    line_sprites: [Sprite; 8],
+    line_sprite_count: u8,
+
     frame_buffer: FrameBuffer,
 
     next_render_x: u32, // x
@@ -111,6 +114,8 @@ impl PpuUnit {
             sprite_palette,
             vram,
             sprites,
+            line_sprites: [Sprite::default(); 8],
+            line_sprite_count: 0,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             next_render_x: 0,
             next_render_y: 0,
@@ -159,26 +164,40 @@ impl PpuUnit {
                 // フレームが完成.
                 self.frame_count += 1;
             }
+            let new_y = self.next_render_y;
 
             // 新ラインの初期化処理を行う.
             {
-                // TODO
-
                 // 0-239 line: visible scanline
+                // ライン上のスプライトを探す
+                if new_y <= 239 {
+                    let mut count = 0;
+                    for it in self.sprites.iter() {
+                        let sy = it.y as u32;
+                        if new_y <= sy && new_y + 7 >= sy {
+                            self.line_sprites[count] = *it;
+                            count += 1;
+                            if count == 8 {
+                                break;
+                            }
+                        }
+                    }
+                    self.line_sprite_count = count as u8;
+                }
 
                 // 240 line: post-render-scanline アイドル状態
 
                 // 241-260 line: VBlank
-                self.reg.status.vblank = self.next_render_y == 241;
+                self.reg.status.vblank = new_y == 241;
 
                 // 261 line: pre-render-scanling VBLANKフラグが下ろされる
-                if self.next_render_y == 261 {
+                if new_y == 261 {
                     self.reg.status.vblank = false;
                 }
             }
 
             // 新しいラインのレンダリング.
-            let pos_ofs = Pos(0, self.next_render_y);
+            let pos_ofs = Pos(0, new_y);
             self.render(&pos_ofs, excess, rom);
 
             self.next_render_x = excess;

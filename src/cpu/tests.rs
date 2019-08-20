@@ -276,7 +276,7 @@ fn test_render_sprite() {
 
     loop {
         exe.execute();
-        if exe.ppu_unit.get_frame_count() == 1 {
+        if exe.ppu_unit.get_frame_count() == 2 {
             break;
         }
     }
