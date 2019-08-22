@@ -342,11 +342,12 @@ impl PpuUnit {
         let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
         let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
-        for i in 0..pixel_count {
+        let nwidth = std::cmp::min(pixel_count, WIDTH - pos.0);
+        let mut bg_color_indices = [0; WIDTH as usize];
+
+        // 背景の処理
+        for i in 0..nwidth {
             let x = pos.0 + i;
-            if x >= WIDTH {
-                break;
-            }
 
             let name_idx = (name_idx_in_line + x / 8) as usize;
 
@@ -363,8 +364,15 @@ impl PpuUnit {
 
             let pal_ofs = 4 * attr as usize;
             let col_idx = bg_palette[pal_ofs + palette_idx as usize];
-            let rgb = COLOR_PALETTE[col_idx as usize];
+            bg_color_indices[i as usize] = col_idx;
+        }
 
+        // スプライトと背景の合成
+        for i in 0..nwidth {
+            let x = pos.0 + i;
+
+            let col_idx = bg_color_indices[i as usize];
+            let rgb = COLOR_PALETTE[col_idx as usize];
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
     }
