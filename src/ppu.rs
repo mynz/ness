@@ -38,7 +38,7 @@ pub struct PpuRegister {
 
     toggle_ppuscroll: bool, // for scroll
     toggle_ppuaddr: bool,   // for addr
-    //oamdata_counter: u8,    // [0-3] for oamdata
+                            //oamdata_counter: u8,    // [0-3] for oamdata
 }
 
 impl PpuRegister {}
@@ -336,6 +336,7 @@ impl PpuUnit {
         let name_table = &self.name_table0;
         let attr_table = &self.attr_table0;
         let bg_palette = &self.bg_palette;
+        let sprite_palette = &self.sprite_palette;
         let chr_table = &rom.get_chr();
 
         let y = pos.1;
@@ -343,7 +344,7 @@ impl PpuUnit {
         let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
         let nwidth = std::cmp::min(pixel_count, WIDTH - pos.0);
-        let mut bg_color_indices = [0; WIDTH as usize];
+        let mut out_color_indices = [0; WIDTH as usize];
 
         // 背景の処理
         for ix in 0..nwidth {
@@ -364,14 +365,44 @@ impl PpuUnit {
 
             let pal_ofs = 4 * attr as usize;
             let col_idx = bg_palette[pal_ofs + palette_idx as usize];
-            bg_color_indices[ix as usize] = col_idx;
+            out_color_indices[ix as usize] = col_idx;
+        }
+
+        // スプライト
+        let spr_pat_tbl_base;
+        {
+            let ctrl = self.reg.ctrl;
+            assert_eq!(ctrl & (0x1 << 5), 0, "16x8 spr is not implemented yet");
+            let csf = ctrl & 0x08 != 0;
+            spr_pat_tbl_base = if csf { 0x1000 } else { 0x0000 };
+        }
+
+        for ix in 0..nwidth {
+            let x = pos.0 + ix;
+            let ns = self.line_sprite_count as usize;
+            for sprite in &self.line_sprites[0..ns] {
+                let sx = sprite.x as u32;
+                if x >= sx && x < sx + 8 {
+                    let sy = sprite.y as u32;
+                    let attr = sprite.attr;
+                    let tile = sprite.tile as usize;
+                    // スプライトも chr_table にアクセス
+                    let pat_ofs = spr_pat_tbl_base + tile * 16;
+                    let chr = &chr_table[pat_ofs..pat_ofs + 16];
+                    let pos_in_pat = Pos(x - sx, 7 - (sy - y));
+                    let pal_idx: u8 = access_pat(chr, &pos_in_pat); // [0, 3]
+                    let pal_quad = attr & 0x3; // 2bitsのパレット取り出す
+                    let pal_ofs = 4 * pal_quad as usize;
+                    let col_idx = sprite_palette[pal_ofs + pal_idx as usize];
+                    out_color_indices[ix as usize] = col_idx;
+                }
+            }
         }
 
         // スプライトと背景の合成
         for ix in 0..nwidth {
             let x = pos.0 + ix;
-
-            let col_idx = bg_color_indices[ix as usize];
+            let col_idx = out_color_indices[ix as usize];
             let rgb = COLOR_PALETTE[col_idx as usize];
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
