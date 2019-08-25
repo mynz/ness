@@ -73,7 +73,6 @@ struct Sprite {
 
 pub struct PpuUnit {
     reg: PpuRegister,
-    pattern_table0: Box<[u8]>, // 0x1000 byte (4kb), from 0x0000, スプライト用パターンテーブル
     name_table0: Box<[u8]>,    // 0x03c0 byte
     attr_table0: Box<[u8]>,    // 0x0040 byte
     bg_palette: [u8; 0x10],    // 0x0010 byte
@@ -97,7 +96,6 @@ pub struct PpuUnit {
 impl PpuUnit {
     pub fn new() -> PpuUnit {
         let reg = PpuRegister::default();
-        let pattern_table0 = Box::new([0_u8; 0x1000]);
         let name_table0 = Box::new([0_u8; 0x03c0]);
         let attr_table0 = Box::new([0_u8; 0x0040]);
         let bg_palette = [0_u8; 0x10];
@@ -107,7 +105,6 @@ impl PpuUnit {
 
         PpuUnit {
             reg,
-            pattern_table0,
             name_table0,
             attr_table0,
             bg_palette,
@@ -302,9 +299,6 @@ impl PpuUnit {
         };
 
         match addr2 {
-            a if a < 0x1000 => {
-                self.pattern_table0[a as usize] = data;
-            }
             a if a >= 0x2000 && a < 0x2000 + 0x3c0 => {
                 let idx = (a - 0x2000) as usize;
                 self.name_table0[idx] = data;
@@ -327,7 +321,6 @@ impl PpuUnit {
         }
     }
 
-    #[allow(unused)] // TODO: remove this
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
         if pos.0 >= WIDTH || pos.1 >= HEIGHT {
             return; // out of screen.
@@ -407,61 +400,6 @@ impl PpuUnit {
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
     }
-
-    /*
-    fn render_line(&self, frame_buffer: &mut FrameBuffer, chr_table: &[u8], y: u32) {
-        let name_table = &self.name_table0;
-        let attr_table = &self.attr_table0;
-        let bg_palette = &self.bg_palette;
-        //let chr_table = &machine.rom.get_chr();
-
-        let block_base = y % 32;
-        let subblock_y = if y / 8 % 2 == 0 { 0 } else { 1 };
-
-        let tile_base_idx = (y / 8) * 32;
-        let y_in_tile = (y % 8) as usize;
-
-        // ブロックは一列に16個
-        for ib in 0..16 {
-            let block_idx = ib + block_base;
-            let attr = attr_table[block_idx as usize];
-
-            for subblock_x in 0..2 {
-                let subblock_idx = (subblock_y << 1) | subblock_x;
-                assert!(subblock_idx < 4, "subblock_idx is {}", subblock_idx);
-
-                let palette_idx = attr >> (subblock_idx * 2) & 0x03;
-                assert!(palette_idx < 4);
-
-                let palette_ofs = (palette_idx * 4) as usize;
-                let palette = &bg_palette[palette_ofs..palette_ofs + 4];
-
-                let tile_idx = (tile_base_idx + 2 * ib + subblock_x) as usize;
-                let chr_idx = name_table[tile_idx] as usize;
-                let chr_ofs = 16 * chr_idx + y_in_tile;
-                let name0 = chr_table[chr_ofs];
-                let name1 = chr_table[chr_ofs + 8];
-
-                let x_base = (8 * subblock_x) + (16 * ib);
-
-                for x_in_block in 0..8 {
-                    let x = x_base + x_in_block;
-                    assert!(x < DISPLAY_SIZE.0);
-                    assert!(y < DISPLAY_SIZE.1);
-                    let pos = (x, y);
-
-                    let mask = 0x01u8 << (7 - x_in_block);
-                    let b0 = if name0 & mask != 0 { 1 } else { 0 };
-                    let b1 = if name1 & mask != 0 { 1 } else { 0 };
-                    let color_idx = (b1 << 1) + b0;
-                    let c = COLOR_PALETTE[palette[color_idx] as usize];
-
-                    frame_buffer.set_pixel(pos, &RGB(c.0, c.1, c.2));
-                }
-            }
-        }
-    }
-    */
 
     pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
         self.frame_buffer.save_as_png(path);
