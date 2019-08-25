@@ -16,40 +16,34 @@ use rustness::rom::Rom;
 extern crate quicksilver;
 
 use quicksilver::{
-    geom::{Rectangle, Shape, Vector},
-    graphics::{
-        //Background::{Col, Img},
-        Background::Img,
-        Color,
-        Font,
-        FontStyle,
-        Image,
-        PixelFormat,
-    },
+    geom::Vector,
+    graphics::Color,
     input::Key,
-    lifecycle::{run_with, Asset, Settings, State, Window},
-    Future, Result,
+    lifecycle::{run_with, Settings, State, Window},
+    //Future,
+    Result,
 };
 
 extern crate image;
 
 struct App {
-    rom: Rom,
+    rom: Option<Rom>,
 }
 
 impl App {
     fn new() -> Result<Self> {
-        Ok(Self {})
+        // ダミー
+        Self::new_with_params(None)
     }
 
-    fn new_with_params(win_size: &Vector) -> Result<Self> {
-        Ok(Self {})
+    fn new_with_params(rom: Option<Rom>) -> Result<Self> {
+        Ok(Self { rom })
     }
 
     fn run(rom: Rom) {
         let win_size = Vector::new(255, 240);
         run_with("RUSTNESS", win_size, Settings::default(), || {
-            Self::new_with_params(&win_size)
+            Self::new_with_params(Some(rom))
         });
     }
 }
