@@ -346,8 +346,8 @@ impl PpuUnit {
         let mut bg_color_indices = [0; WIDTH as usize];
 
         // 背景の処理
-        for i in 0..nwidth {
-            let x = pos.0 + i;
+        for ix in 0..nwidth {
+            let x = pos.0 + ix;
 
             let name_idx = (name_idx_in_line + x / 8) as usize;
 
@@ -364,14 +364,14 @@ impl PpuUnit {
 
             let pal_ofs = 4 * attr as usize;
             let col_idx = bg_palette[pal_ofs + palette_idx as usize];
-            bg_color_indices[i as usize] = col_idx;
+            bg_color_indices[ix as usize] = col_idx;
         }
 
         // スプライトと背景の合成
-        for i in 0..nwidth {
-            let x = pos.0 + i;
+        for ix in 0..nwidth {
+            let x = pos.0 + ix;
 
-            let col_idx = bg_color_indices[i as usize];
+            let col_idx = bg_color_indices[ix as usize];
             let rgb = COLOR_PALETTE[col_idx as usize];
             self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
         }
