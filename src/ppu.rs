@@ -73,11 +73,11 @@ struct Sprite {
 
 pub struct PpuUnit {
     reg: PpuRegister,
-    name_table0: Box<[u8]>,    // 0x03c0 byte
-    attr_table0: Box<[u8]>,    // 0x0040 byte
-    bg_palette: [u8; 0x10],    // 0x0010 byte
+    name_table0: Box<[u8]>,     // 0x03c0 byte
+    attr_table0: Box<[u8]>,     // 0x0040 byte
+    bg_palette: [u8; 0x10],     // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
-    vram: Box<[u8]>,           // 0x2000 byte
+    vram: Box<[u8]>,            // 0x2000 byte
 
     sprites: Box<[Sprite]>, // 64 elems: 256 bytes
 
