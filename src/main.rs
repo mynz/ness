@@ -8,10 +8,8 @@
 //use std::path::Path;
 
 extern crate rustness;
+use rustness::machine::Executer;
 use rustness::rom::Rom;
-
-//use rustness::color_palette::COLOR_PALETTE;
-//use rustness::RGB;
 
 extern crate quicksilver;
 
@@ -27,17 +25,24 @@ use quicksilver::{
 extern crate image;
 
 struct App {
-    rom: Option<Rom>,
+    exe: Executer,
 }
 
 impl App {
+    // ダミー
     fn new() -> Result<Self> {
-        // ダミー
         Self::new_with_params(None)
     }
 
     fn new_with_params(rom: Option<Rom>) -> Result<Self> {
-        Ok(Self { rom })
+        let mut exe = Executer::new();
+
+        if let Some(rom) = rom {
+            exe.set_rom(rom);
+            exe.hard_reset();
+        }
+
+        Ok(Self { exe })
     }
 
     fn run(rom: Rom) {
