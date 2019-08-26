@@ -1,5 +1,5 @@
 extern crate rustness;
-use rustness::cpu::*;
+use rustness::machine::*;
 use rustness::rom::*;
 
 #[test]
