@@ -85,7 +85,17 @@ impl State for App {
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         window.clear(Color::GREEN)?;
 
-        // 本来 update() で呼び出すべきかもしれないが、ここに書かないとキーイベントなどがうまくとれない.
+        let frame_count = self.exe.get_frame_count();
+        loop {
+            self.exe.execute();
+            if self.exe.get_frame_count() > frame_count {
+                break;
+            }
+        }
+        println!("update frame: {}", frame_count);
+
+        // 本来 update() で呼び出すべきかもしれないが、
+        // ここに書かないとキーイベントなどがうまくとれない.
 
         Ok(())
     }

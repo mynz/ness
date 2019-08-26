@@ -428,4 +428,8 @@ impl Executer {
         self.cycles += cycles_delta;
         spec.cycles
     }
+
+    pub fn get_frame_count(&self) -> u32 {
+        self.ppu_unit.get_frame_count()
+    }
 }
