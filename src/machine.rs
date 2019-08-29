@@ -24,8 +24,6 @@ fn add_rel_to_pc(pc: u16, r: u8) -> u16 {
     (base + rr) as u16
 }
 
-impl Register {}
-
 #[derive(Debug, PartialEq, Copy, Clone)]
 enum Opcode {
     ADC,

@@ -1,11 +1,4 @@
-// main.rs
-
 #![allow(dead_code)]
-
-//use std::fs::OpenOptions;
-//use std::io::prelude::*;
-//use std::io::Cursor;
-//use std::path::Path;
 
 extern crate rustness;
 use rustness::machine::Executer;
@@ -16,6 +9,7 @@ extern crate quicksilver;
 use quicksilver::{
     geom::Vector,
     graphics::Color,
+    //graphics::Image,
     input::Key,
     lifecycle::{run_with, Settings, State, Window},
     //Future,
@@ -92,6 +86,7 @@ impl State for App {
                 break;
             }
         }
+
         println!("update frame: {}", frame_count);
 
         // 本来 update() で呼び出すべきかもしれないが、
