@@ -9,6 +9,7 @@ use std::io::Cursor;
 use self::inst_specs::INST_SPECS;
 use crate::ppu::PpuUnit;
 use crate::rom::Rom;
+use crate::frame_buffer::FrameBuffer;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -429,5 +430,9 @@ impl Executer {
 
     pub fn get_frame_count(&self) -> u32 {
         self.ppu_unit.get_frame_count()
+    }
+
+    pub fn get_frame_buffer(&self) -> &FrameBuffer {
+        self.ppu_unit.get_frame_buffer()
     }
 }

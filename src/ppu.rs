@@ -123,6 +123,10 @@ impl PpuUnit {
         self.frame_count
     }
 
+    pub fn get_frame_buffer(&self) -> &FrameBuffer {
+        &self.frame_buffer
+    }
+
     pub fn get_next_render_pos(&self) -> Pos {
         Pos(self.next_render_x, self.next_render_y)
     }
