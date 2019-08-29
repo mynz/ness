@@ -5,9 +5,9 @@ use crate::Pos;
 use crate::RGB;
 
 pub struct FrameBuffer {
-    w: u32,
-    h: u32,
-    buf: Vec<u8>, // RGBs
+    pub w: u32,
+    pub h: u32,
+    pub buf: Vec<u8>, // RGBs
 }
 
 impl FrameBuffer {

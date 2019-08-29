@@ -8,8 +8,8 @@ extern crate quicksilver;
 
 use quicksilver::{
     geom::Vector,
-    graphics::Color,
-    //graphics::Image,
+    graphics::Background::Img,
+    graphics::{Color, Image, PixelFormat},
     input::Key,
     lifecycle::{run_with, Settings, State, Window},
     //Future,
@@ -77,8 +77,8 @@ impl State for App {
     }
 
     fn draw(&mut self, window: &mut Window) -> Result<()> {
-        window.clear(Color::GREEN)?;
-
+        // 本来 update() で呼び出すべきかもしれないが、
+        // ここに書かないとキーイベントなどがうまくとれない.
         let frame_count = self.exe.get_frame_count();
         loop {
             self.exe.execute();
@@ -89,15 +89,19 @@ impl State for App {
 
         println!("update frame: {}", frame_count);
 
-        // 本来 update() で呼び出すべきかもしれないが、
-        // ここに書かないとキーイベントなどがうまくとれない.
+        window.clear(Color::GREEN)?;
+        {
+            let fb = self.exe.get_frame_buffer();
+            let img = Image::from_raw(&fb.buf, fb.w, fb.h, PixelFormat::RGB).unwrap();
+            window.draw(&img.area(), Img(&img));
+        }
 
         Ok(())
     }
 }
 
 fn main() {
-    let rom = Rom::load_image("static/sample1/sample1.nes");
-    //let rom = Rom::load_image("static/roms/giko005.nes");
+    //let rom = Rom::load_image("static/sample1/sample1.nes");
+    let rom = Rom::load_image("static/roms/giko005.nes");
     App::run(rom);
 }

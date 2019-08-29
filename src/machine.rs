@@ -7,9 +7,9 @@ use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
+use crate::frame_buffer::FrameBuffer;
 use crate::ppu::PpuUnit;
 use crate::rom::Rom;
-use crate::frame_buffer::FrameBuffer;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
