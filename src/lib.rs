@@ -1,4 +1,5 @@
 pub mod color_palette;
+pub mod frame_buffer;
 pub mod machine;
 pub mod ppu;
 pub mod rom;

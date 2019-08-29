@@ -1,9 +1,7 @@
 #![allow(dead_code)]
 
-mod frame_buffer;
-
-use self::frame_buffer::FrameBuffer;
 use crate::color_palette::COLOR_PALETTE;
+use crate::frame_buffer::FrameBuffer;
 use crate::rom::Rom;
 use crate::Pos;
 use std::path::Path;
