@@ -102,6 +102,6 @@ impl State for App {
 
 fn main() {
     //let rom = Rom::load_image("static/sample1/sample1.nes");
-    let rom = Rom::load_image("static/roms/giko005.nes");
+    let rom = Rom::load_image("static/roms/giko008.nes");
     App::run(rom);
 }

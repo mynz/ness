@@ -82,6 +82,35 @@ fn test_giko005() {
 }
 
 #[test]
+fn test_giko008() {
+    let mut exe = Executer::new();
+
+    let rom = Rom::load_image("static/roms/giko008.nes");
+    exe.set_rom(rom);
+
+    exe.hard_reset();
+
+    let mut inst_count = 0;
+    loop {
+        println!("giko008: {}, {:?}", inst_count, exe.last_exec_inst);
+
+        exe.execute(); // LDA
+        if exe.get_frame_count() == 1 {
+            break;
+        }
+
+        inst_count += 1;
+    }
+
+    for _ in 0..100 {
+        exe.execute(); // LDA
+
+        println!("last_exec_inst: {:?}", exe.last_exec_inst.opcode);
+        //let frame_count = exe.get_frame_count();
+    }
+}
+
+#[test]
 fn test_executer_00() {
     let mut exe = Executer::new();
     assert_eq!(0, exe.register.a);

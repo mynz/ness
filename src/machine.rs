@@ -268,7 +268,7 @@ impl Executer {
             self.ppu_unit.store_from_cpu(addr, data);
             return;
         }
-        assert!(false, "yet to be implemented");
+        panic!("yet to be implementedi: {:x}, {:x}", addr, data);
     }
 
     pub fn hard_reset(&mut self) {
