@@ -102,7 +102,7 @@ fn test_giko008() {
         inst_count += 1;
     }
 
-    for _ in 0..100 {
+    for _ in 0..500 {
         exe.execute(); // LDA
 
         println!("last_exec_inst: {:?}", exe.last_exec_inst.opcode);

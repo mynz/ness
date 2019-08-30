@@ -216,7 +216,11 @@ pub struct Executer {
 
 impl Executer {
     pub fn new() -> Self {
-        Executer::default()
+        let wram = Box::new([0u8; 0x800]);
+        Self {
+            wram,
+            ..Default::default()
+        }
     }
 
     pub fn set_rom(&mut self, rom: Rom) {
@@ -264,11 +268,13 @@ impl Executer {
     }
 
     fn store_byte(&mut self, addr: u16, data: u8) {
-        if addr >= 0x2000 && addr < 0x2008 {
+        if addr < 0x0800 {
+            self.wram[addr as usize] = data;
+        } else if addr >= 0x2000 && addr < 0x2008 {
             self.ppu_unit.store_from_cpu(addr, data);
-            return;
+        } else {
+            panic!("store_byte out of bound: {:x}, {:x}", addr, data);
         }
-        panic!("yet to be implementedi: {:x}, {:x}", addr, data);
     }
 
     pub fn hard_reset(&mut self) {
