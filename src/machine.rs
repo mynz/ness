@@ -1,5 +1,7 @@
 #![allow(dead_code)]
 
+// https://www.masswerk.at/6502/6502_instruction_set.html
+
 mod inst_specs;
 mod tests;
 
@@ -218,6 +220,7 @@ impl Joypad {
     fn store_byte(&mut self, data: u8) {
         if self.store_count == 1 && data == 0 {
             // reset
+            self.load_count = 0;
         }
         self.store_count = data;
     }
@@ -334,6 +337,16 @@ impl Executer {
 
     fn execute_inst(&mut self, inst: &Inst) {
         match inst.opcode {
+            Opcode::AND => {
+                let m = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    _ => unimplemented!(),
+                };
+                let d = self.register.a & m;
+                self.register.a = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
+            }
             Opcode::BNE => {
                 if !self.register.p.zero {
                     let r = match inst.operand {
