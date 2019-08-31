@@ -204,11 +204,32 @@ struct Register {
 }
 
 #[derive(Default)]
+struct Joypad {
+    load_count: u8,
+    store_count: u8,
+}
+
+impl Joypad {
+    fn load_byte(&mut self) -> u8 {
+        self.load_count += 1;
+
+        0 // TODO
+    }
+    fn store_byte(&mut self, data: u8) {
+        if self.store_count == 1 && data == 0 {
+            // reset
+        }
+        self.store_count = data;
+    }
+}
+
+#[derive(Default)]
 pub struct Executer {
     register: Register,
     wram: Box<[u8]>, // 2kb
     ppu_unit: PpuUnit,
     rom: Box<Rom>,
+    joypad0: Joypad,
 
     last_exec_inst: Inst,
     cycles: u32,
@@ -230,6 +251,9 @@ impl Executer {
     fn load_byte(&mut self, addr: u16) -> u8 {
         if addr >= 0x2000 && addr < 0x4000 {
             return self.ppu_unit.load_byte(addr);
+        } else if addr == 0x4016 {
+            // joypad0
+            return self.joypad0.load_byte();
         }
 
         let word = self.load_word(addr);
@@ -263,8 +287,7 @@ impl Executer {
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
-        assert!(false, "yet to be implemented: {:x}", addr);
-        return 0;
+        panic!("yet to be implemented: {:x}", addr);
     }
 
     fn store_byte(&mut self, addr: u16, data: u8) {
@@ -272,6 +295,9 @@ impl Executer {
             self.wram[addr as usize] = data;
         } else if addr >= 0x2000 && addr < 0x2008 {
             self.ppu_unit.store_from_cpu(addr, data);
+        } else if addr == 0x4016 {
+            // joypad0
+            self.joypad0.store_byte(data);
         } else {
             panic!("store_byte out of bound: {:x}, {:x}", addr, data);
         }
@@ -414,7 +440,7 @@ impl Executer {
                 self.register.s = self.register.x;
             }
             _ => {
-                panic!("yet to not impl: {:#?}", inst);
+                panic!("yet to not impl: {:?}", inst);
             }
         }
 
