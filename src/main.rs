@@ -53,9 +53,29 @@ impl State for App {
     }
 
     fn update(&mut self, window: &mut Window) -> Result<()> {
+        use rustness::PadButton;
+
         if window.keyboard()[Key::Q].is_down() || window.keyboard()[Key::Escape].is_down() {
             window.close();
         }
+
+        let mut keybits: u32 = 0;
+
+        let keys = window.keyboard();
+        if keys[Key::H].is_down() {
+            keybits |= 1 << PadButton::Left as u8;
+        }
+        if keys[Key::J].is_down() {
+            keybits |= 1 << PadButton::Down as u8;
+        }
+        if keys[Key::K].is_down() {
+            keybits |= 1 << PadButton::Up as u8;
+        }
+        if keys[Key::L].is_down() {
+            keybits |= 1 << PadButton::Right as u8;
+        }
+
+        self.exe.set_joypad_keybits(keybits);
 
         /*
         self.pad_state = PadState::default();

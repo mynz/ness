@@ -207,15 +207,21 @@ struct Register {
 
 #[derive(Default)]
 struct Joypad {
+    keybits: u32,
     load_count: u8,
     store_count: u8,
 }
 
 impl Joypad {
-    fn load_byte(&mut self) -> u8 {
-        self.load_count += 1;
+    pub fn set_joypad_keybits(&mut self, keybits: u32) {
+        self.keybits = keybits;
+    }
 
-        0 // TODO
+    fn load_byte(&mut self) -> u8 {
+        let c = self.load_count;
+        let ret = (self.keybits >> c) as u8 & 0x1;
+        self.load_count += 1;
+        ret
     }
     fn store_byte(&mut self, data: u8) {
         if self.store_count == 1 && data == 0 {
@@ -249,6 +255,10 @@ impl Executer {
 
     pub fn set_rom(&mut self, rom: Rom) {
         self.rom = Box::new(rom);
+    }
+
+    pub fn set_joypad_keybits(&mut self, keybits: u32) {
+        self.joypad0.set_joypad_keybits(keybits);
     }
 
     fn load_byte(&mut self, addr: u16) -> u8 {
