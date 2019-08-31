@@ -4,6 +4,17 @@ pub mod machine;
 pub mod ppu;
 pub mod rom;
 
+pub enum PadButton {
+    A,
+    B,
+    Select,
+    Start,
+    Up,
+    Down,
+    Left,
+    Right,
+}
+
 #[derive(Debug, Copy, Clone, PartialEq)]
 pub struct Pos(u32, u32);
 
