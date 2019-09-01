@@ -129,10 +129,24 @@ impl PpuUnit {
         Pos(self.next_render_x, self.next_render_y)
     }
 
-    pub fn execute(&mut self, cycles: u32, rom: &Rom) {
+    pub fn execute(&mut self, cycles: Cycle, rom: &Rom) {
+        let mut rest_cycles = cycles;
+        loop {
+            if rest_cycles > CYCLES_PER_LINE {
+                self.execute_internal(CYCLES_PER_LINE, rom);
+                rest_cycles -= CYCLES_PER_LINE;
+            } else {
+                self.execute_internal(rest_cycles, rom);
+                break;
+            }
+        }
+    }
+
+    fn execute_internal(&mut self, cycles: Cycle, rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
         // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
 
+        assert!(cycles > 0);
         assert!(cycles <= CYCLES_PER_LINE);
 
         if cycles < self.rest_cycles_in_line {

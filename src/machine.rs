@@ -541,8 +541,9 @@ impl Executer {
         let extra_cycles = self.execute_inst(&inst);
 
         // PPUは3倍で進む
-        let cycles_delta = spec.cycles as u32 + extra_cycles;
-        self.ppu_unit.execute(3 * cycles_delta, &self.rom);
+        let cycles_delta = spec.cycles as Cycle + extra_cycles;
+        let ppu_cycles = 3 * cycles_delta;
+        self.ppu_unit.execute(ppu_cycles, &self.rom);
 
         self.cycles += cycles_delta;
         spec.cycles
