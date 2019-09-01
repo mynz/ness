@@ -40,12 +40,15 @@ pub struct PpuRegister {
 impl PpuRegister {}
 
 // パターン
-fn access_pat(pat: &[u8], pos_in_pat: &Pos) -> u8 {
-    let Pos(x, y) = *pos_in_pat;
+fn access_pat(pat: &[u8], pos_in_pat: Pos, h_mir: bool) -> u8 {
+    let Pos(x, y) = pos_in_pat;
     let l0 = pat[y as usize];
     let l1 = pat[y as usize + 8];
-    let p0 = (l0 >> (7 - x)) & 0x1;
-    let p1 = (l1 >> (7 - x)) & 0x1;
+
+    let sft = if h_mir { x } else { 7 - x };
+    let p0 = (l0 >> sft) & 0x1;
+    let p1 = (l1 >> sft) & 0x1;
+
     (p1 << 0x1) + p0
 }
 
@@ -380,7 +383,7 @@ impl PpuUnit {
             let pat_ofs = pat_idx * 16;
             let chr = &chr_table[pat_ofs..pat_ofs + 16];
             let pos_in_pat = Pos(x % 8, y % 8);
-            let palette_idx: u8 = access_pat(chr, &pos_in_pat); // [0, 3]
+            let palette_idx: u8 = access_pat(chr, pos_in_pat, false); // [0, 3]
 
             // アトリビュートの取り出し
             let attr_idx = x / 32 + attr_idx_in_line;
@@ -400,6 +403,8 @@ impl PpuUnit {
             spr_pat_tbl_base = if csf { 0x1000 } else { 0x0000 };
         }
 
+        let mut found_v_mir = false;
+
         for ix in 0..nwidth {
             let x = pos.0 + ix;
             let ns = self.line_sprite_count as usize;
@@ -408,12 +413,15 @@ impl PpuUnit {
                 if x >= sx && x < sx + 8 {
                     let sy = sprite.y as u32;
                     let attr = sprite.attr;
+                    let h_mir = attr & 0x40 != 0; // 左右反転
+                    let v_mir = attr & 0x80 != 0; // 上下反転
+                    found_v_mir |= v_mir; // 未実装チェック
                     let tile = sprite.tile as usize;
                     // スプライトも chr_table にアクセス
                     let pat_ofs = spr_pat_tbl_base + tile * 16;
                     let chr = &chr_table[pat_ofs..pat_ofs + 16];
                     let pos_in_pat = Pos(x - sx, 7 - (sy - y));
-                    let pal_idx: u8 = access_pat(chr, &pos_in_pat); // [0, 3]
+                    let pal_idx: u8 = access_pat(chr, pos_in_pat, h_mir); // [0, 3]
                     let pal_quad = attr & 0x3; // 2bitsのパレット取り出す
                     let pal_ofs = 4 * pal_quad as usize;
                     let col_idx = sprite_palette[pal_ofs + pal_idx as usize];
@@ -421,6 +429,8 @@ impl PpuUnit {
                 }
             }
         }
+
+        assert!(!found_v_mir, "not impl");
 
         // スプライトと背景の合成
         for ix in 0..nwidth {
