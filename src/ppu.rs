@@ -29,14 +29,12 @@ pub struct PpuRegister {
     pub mask: u8,    // w
     status: Status,  // r
     pub oamaddr: u8, // w
-    //pub oamdata: u8,  // rw
     pub scroll: u8,   // w
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
 
     toggle_ppuscroll: bool, // for scroll
     toggle_ppuaddr: bool,   // for addr
-                            //oamdata_counter: u8,    // [0-3] for oamdata
 }
 
 impl PpuRegister {}
@@ -323,10 +321,19 @@ impl PpuUnit {
         }
     }
 
-    pub fn do_oda_dma(&self, data: u8) -> u32 {
-        unimplemented!("data: {}", data);
+    pub fn do_oda_dma<T>(&mut self, src: &mut T) -> u32
+        where T : std::io::Read + std::fmt::Debug 
+    {
+        let mut s = [0; 4];
+        for sprite in self.sprites.iter_mut() {
+            src.read(&mut s).unwrap();
+            sprite.y = s[0];
+            sprite.tile = s[1];
+            sprite.attr = s[2];
+            sprite.x = s[3];
+        }
 
-        513 // or 514 cycles
+        514 // or 513 cycles
     }
 
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {

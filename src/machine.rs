@@ -314,7 +314,13 @@ impl Executer {
             self.ppu_unit.store_from_cpu(addr, data);
         } else if addr == 0x4014 {
             // ODA DMA
-            return self.ppu_unit.do_oda_dma(data);
+            let addr_from = 0x100 * data as usize;
+            if addr_from < 0x800 {
+                let addr_to = addr_from + 0x100;
+                let mut src = Cursor::new(&self.wram[addr_from..addr_to]);
+                return self.ppu_unit.do_oda_dma(&mut src);
+            }
+            unimplemented!();
         } else if addr == 0x4016 {
             // joypad0
             self.joypad0.store_byte(data);
