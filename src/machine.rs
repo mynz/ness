@@ -169,6 +169,10 @@ impl Default for Inst {
     }
 }
 
+
+// carry / overflow の違いは以下が分かりやすい
+// https://lipoyang.hatenablog.com/entry/20131031/p1
+
 struct StatusRegister {
     negative: bool,
     overflow: bool,
@@ -347,6 +351,24 @@ impl Executer {
 
     fn execute_inst(&mut self, inst: &Inst) {
         match inst.opcode {
+            Opcode::ADC => {
+                let m = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    _ => unimplemented!(),
+                };
+
+                let a = self.register.a;
+                let c = if self.register.p.carry { 1 } else { 0 };
+                let d16 = (a + m + c) as u16;
+                let c = d16 > 0x00ff;
+                let d = d16 as u8;
+
+                self.register.a = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
+                self.register.p.carry = c;
+                self.register.p.overflow = c; // XXX: carry との区別が分からない
+            }
             Opcode::AND => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
