@@ -4,6 +4,8 @@ pub mod machine;
 pub mod ppu;
 pub mod rom;
 
+type Cycle = u32;
+
 pub enum PadButton {
     A,
     B,

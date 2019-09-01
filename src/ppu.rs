@@ -3,7 +3,7 @@
 use crate::color_palette::COLOR_PALETTE;
 use crate::frame_buffer::FrameBuffer;
 use crate::rom::Rom;
-use crate::Pos;
+use crate::{Cycle, Pos};
 use std::path::Path;
 
 const WIDTH: u32 = 256;
@@ -25,10 +25,10 @@ struct Status {
 
 #[derive(Default)]
 pub struct PpuRegister {
-    pub ctrl: u8,    // w
-    pub mask: u8,    // w
-    status: Status,  // r
-    pub oamaddr: u8, // w
+    pub ctrl: u8,     // w
+    pub mask: u8,     // w
+    status: Status,   // r
+    pub oamaddr: u8,  // w
     pub scroll: u8,   // w
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
@@ -321,8 +321,9 @@ impl PpuUnit {
         }
     }
 
-    pub fn do_oda_dma<T>(&mut self, src: &mut T) -> u32
-        where T : std::io::Read + std::fmt::Debug 
+    pub fn do_oda_dma<T>(&mut self, src: &mut T) -> Cycle
+    where
+        T: std::io::Read + std::fmt::Debug,
     {
         let mut s = [0; 4];
         for sprite in self.sprites.iter_mut() {

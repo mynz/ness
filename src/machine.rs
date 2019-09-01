@@ -12,6 +12,7 @@ use self::inst_specs::INST_SPECS;
 use crate::frame_buffer::FrameBuffer;
 use crate::ppu::PpuUnit;
 use crate::rom::Rom;
+use crate::Cycle;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -169,7 +170,6 @@ impl Default for Inst {
     }
 }
 
-
 // carry / overflow の違いは以下が分かりやすい
 // https://lipoyang.hatenablog.com/entry/20131031/p1
 
@@ -245,7 +245,7 @@ pub struct Executer {
     joypad0: Joypad,
 
     last_exec_inst: Inst,
-    cycles: u32,
+    cycles: Cycle,
 }
 
 impl Executer {
@@ -307,7 +307,7 @@ impl Executer {
         panic!("yet to be implemented: {:x}", addr);
     }
 
-    fn store_byte(&mut self, addr: u16, data: u8) -> u32 {
+    fn store_byte(&mut self, addr: u16, data: u8) -> Cycle {
         if addr < 0x0800 {
             self.wram[addr as usize] = data;
         } else if addr >= 0x2000 && addr < 0x2008 {
@@ -360,7 +360,7 @@ impl Executer {
         (Inst::decode(&mut bytes.as_ref(), inst_spec, pc), inst_spec)
     }
 
-    fn execute_inst(&mut self, inst: &Inst) -> u32 {
+    fn execute_inst(&mut self, inst: &Inst) -> Cycle {
         let mut extra_cycles = 0;
 
         match inst.opcode {
