@@ -323,6 +323,12 @@ impl PpuUnit {
         }
     }
 
+    pub fn do_oda_dma(&self, data: u8) -> u32 {
+        unimplemented!("data: {}", data);
+
+        513 // or 514 cycles
+    }
+
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
         if pos.0 >= WIDTH || pos.1 >= HEIGHT {
             return; // out of screen.

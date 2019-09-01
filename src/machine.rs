@@ -307,17 +307,22 @@ impl Executer {
         panic!("yet to be implemented: {:x}", addr);
     }
 
-    fn store_byte(&mut self, addr: u16, data: u8) {
+    fn store_byte(&mut self, addr: u16, data: u8) -> u32 {
         if addr < 0x0800 {
             self.wram[addr as usize] = data;
         } else if addr >= 0x2000 && addr < 0x2008 {
             self.ppu_unit.store_from_cpu(addr, data);
+        } else if addr == 0x4014 {
+            // ODA DMA
+            return self.ppu_unit.do_oda_dma(data);
         } else if addr == 0x4016 {
             // joypad0
             self.joypad0.store_byte(data);
         } else {
             panic!("store_byte out of bound: {:x}, {:x}", addr, data);
-        }
+        };
+
+        0 // 指定がなければ zero cycles
     }
 
     pub fn hard_reset(&mut self) {
@@ -349,7 +354,9 @@ impl Executer {
         (Inst::decode(&mut bytes.as_ref(), inst_spec, pc), inst_spec)
     }
 
-    fn execute_inst(&mut self, inst: &Inst) {
+    fn execute_inst(&mut self, inst: &Inst) -> u32 {
+        let mut extra_cycles = 0;
+
         match inst.opcode {
             Opcode::ADC => {
                 let m = match inst.operand {
@@ -505,7 +512,7 @@ impl Executer {
                     Operand::Absolute(a) => a,
                     _ => unimplemented!(),
                 };
-                self.store_byte(addr, self.register.a);
+                extra_cycles = self.store_byte(addr, self.register.a);
             }
             Opcode::TXS => {
                 self.register.s = self.register.x;
@@ -516,15 +523,19 @@ impl Executer {
         }
 
         self.last_exec_inst = *inst;
+
+        extra_cycles
     }
 
     pub fn execute(&mut self) -> u8 {
         let (inst, spec) = self.fetch_inst();
         //println!("xxx: inst {:#?}: ", inst);
-        self.execute_inst(&inst);
+
+        // DMA用
+        let extra_cycles = self.execute_inst(&inst);
 
         // PPUは3倍で進む
-        let cycles_delta = spec.cycles as u32;
+        let cycles_delta = spec.cycles as u32 + extra_cycles;
         self.ppu_unit.execute(3 * cycles_delta, &self.rom);
 
         self.cycles += cycles_delta;
