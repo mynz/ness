@@ -365,6 +365,8 @@ impl Executer {
 
         match inst.opcode {
             Opcode::ADC => {
+                // http://taotao54321.hatenablog.com/entry/2017/04/09/151355
+
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
                     _ => unimplemented!(),
@@ -376,11 +378,19 @@ impl Executer {
                 let c = d16 > 0x00ff;
                 let d = d16 as u8;
 
+                // V: 符号付きオーバーフローが発生したか(同符号の値を加算した結果符号が変わったら真)
+                let v = {
+                    let s0 = a >> 7;
+                    let s1 = m >> 7;
+                    let s2 = d >> 7;
+                    if s0 == s1 { s0 != s2 } else { false }
+                };
+
                 self.register.a = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.carry = c;
-                self.register.p.overflow = c; // XXX: carry との区別が分からない
+                self.register.p.overflow = v;
             }
             Opcode::AND => {
                 let m = match inst.operand {
