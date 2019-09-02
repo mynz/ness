@@ -485,9 +485,6 @@ impl Executer {
                 self.push_u16(self.register.pc + 2);
                 self.register.pc = d;
             }
-            Opcode::SEI => {
-                self.register.p.interrupt = true;
-            }
             Opcode::LDX => {
                 let d = match inst.operand {
                     Operand::Immediate(v) => v,
@@ -521,6 +518,13 @@ impl Executer {
                 self.register.a = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
+            }
+            Opcode::RTS => {
+                let v = self.pop_u16();
+                self.register.pc = v + 1;
+            }
+            Opcode::SEI => {
+                self.register.p.interrupt = true;
             }
             Opcode::STA => {
                 let addr = match inst.operand {
@@ -557,6 +561,21 @@ impl Executer {
         let s = self.register.s as u16 + stack_base;
         self.store_byte(s, v1);
         self.register.s = self.register.s.wrapping_sub(1);
+    }
+
+    fn pop_u16(&mut self) -> u16 {
+        let stack_base = 0x0100;
+
+        self.register.s = self.register.s.wrapping_add(1);
+        let s = self.register.s as u16 + stack_base;
+        let v1 = self.load_byte(s) as u16;
+
+        self.register.s = self.register.s.wrapping_add(1);
+        let s = self.register.s as u16 + stack_base;
+        let v0 = self.load_byte(s) as u16;
+
+        let v = (v0 << 8) + v1;
+        v
     }
 
     pub fn execute(&mut self) -> u8 {
