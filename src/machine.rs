@@ -476,6 +476,15 @@ impl Executer {
                 };
                 self.register.pc = d;
             }
+            Opcode::JSR => {
+                let d = match inst.operand {
+                    Operand::Absolute(v) => v,
+                    _ => unreachable!(),
+                };
+
+                self.push_u16(self.register.pc + 2);
+                self.register.pc = d;
+            }
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
@@ -531,6 +540,23 @@ impl Executer {
         self.last_exec_inst = *inst;
 
         extra_cycles
+    }
+
+    fn push_u16(&mut self, v: u16) {
+        // スタックレジスタはラップする。
+        // https://superuser.com/questions/346658/does-the-6502-put-ff-in-the-stack-pointer-register-as-soon-as-it-gets-power-for
+
+        let v0 = (v >> 8 & 0xff) as u8;
+        let v1 = (v & 0xff) as u8;
+        let stack_base = 0x0100;
+
+        let s = self.register.s as u16 + stack_base;
+        self.store_byte(s, v0);
+        self.register.s = self.register.s.wrapping_sub(1);
+
+        let s = self.register.s as u16 + stack_base;
+        self.store_byte(s, v1);
+        self.register.s = self.register.s.wrapping_sub(1);
     }
 
     pub fn execute(&mut self) -> u8 {
