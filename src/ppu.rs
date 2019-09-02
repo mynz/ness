@@ -134,7 +134,7 @@ impl PpuUnit {
 
     pub fn execute(&mut self, cycles: Cycle, rom: &Rom) {
         let mut rest_cycles = cycles;
-        loop {
+        while rest_cycles > 0 {
             if rest_cycles > CYCLES_PER_LINE {
                 self.execute_internal(CYCLES_PER_LINE, rom);
                 rest_cycles -= CYCLES_PER_LINE;
