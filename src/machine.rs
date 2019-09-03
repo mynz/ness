@@ -383,7 +383,7 @@ impl Executer {
                     let s0 = a >> 7;
                     let s1 = m >> 7;
                     let s2 = d >> 7;
-                    if s0 == s1 { s0 != s2 } else { false }
+                    s0 == s1 && s0 != s2
                 };
 
                 self.register.a = d;
@@ -401,6 +401,30 @@ impl Executer {
                 self.register.a = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
+            }
+            Opcode::ASL | Opcode::LSR => {
+                // 対象はメモリだけでなく、Aレジスタの場合もある
+                let m = match inst.operand {
+                    Operand::ZeroPage(v) => v,
+                    Operand::Accumulator => unimplemented!("A regiser"),
+                    _ => unimplemented!(),
+                } as u16;
+
+                let s = self.load_byte(m);
+
+                let (d, c) = match inst.opcode {
+                    Opcode::ASL => (s << 1, s & 0x80 != 0),
+                    Opcode::LSR => (s >> 1, s & 0x01 != 0),
+                    _ => unreachable!(),
+                };
+
+                self.store_byte(m, d);
+
+                let n = inst.opcode == Opcode::ASL && (d & 0x80 != 0);
+
+                self.register.p.zero = d == 0;
+                self.register.p.negative = n;
+                self.register.p.carry = c;
             }
             Opcode::BNE => {
                 if !self.register.p.zero {
