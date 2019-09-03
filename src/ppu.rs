@@ -229,6 +229,7 @@ impl PpuUnit {
         match addr {
             0x2000 => {
                 self.reg.ctrl = data;
+                assert!(self.reg.ctrl & 0x3 == 0, "not supported yet");
             }
             0x2001 => {
                 self.reg.mask = data;
