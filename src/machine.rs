@@ -613,6 +613,13 @@ impl Executer {
     }
 
     pub fn execute(&mut self) -> u8 {
+        if self.ppu_unit.check_nmi_enabled() {
+            println!(
+                "check_nmi_enabled: {:?}",
+                (self.get_frame_count(), self.cycles)
+            );
+        }
+
         let (inst, spec) = self.fetch_inst();
         //println!("xxx: inst {:#?}: ", inst);
 

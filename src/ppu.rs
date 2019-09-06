@@ -83,6 +83,8 @@ pub struct PpuUnit {
     line_sprites: [Sprite; 8],
     line_sprite_count: u8,
 
+    nmi_interuption: bool,
+
     frame_buffer: FrameBuffer,
 
     next_render_x: u32, // x
@@ -112,6 +114,7 @@ impl PpuUnit {
             sprites,
             line_sprites: [Sprite::default(); 8],
             line_sprite_count: 0,
+            nmi_interuption: false,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             next_render_x: 0,
             next_render_y: 0,
@@ -202,7 +205,14 @@ impl PpuUnit {
                 // 240 line: post-render-scanline アイドル状態
 
                 // 241-260 line: VBlank
-                self.reg.status.vblank = new_y == 241;
+                if new_y == 241 {
+                    // start VBLANK
+                    self.reg.status.vblank = true;
+                    // NMI
+                    if self.reg.ctrl & 0x80 != 0 {
+                        self.nmi_interuption = true;
+                    }
+                }
 
                 // 261 line: pre-render-scanling VBLANKフラグが下ろされる
                 if new_y == 261 {
@@ -353,6 +363,10 @@ impl PpuUnit {
         }
 
         514 // or 513 cycles
+    }
+
+    pub fn check_nmi_enabled(&mut self) -> bool {
+        std::mem::replace(&mut self.nmi_interuption, false)
     }
 
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
