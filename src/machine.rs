@@ -5,7 +5,7 @@
 mod inst_specs;
 mod tests;
 
-use byteorder::{LittleEndian, ReadBytesExt, WriteBytesExt};
+use byteorder::{LittleEndian, ByteOrder, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
@@ -20,6 +20,17 @@ fn u8_to_i8(u: u8) -> i8 {
 
 fn u8_to_i16(u: u8) -> i16 {
     u8_to_i8(u) as i16
+}
+
+fn pack_u16(b0: u8, b1: u8) -> u16 {
+    let buf = [b0, b1];
+    LittleEndian::read_u16(&buf)
+}
+
+fn unpack_u16(w: u16) -> (u8, u8) {
+    let mut buf = [0_u8; 2];
+    LittleEndian::write_u16(&mut buf, w);
+    (buf[0], buf[1])
 }
 
 fn add_rel_to_pc(pc: u16, r: u8) -> u16 {
@@ -584,8 +595,7 @@ impl Executer {
         // スタックレジスタはラップする。
         // https://superuser.com/questions/346658/does-the-6502-put-ff-in-the-stack-pointer-register-as-soon-as-it-gets-power-for
 
-        let v0 = (v >> 8 & 0xff) as u8;
-        let v1 = (v & 0xff) as u8;
+        let (v0, v1) = unpack_u16(v);
         let stack_base = 0x0100;
 
         let s = self.register.s as u16 + stack_base;
@@ -602,21 +612,27 @@ impl Executer {
 
         self.register.s = self.register.s.wrapping_add(1);
         let s = self.register.s as u16 + stack_base;
-        let v1 = self.load_byte(s) as u16;
+        let v1 = self.load_byte(s);
 
         self.register.s = self.register.s.wrapping_add(1);
         let s = self.register.s as u16 + stack_base;
-        let v0 = self.load_byte(s) as u16;
+        let v0 = self.load_byte(s);
 
-        let v = (v0 << 8) + v1;
+        let v = pack_u16(v0, v1);
         v
     }
 
     pub fn execute(&mut self) -> u8 {
+        // NMIの検出
         if self.ppu_unit.check_nmi_enabled() {
+            self.register.p.brk = false;
+            self.push_u16(self.register.pc);
+            self.register.p.interrupt = true;
+            self.register.pc = self.load_word(0xfffa);
+
             println!(
                 "check_nmi_enabled: {:?}",
-                (self.get_frame_count(), self.cycles)
+                (self.get_frame_count(), self.cycles, self.register.pc)
             );
         }
 
