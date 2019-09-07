@@ -584,21 +584,18 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
-            Opcode::LDX => {
+            Opcode::LDX | Opcode::LDY => {
                 let d = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => unimplemented!(),
+                    Operand::AbsoluteX(v) => self.load_byte(v + self.register.x as u16),
+                    Operand::AbsoluteY(v) => self.load_byte(v + self.register.y as u16),
+                    _ => unimplemented!("LDX: {:?}", inst.operand),
                 };
-                self.register.x = d;
-                self.register.p.zero = d == 0;
-                self.register.p.negative = d & 0x80 != 0;
-            }
-            Opcode::LDY => {
-                let d = match inst.operand {
-                    Operand::Immediate(v) => v,
-                    _ => unimplemented!(),
-                };
-                self.register.y = d;
+                match inst.opcode {
+                    Opcode::LDX => self.register.x = d,
+                    Opcode::LDY => self.register.y = d,
+                    _ => unreachable!(),
+                }
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
