@@ -482,6 +482,10 @@ impl Executer {
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
             }
+            Opcode::CLD => {
+                assert_eq!(inst.operand, Operand::Implied);
+                self.register.p.decimal = false;
+            }
             Opcode::CPX | Opcode::CPY => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
@@ -685,7 +689,7 @@ impl Executer {
         }
 
         let (inst, spec) = self.fetch_inst();
-        //println!("xxx: inst {:#?}: ", inst);
+        println!("xxx: inst {:#?}: ", inst);
 
         // DMA用
         let extra_cycles = self.execute_inst(&inst);
