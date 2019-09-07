@@ -615,6 +615,11 @@ impl Executer {
             Opcode::NOP => {
                 assert_eq!(inst.operand, Operand::Implied);
             }
+            Opcode::RTI => {
+                assert_eq!(inst.operand, Operand::Implied);
+                self.register.p = StatusRegister::decode(self.pop_u8());
+                self.register.pc = self.pop_u16();
+            }
             Opcode::RTS => {
                 let v = self.pop_u16();
                 self.register.pc = v + 1;
