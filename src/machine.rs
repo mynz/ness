@@ -612,6 +612,18 @@ impl Executer {
                 };
                 extra_cycles = self.store_byte(addr, self.register.a);
             }
+            Opcode::STX | Opcode::STY => {
+                let addr = match inst.operand {
+                    Operand::Absolute(a) => a,
+                    _ => unimplemented!(),
+                };
+                let s = match inst.opcode {
+                    Opcode::STX => self.register.x,
+                    Opcode::STY => self.register.y,
+                    _ => panic!(),
+                };
+                extra_cycles = self.store_byte(addr, s);
+            }
             Opcode::TXS => {
                 self.register.s = self.register.x;
             }
