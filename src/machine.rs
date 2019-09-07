@@ -5,7 +5,7 @@
 mod inst_specs;
 mod tests;
 
-use byteorder::{LittleEndian, ByteOrder, ReadBytesExt, WriteBytesExt};
+use byteorder::{ByteOrder, LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
@@ -193,6 +193,33 @@ struct StatusRegister {
     interrupt: bool,
     zero: bool,
     carry: bool,
+}
+
+impl StatusRegister {
+    fn encode(&self) -> u8 {
+        let v = if self.negative { 1 << 7 } else { 0 }
+            | if self.overflow { 1 << 6 } else { 0 }
+            | if self.reserved { 1 << 5 } else { 0 }
+            | if self.brk { 1 << 4 } else { 0 }
+            | if self.decimal { 1 << 3 } else { 0 }
+            | if self.interrupt { 1 << 2 } else { 0 }
+            | if self.zero { 1 << 1 } else { 0 }
+            | if self.carry { 1 << 0 } else { 0 };
+        v
+    }
+
+    fn decode(v: u8) -> StatusRegister {
+        Self {
+            negative: v & (1 << 7) != 0,
+            overflow: v & (1 << 6) != 0,
+            reserved: v & (1 << 5) != 0,
+            brk: v & (1 << 4) != 0,
+            decimal: v & (1 << 3) != 0,
+            interrupt: v & (1 << 2) != 0,
+            zero: v & (1 << 1) != 0,
+            carry: v & (1 << 0) != 0,
+        }
+    }
 }
 
 impl Default for StatusRegister {
@@ -594,6 +621,23 @@ impl Executer {
         extra_cycles
     }
 
+    fn push_u8(&mut self, v: u8) {
+        let stack_base = 0x0100;
+
+        let s = self.register.s as u16 + stack_base;
+        self.store_byte(s, v);
+        self.register.s = self.register.s.wrapping_sub(1);
+    }
+
+    fn pop_u8(&mut self) -> u8 {
+        let stack_base = 0x0100;
+
+        self.register.s = self.register.s.wrapping_add(1);
+        let s = self.register.s as u16 + stack_base;
+        let v = self.load_byte(s);
+        v
+    }
+
     fn push_u16(&mut self, v: u16) {
         // スタックレジスタはラップする。
         // https://superuser.com/questions/346658/does-the-6502-put-ff-in-the-stack-pointer-register-as-soon-as-it-gets-power-for
@@ -630,12 +674,13 @@ impl Executer {
         if self.ppu_unit.check_nmi_enabled() {
             self.register.p.brk = false;
             self.push_u16(self.register.pc);
+            self.push_u8(self.register.p.encode());
             self.register.p.interrupt = true;
             self.register.pc = self.load_word(0xfffa);
 
             //println!(
-                //"check_nmi_enabled: {:?}",
-                //(self.get_frame_count(), self.cycles, self.register.pc)
+            //"check_nmi_enabled: {:?}",
+            //(self.get_frame_count(), self.cycles, self.register.pc)
             //);
         }
 
