@@ -527,7 +527,7 @@ impl Executer {
                     _ => unreachable!(),
                 };
 
-                self.push_u16(self.register.pc + 2);
+                self.push_u16(inst.pc + 2);
                 self.register.pc = d;
             }
             Opcode::LDA => {
