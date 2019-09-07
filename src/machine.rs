@@ -530,6 +530,22 @@ impl Executer {
                 self.push_u16(self.register.pc + 2);
                 self.register.pc = d;
             }
+            Opcode::LDA => {
+                let d = match inst.operand {
+                    Operand::Immediate(v) => v,
+                    Operand::Absolute(addr) => self.load_byte(addr),
+                    Operand::AbsoluteX(addr) => {
+                        self.load_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
+                    }
+                    Operand::AbsoluteY(addr) => {
+                        self.load_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
+                    }
+                    _ => panic!("no impl: {:#?}", inst.operand),
+                };
+                self.register.a = d;
+                self.register.p.zero = d == 0;
+                self.register.p.negative = d & 0x80 != 0;
+            }
             Opcode::LDX => {
                 let d = match inst.operand {
                     Operand::Immediate(v) => v,
@@ -548,21 +564,8 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
-            Opcode::LDA => {
-                let d = match inst.operand {
-                    Operand::Immediate(v) => v,
-                    Operand::Absolute(addr) => self.load_byte(addr),
-                    Operand::AbsoluteX(addr) => {
-                        self.load_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
-                    }
-                    Operand::AbsoluteY(addr) => {
-                        self.load_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
-                    }
-                    _ => panic!("no impl: {:#?}", inst.operand),
-                };
-                self.register.a = d;
-                self.register.p.zero = d == 0;
-                self.register.p.negative = d & 0x80 != 0;
+            Opcode::NOP => {
+                assert_eq!(inst.operand, Operand::Implied);
             }
             Opcode::RTS => {
                 let v = self.pop_u16();
@@ -630,10 +633,10 @@ impl Executer {
             self.register.p.interrupt = true;
             self.register.pc = self.load_word(0xfffa);
 
-            println!(
-                "check_nmi_enabled: {:?}",
-                (self.get_frame_count(), self.cycles, self.register.pc)
-            );
+            //println!(
+                //"check_nmi_enabled: {:?}",
+                //(self.get_frame_count(), self.cycles, self.register.pc)
+            //);
         }
 
         let (inst, spec) = self.fetch_inst();
