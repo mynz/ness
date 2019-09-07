@@ -430,15 +430,22 @@ impl Executer {
                 self.register.p.carry = c;
                 self.register.p.overflow = v;
             }
-            Opcode::AND => {
+            Opcode::AND | Opcode::EOR | Opcode::ORA => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
                     _ => unimplemented!(),
                 };
-                let d = self.register.a & m;
+
+                let d = match inst.opcode {
+                    Opcode::AND => self.register.a & m,
+                    Opcode::EOR => self.register.a ^ m,
+                    Opcode::ORA => self.register.a | m,
+                    _ => unreachable!(),
+                };
+
                 self.register.a = d;
-                self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
+                self.register.p.zero = d == 0;
             }
             Opcode::ASL | Opcode::LSR => {
                 // 対象はメモリだけでなく、Aレジスタの場合もある
