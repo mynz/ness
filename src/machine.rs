@@ -524,10 +524,14 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
-            Opcode::DEY => {
-                let s = self.register.y;
-                let d = if s == 0 { 0xff } else { s - 1 };
-                self.register.y = d;
+            Opcode::DEX | Opcode::DEY => {
+                let reg = match inst.opcode {
+                    Opcode::DEX => &mut self.register.x,
+                    Opcode::DEY => &mut self.register.y,
+                    _ => unreachable!(),
+                };
+                let d = if *reg == 0 { 0xff } else { *reg - 1 };
+                *reg = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
