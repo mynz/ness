@@ -29,12 +29,11 @@ pub struct PpuRegister {
     pub mask: u8,     // w
     status: Status,   // r
     pub oamaddr: u8,  // w
-    pub scroll: u8,   // w
+    pub scroll: (u8, u8),   // w
     pub ppuaddr: u16, // w
     pub ppudata: u8,  // rw
 
-    toggle_ppuscroll: bool, // for scroll
-    toggle_ppuaddr: bool,   // for addr
+    toggle_2005_2006: bool,   // for addr
 }
 
 impl PpuRegister {}
@@ -263,16 +262,23 @@ impl PpuUnit {
                 self.reg.oamaddr += 1;
             }
             0x2005 => {
-                self.reg.scroll = data;
+                if !self.reg.toggle_2005_2006 {
+                    self.reg.scroll.0 = data;
+                    //println!("scroll.x: {}", data);
+                } else {
+                    self.reg.scroll.1 = data;
+                    //println!("scroll.y: {}", data);
+                }
+                self.reg.toggle_2005_2006 = !self.reg.toggle_2005_2006;
             }
             0x2006 => {
                 let w = u16::from(data);
-                if !self.reg.toggle_ppuaddr {
+                if !self.reg.toggle_2005_2006 {
                     self.reg.ppuaddr = (self.reg.ppuaddr & 0xff) | w << 8;
                 } else {
                     self.reg.ppuaddr = (self.reg.ppuaddr & 0xff00) | w;
                 }
-                self.reg.toggle_ppuaddr = !self.reg.toggle_ppuaddr;
+                self.reg.toggle_2005_2006 = !self.reg.toggle_2005_2006;
             }
             0x2007 => {
                 let ppuaddr = self.reg.ppuaddr;
@@ -300,8 +306,7 @@ impl PpuUnit {
                 }
 
                 self.reg.status.vblank = false;
-                self.reg.toggle_ppuaddr = false;
-                self.reg.toggle_ppuscroll = false;
+                self.reg.toggle_2005_2006 = false;
                 return r;
             }
             _ => {
