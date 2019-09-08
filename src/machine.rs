@@ -585,8 +585,8 @@ impl Executer {
                     _ => panic!("no impl: {:#?}", inst.operand),
                 };
                 self.register.a = d;
-                self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
+                self.register.p.zero = d == 0;
             }
             Opcode::LDX | Opcode::LDY => {
                 let d = match inst.operand {
@@ -600,8 +600,8 @@ impl Executer {
                     Opcode::LDY => self.register.y = d,
                     _ => unreachable!(),
                 }
-                self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
+                self.register.p.zero = d == 0;
             }
             Opcode::NOP => {
                 assert_eq!(inst.operand, Operand::Implied);
@@ -632,8 +632,36 @@ impl Executer {
                 };
                 extra_cycles = self.store_byte(addr, s);
             }
-            Opcode::TXS => {
-                self.register.s = self.register.x;
+            Opcode::TAX | Opcode::TAY | Opcode::TSX | Opcode::TXA | Opcode::TXS | Opcode::TYA => {
+                let d: u8 = match inst.opcode {
+                    Opcode::TAX => {
+                        self.register.x = self.register.a;
+                        self.register.x
+                    }
+                    Opcode::TAY => {
+                        self.register.y = self.register.a;
+                        self.register.y
+                    }
+                    Opcode::TSX => {
+                        self.register.x = self.register.s;
+                        self.register.x
+                    }
+                    Opcode::TXA => {
+                        self.register.a = self.register.x;
+                        self.register.a
+                    }
+                    Opcode::TXS => {
+                        self.register.s = self.register.x;
+                        self.register.s
+                    }
+                    Opcode::TYA => {
+                        self.register.a = self.register.y;
+                        self.register.a
+                    }
+                    _ => unreachable!(),
+                };
+                self.register.p.negative = d & 0x80 != 0;
+                self.register.p.zero = d == 0;
             }
             _ => {
                 panic!("yet to not impl: {:?}", inst);
@@ -709,7 +737,7 @@ impl Executer {
         }
 
         let (inst, spec) = self.fetch_inst();
-        println!("xxx: inst {:#?}: ", inst);
+        println!("xxx: inst {:?}: ", inst);
 
         // DMA用
         let extra_cycles = self.execute_inst(&inst);
