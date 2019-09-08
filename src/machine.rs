@@ -548,10 +548,19 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
-            Opcode::INX => {
-                let s = self.register.x;
+            Opcode::INX | Opcode::INY => {
+                let r = match inst.opcode {
+                    Opcode::INX => {
+                        &mut self.register.x
+                    }
+                    Opcode::INY => {
+                        &mut self.register.y
+                    }
+                    _ => unreachable!(),
+                };
+                let s = *r;
                 let d = if s == 0xff { 0 } else { s + 1 };
-                self.register.x = d;
+                *r = d;
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
