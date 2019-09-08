@@ -751,7 +751,7 @@ impl Executer {
         }
 
         let (inst, spec) = self.fetch_inst();
-        println!("xxx: inst {:?}: ", inst);
+        //println!("xxx: inst {:?}: ", inst);
 
         // DMA用
         let extra_cycles = self.execute_inst(&inst);
