@@ -385,6 +385,9 @@ impl PpuUnit {
         let sprite_palette = &self.sprite_palette;
         let chr_table = &rom.get_chr();
 
+        let bg_scroll_x = self.reg.scroll.0 as u32;
+        //let bg_scroll_y = self.reg.scroll.1 as u32;
+
         let y = pos.1;
         let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
         let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
