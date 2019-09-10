@@ -374,6 +374,10 @@ impl PpuUnit {
         std::mem::replace(&mut self.nmi_interuption, false)
     }
 
+    fn scroll_wrap(base: u32, scroll: u8, max: u32) -> u32 {
+        (base + scroll as u32) % max
+    }
+
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
         if pos.0 >= WIDTH || pos.1 >= HEIGHT {
             return; // out of screen.
@@ -385,36 +389,38 @@ impl PpuUnit {
         let sprite_palette = &self.sprite_palette;
         let chr_table = &rom.get_chr();
 
-        let bg_scroll_x = self.reg.scroll.0 as u32;
-        //let bg_scroll_y = self.reg.scroll.1 as u32;
-
-        let y = pos.1;
-        let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
-        let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
-
         let nwidth = std::cmp::min(pixel_count, WIDTH - pos.0);
         let mut out_color_indices = [0; WIDTH as usize];
 
-        // 背景の処理
-        for ix in 0..nwidth {
-            let x = pos.0 + ix;
+        {
+            let scroll_x = self.reg.scroll.0;
+            let scroll_y = self.reg.scroll.1;
 
-            let name_idx = (name_idx_in_line + x / 8) as usize;
+            let y = Self::scroll_wrap(pos.1, scroll_y, HEIGHT);
+            let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
+            let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
-            let pat_idx = name_table[name_idx] as usize;
-            // 背景の場合は chr_table にアクセス
-            let pat_ofs = pat_idx * 16;
-            let chr = &chr_table[pat_ofs..pat_ofs + 16];
-            let pos_in_pat = Pos(x % 8, y % 8);
-            let palette_idx: u8 = access_pat(chr, pos_in_pat, false); // [0, 3]
+            // 背景の処理
+            for ix in 0..nwidth {
+                let x = Self::scroll_wrap(pos.0 + ix, scroll_x, WIDTH);
 
-            // アトリビュートの取り出し
-            let attr_idx = x / 32 + attr_idx_in_line;
-            let attr = access_attr(attr_table[attr_idx as usize], pos);
+                let name_idx = (name_idx_in_line + x / 8) as usize;
 
-            let pal_ofs = 4 * attr as usize;
-            let col_idx = bg_palette[pal_ofs + palette_idx as usize];
-            out_color_indices[ix as usize] = col_idx;
+                let pat_idx = name_table[name_idx] as usize;
+                // 背景の場合は chr_table にアクセス
+                let pat_ofs = pat_idx * 16;
+                let chr = &chr_table[pat_ofs..pat_ofs + 16];
+                let pos_in_pat = Pos(x % 8, y % 8);
+                let palette_idx: u8 = access_pat(chr, pos_in_pat, false); // [0, 3]
+
+                // アトリビュートの取り出し
+                let attr_idx = x / 32 + attr_idx_in_line;
+                let attr = access_attr(attr_table[attr_idx as usize], pos);
+
+                let pal_ofs = 4 * attr as usize;
+                let col_idx = bg_palette[pal_ofs + palette_idx as usize];
+                out_color_indices[ix as usize] = col_idx;
+            }
         }
 
         // スプライト
@@ -426,6 +432,7 @@ impl PpuUnit {
             spr_pat_tbl_base = if csf { 0x1000 } else { 0x0000 };
         }
 
+        let y = pos.1;
         let mut found_v_mir = false;
 
         for ix in 0..nwidth {
