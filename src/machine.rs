@@ -630,7 +630,8 @@ impl Executer {
             Opcode::STA => {
                 let addr = match inst.operand {
                     Operand::Absolute(a) => a,
-                    _ => unimplemented!(),
+                    Operand::ZeroPage(a) => a as u16,
+                    _ => unimplemented!("{:?}", inst.operand),
                 };
                 extra_cycles = self.store_byte(addr, self.register.a);
             }
