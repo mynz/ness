@@ -25,15 +25,15 @@ struct Status {
 
 #[derive(Default)]
 pub struct PpuRegister {
-    pub ctrl: u8,     // w
-    pub mask: u8,     // w
-    status: Status,   // r
-    pub oamaddr: u8,  // w
-    pub scroll: (u8, u8),   // w
-    pub ppuaddr: u16, // w
-    pub ppudata: u8,  // rw
+    pub ctrl: u8,         // w
+    pub mask: u8,         // w
+    status: Status,       // r
+    pub oamaddr: u8,      // w
+    pub scroll: (u8, u8), // w
+    pub ppuaddr: u16,     // w
+    pub ppudata: u8,      // rw
 
-    toggle_2005_2006: bool,   // for addr
+    toggle_2005_2006: bool, // for addr
 }
 
 impl PpuRegister {}
@@ -264,7 +264,7 @@ impl PpuUnit {
             0x2005 => {
                 if !self.reg.toggle_2005_2006 {
                     self.reg.scroll.0 = data;
-                    //println!("scroll.x: {}", data);
+                //println!("scroll.x: {}", data);
                 } else {
                     self.reg.scroll.1 = data;
                     //println!("scroll.y: {}", data);

@@ -398,6 +398,18 @@ impl Executer {
         (Inst::decode(&mut bytes.as_ref(), inst_spec, pc), inst_spec)
     }
 
+    fn get_addr_from_operand(&self, operand: Operand) -> u16 {
+        let addr: u16 = match operand {
+            Operand::Immediate(_) => unreachable!("must not come Immediate"),
+            Operand::ZeroPage(a) => a as u16,
+            Operand::Absolute(a) => a,
+            Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
+            Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
+            _ => panic!("no impl: {:#?}", operand),
+        };
+        addr
+    }
+
     fn execute_inst(&mut self, inst: &Inst) -> Cycle {
         let mut extra_cycles = 0;
 
@@ -550,12 +562,8 @@ impl Executer {
             }
             Opcode::INX | Opcode::INY => {
                 let r = match inst.opcode {
-                    Opcode::INX => {
-                        &mut self.register.x
-                    }
-                    Opcode::INY => {
-                        &mut self.register.y
-                    }
+                    Opcode::INX => &mut self.register.x,
+                    Opcode::INY => &mut self.register.y,
                     _ => unreachable!(),
                 };
                 let s = *r;
@@ -581,34 +589,22 @@ impl Executer {
                 self.push_u16(inst.pc + 2);
                 self.register.pc = d;
             }
-            Opcode::LDA => {
-                let d = match inst.operand {
-                    Operand::Immediate(v) => v,
-                    Operand::Absolute(addr) => self.load_byte(addr),
-                    Operand::AbsoluteX(addr) => {
-                        self.load_byte((addr as i16 + u8_to_i16(self.register.x)) as u16)
-                    }
-                    Operand::AbsoluteY(addr) => {
-                        self.load_byte((addr as i16 + u8_to_i16(self.register.y)) as u16)
-                    }
-                    _ => panic!("no impl: {:#?}", inst.operand),
+            Opcode::LDA | Opcode::LDX | Opcode::LDY => {
+                let d: u8 = if let Operand::Immediate(v) = inst.operand {
+                    v
+                } else {
+                    let addr = self.get_addr_from_operand(inst.operand);
+                    self.load_byte(addr)
                 };
-                self.register.a = d;
-                self.register.p.negative = d & 0x80 != 0;
-                self.register.p.zero = d == 0;
-            }
-            Opcode::LDX | Opcode::LDY => {
-                let d = match inst.operand {
-                    Operand::Immediate(v) => v,
-                    Operand::AbsoluteX(v) => self.load_byte(v + self.register.x as u16),
-                    Operand::AbsoluteY(v) => self.load_byte(v + self.register.y as u16),
-                    _ => unimplemented!("LDX: {:?}", inst.operand),
-                };
-                match inst.opcode {
-                    Opcode::LDX => self.register.x = d,
-                    Opcode::LDY => self.register.y = d,
+
+                let r = match inst.opcode {
+                    Opcode::LDA => &mut self.register.a,
+                    Opcode::LDX => &mut self.register.x,
+                    Opcode::LDY => &mut self.register.y,
                     _ => unreachable!(),
-                }
+                };
+                *r = d;
+
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
             }
