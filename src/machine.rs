@@ -483,8 +483,14 @@ impl Executer {
                 self.register.p.negative = n;
                 self.register.p.carry = c;
             }
-            Opcode::BNE => {
-                if !self.register.p.zero {
+            Opcode::BEQ | Opcode::BNE => {
+                let cond = match inst.opcode {
+                    Opcode::BEQ => self.register.p.zero,
+                    Opcode::BNE => !self.register.p.zero,
+                    _ => unreachable!(),
+                };
+
+                if cond {
                     let r = match inst.operand {
                         Operand::Relative(r) => r,
                         _ => unreachable!(),
