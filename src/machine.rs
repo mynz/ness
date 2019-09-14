@@ -493,25 +493,18 @@ impl Executer {
                 self.register.p.negative = n;
                 self.register.p.carry = c;
             }
-            Opcode::BEQ | Opcode::BNE => {
+            Opcode::BEQ | Opcode::BNE | Opcode::BCS | Opcode::BPL => {
                 let cond = match inst.opcode {
                     Opcode::BEQ => self.register.p.zero,
                     Opcode::BNE => !self.register.p.zero,
+                    Opcode::BCS => self.register.p.carry,
+                    Opcode::BPL => !self.register.p.negative,
                     _ => unreachable!(),
                 };
 
                 if cond {
                     let r = match inst.operand {
                         Operand::Relative(r) => r,
-                        _ => unreachable!(),
-                    };
-                    self.register.pc = add_rel_to_pc(self.register.pc, r);
-                }
-            }
-            Opcode::BPL => {
-                if !self.register.p.negative {
-                    let r = match inst.operand {
-                        Operand::Relative(v) => v,
                         _ => unreachable!(),
                     };
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
