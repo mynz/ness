@@ -17,6 +17,18 @@ const DISPLAY_SIZE: (u32, u32) = (256, 240);
 // １ラインに掛かるサイクル数
 const CYCLES_PER_LINE: u32 = 341;
 
+const NAME_SIZE: u16 = 0x03c0;
+const ATTR_SIZE: u16 = 0x0040;
+
+const NM0_BASE: u16 = 0x2000;
+const AT0_BASE: u16 = 0x23c0;
+const NM1_BASE: u16 = 0x2400;
+const AT1_BASE: u16 = 0x27c0;
+const NM2_BASE: u16 = 0x2800;
+const AT2_BASE: u16 = 0x2bc0;
+const NM3_BASE: u16 = 0x2c00;
+const AT3_BASE: u16 = 0x2fc0;
+
 #[derive(Default)]
 struct Status {
     vblank: bool,
@@ -325,7 +337,6 @@ impl PpuUnit {
                 return r;
             }
             0x2007 => {
-                // TODO
                 let ppuaddr = self.reg.ppuaddr;
                 let r = self.load_memory(ppuaddr);
 
@@ -343,7 +354,20 @@ impl PpuUnit {
     }
 
     fn load_memory(&self, addr: u16) -> u8 {
-        unimplemented!("yet to implement ppu addr: 0x{:x}", addr);
+        const NM0_END: u16 = NM0_BASE + NAME_SIZE - 1;
+        const NM1_END: u16 = NM1_BASE + NAME_SIZE - 1;
+        const NM2_END: u16 = NM2_BASE + NAME_SIZE - 1;
+        const NM3_END: u16 = NM3_BASE + NAME_SIZE - 1;
+
+        let ret = match addr {
+            NM0_BASE...NM0_END => self.name_table0[(addr - NM0_BASE) as usize],
+            NM1_BASE...NM1_END => self.name_table1[(addr - NM1_BASE) as usize],
+            NM2_BASE...NM2_END => self.name_table2[(addr - NM2_BASE) as usize],
+            NM3_BASE...NM3_END => self.name_table3[(addr - NM3_BASE) as usize],
+            _ => unimplemented!(),
+        };
+
+        ret
     }
 
     fn store_memory(&mut self, addr: u16, data: u8) {
@@ -355,18 +379,6 @@ impl PpuUnit {
         } else {
             addr
         };
-
-        const NAME_SIZE: u16 = 0x03c0;
-        const ATTR_SIZE: u16 = 0x0040;
-
-        const NM0_BASE: u16 = 0x2000;
-        const AT0_BASE: u16 = 0x23c0;
-        const NM1_BASE: u16 = 0x2400;
-        const AT1_BASE: u16 = 0x27c0;
-        const NM2_BASE: u16 = 0x2800;
-        const AT2_BASE: u16 = 0x2bc0;
-        const NM3_BASE: u16 = 0x2c00;
-        const AT3_BASE: u16 = 0x2fc0;
 
         match addr2 {
             a if a >= NM0_BASE && a < NM0_BASE + NAME_SIZE => {

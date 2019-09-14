@@ -146,7 +146,7 @@ fn test_giko016() {
     let mut _inst_count = 0;
     loop {
         exe.execute();
-        if exe.get_frame_count() == 2 {
+        if exe.get_frame_count() == 5 {
             break;
         }
         _inst_count += 1;
