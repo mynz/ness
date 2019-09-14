@@ -623,10 +623,21 @@ impl Executer {
                 self.register.p.zero = d == 0;
             }
             Opcode::NOP => {
-                assert_eq!(inst.operand, Operand::Implied);
+                debug_assert_eq!(inst.operand, Operand::Implied);
+            }
+            Opcode::PHA => {
+                debug_assert_eq!(inst.operand, Operand::Implied);
+                self.push_u8(self.register.a);
+            }
+            Opcode::PLA => {
+                debug_assert_eq!(inst.operand, Operand::Implied);
+                let d = self.pop_u8();
+                self.register.a = d;
+                self.register.p.negative = d & 0x80 != 0;
+                self.register.p.zero = d == 0;
             }
             Opcode::RTI => {
-                assert_eq!(inst.operand, Operand::Implied);
+                debug_assert_eq!(inst.operand, Operand::Implied);
                 self.register.p = StatusRegister::decode(self.pop_u8());
                 self.register.pc = self.pop_u16();
             }
