@@ -325,7 +325,7 @@ impl PpuUnit {
                 return r;
             }
             _ => {
-                panic!("yet to implement ppu addr: {}", addr);
+                unimplemented!("yet to implement ppu addr: 0x{:x}", addr);
             }
         }
 
