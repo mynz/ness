@@ -324,6 +324,16 @@ impl PpuUnit {
                 self.reg.toggle_2005_2006 = false;
                 return r;
             }
+            0x2007 => {
+                // TODO
+                let ppuaddr = self.reg.ppuaddr;
+                let r = self.load_memory(ppuaddr);
+
+                // アドレスのインクリメント
+                let inc = if self.reg.ctrl & 0x4 == 0 { 1 } else { 32 };
+                self.reg.ppuaddr += inc;
+                return r;
+            }
             _ => {
                 unimplemented!("yet to implement ppu addr: 0x{:x}", addr);
             }
@@ -332,8 +342,8 @@ impl PpuUnit {
         //panic!("yet to be implemented: {:x}", addr);
     }
 
-    pub fn load_word(&mut self, addr: u16) -> u16 {
-        panic!("yet to be implemented: {:x}", addr);
+    fn load_memory(&self, addr: u16) -> u8 {
+        unimplemented!("yet to implement ppu addr: 0x{:x}", addr);
     }
 
     fn store_memory(&mut self, addr: u16, data: u8) {

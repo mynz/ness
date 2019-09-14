@@ -322,10 +322,6 @@ impl Executer {
             return cur.read_u16::<LittleEndian>().unwrap();
         }
 
-        if addr >= 0x2000 && addr < 0x4000 {
-            return self.ppu_unit.load_word(addr);
-        }
-
         // 0xffff まで有効
         if addr >= 0x8000 {
             let base = 0x8000;
