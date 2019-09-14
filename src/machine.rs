@@ -644,11 +644,7 @@ impl Executer {
                 self.register.p.interrupt = true;
             }
             Opcode::STA => {
-                let addr = match inst.operand {
-                    Operand::Absolute(a) => a,
-                    Operand::ZeroPage(a) => a as u16,
-                    _ => unimplemented!("{:?}", inst.operand),
-                };
+                let addr = self.get_addr_from_operand(inst.operand);
                 extra_cycles = self.store_byte(addr, self.register.a);
             }
             Opcode::STX | Opcode::STY => {
