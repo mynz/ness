@@ -456,6 +456,8 @@ impl PpuUnit {
             return; // out of screen.
         }
 
+        // https://wiki.nesdev.com/w/index.php/PPU_registers#PPUCTRL
+
         let name_table = &self.name_table0;
         let attr_table = &self.attr_table0;
         let bg_palette = &self.bg_palette;
@@ -466,8 +468,7 @@ impl PpuUnit {
         let mut out_color_indices = [0; WIDTH as usize];
 
         {
-            let scroll_x = self.reg.scroll.0;
-            let scroll_y = self.reg.scroll.1;
+            let (scroll_x, scroll_y) = self.reg.scroll;
 
             let y = Self::scroll_wrap(pos.1, scroll_y, HEIGHT);
             let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
