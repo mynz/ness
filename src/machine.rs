@@ -525,22 +525,24 @@ impl Executer {
                 assert_eq!(inst.operand, Operand::Implied);
                 self.register.p.decimal = false;
             }
-            Opcode::CPX | Opcode::CPY => {
+            Opcode::CMP | Opcode::CPX | Opcode::CPY => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
-                    Operand::ZeroPage(v) => self.load_byte(v as u16),
-                    Operand::Absolute(v) => self.load_byte(v),
-                    _ => unreachable!(),
+                    _ => {
+                        let addr = self.get_addr_from_operand(inst.operand);
+                        self.load_byte(addr)
+                    }
                 };
 
                 let s = match inst.opcode {
+                    Opcode::CMP => self.register.a,
                     Opcode::CPX => self.register.x,
                     Opcode::CPY => self.register.y,
                     _ => unreachable!(),
                 };
 
-                self.register.p.zero = s == m;
                 self.register.p.negative = s < m;
+                self.register.p.zero = s == m;
                 self.register.p.carry = s >= m;
             }
             Opcode::DEC => {
