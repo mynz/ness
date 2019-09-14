@@ -402,6 +402,8 @@ impl Executer {
         let addr: u16 = match operand {
             Operand::Immediate(_) => unreachable!("must not come Immediate"),
             Operand::ZeroPage(a) => a as u16,
+            Operand::ZeroPageX(a) => { (a as u16 + self.register.x as u16) & 0xff }
+            Operand::ZeroPageY(a) => { (a as u16 + self.register.y as u16) & 0xff }
             Operand::Absolute(a) => a,
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
