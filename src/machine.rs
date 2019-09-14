@@ -402,8 +402,8 @@ impl Executer {
         let addr: u16 = match operand {
             Operand::Immediate(_) => unreachable!("must not come Immediate"),
             Operand::ZeroPage(a) => a as u16,
-            Operand::ZeroPageX(a) => { (a as u16 + self.register.x as u16) & 0xff }
-            Operand::ZeroPageY(a) => { (a as u16 + self.register.y as u16) & 0xff }
+            Operand::ZeroPageX(a) => (a as u16 + self.register.x as u16) & 0xff,
+            Operand::ZeroPageY(a) => (a as u16 + self.register.y as u16) & 0xff,
             Operand::Absolute(a) => a,
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
@@ -471,13 +471,19 @@ impl Executer {
             }
             Opcode::ASL | Opcode::LSR => {
                 // 対象はメモリだけでなく、Aレジスタの場合もある
-                let m = match inst.operand {
-                    Operand::ZeroPage(v) => v,
-                    Operand::Accumulator => unimplemented!("A regiser"),
-                    _ => unimplemented!(),
-                } as u16;
 
-                let s = self.load_byte(m);
+                enum T {
+                    RegA,
+                    Mem(u16),
+                };
+
+                let (t, s) = match inst.operand {
+                    Operand::Accumulator => (T::RegA, self.register.a),
+                    _ => {
+                        let addr = self.get_addr_from_operand(inst.operand);
+                        (T::Mem(addr), self.load_byte(addr))
+                    }
+                };
 
                 let (d, c) = match inst.opcode {
                     Opcode::ASL => (s << 1, s & 0x80 != 0),
@@ -485,7 +491,11 @@ impl Executer {
                     _ => unreachable!(),
                 };
 
-                self.store_byte(m, d);
+                if let T::Mem(addr) = t {
+                    self.store_byte(addr, d);
+                } else {
+                    self.register.a = d;
+                }
 
                 let n = inst.opcode == Opcode::ASL && (d & 0x80 != 0);
 
