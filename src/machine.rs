@@ -626,6 +626,12 @@ impl Executer {
                 let v = self.pop_u16();
                 self.register.pc = v + 1;
             }
+            Opcode::SEC => {
+                self.register.p.carry = true;
+            }
+            Opcode::SED => {
+                self.register.p.decimal = true;
+            }
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
