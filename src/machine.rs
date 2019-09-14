@@ -515,6 +515,10 @@ impl Executer {
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
             }
+            Opcode::CLC => {
+                assert_eq!(inst.operand, Operand::Implied);
+                self.register.p.carry = false;
+            }
             Opcode::CLD => {
                 assert_eq!(inst.operand, Operand::Implied);
                 self.register.p.decimal = false;
