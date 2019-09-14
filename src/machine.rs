@@ -546,10 +546,7 @@ impl Executer {
                 self.register.p.carry = s >= m;
             }
             Opcode::DEC => {
-                let addr = match inst.operand {
-                    Operand::Absolute(v) => v,
-                    _ => unreachable!(),
-                };
+                let addr = self.get_addr_from_operand(inst.operand);
 
                 let s = self.load_byte(addr);
                 let d = if s == 0 { 0xff } else { s - 1 };
