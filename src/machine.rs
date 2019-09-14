@@ -568,11 +568,7 @@ impl Executer {
                 self.register.p.negative = d & 0x80 != 0;
             }
             Opcode::INC => {
-                let addr = match inst.operand {
-                    Operand::Absolute(v) => v,
-                    _ => unreachable!(),
-                };
-
+                let addr = self.get_addr_from_operand(inst.operand);
                 let s = self.load_byte(addr);
                 let d = if s == 0xff { 0 } else { s + 1 };
                 self.store_byte(addr, d);
