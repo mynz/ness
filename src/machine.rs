@@ -419,16 +419,15 @@ impl Executer {
 
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => unimplemented!("{:?}, {:?}", inst.opcode, inst.operand),
+                    _ => {
+                        let addr = self.get_addr_from_operand(inst.operand);
+                        self.load_byte(addr)
+                    }
                 };
 
                 // SBCはADCの引数を反転させることで実現できる
                 // https://stackoverflow.com/a/29224684
-                let b = if inst.opcode == Opcode::SBC {
-                    !m
-                } else {
-                    m
-                };
+                let b = if inst.opcode == Opcode::SBC { !m } else { m };
 
                 let a = self.register.a;
                 let c = if self.register.p.carry { 1 } else { 0 };
