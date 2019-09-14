@@ -71,8 +71,16 @@ struct Sprite {
 
 pub struct PpuUnit {
     reg: PpuRegister,
+
     name_table0: Box<[u8]>,     // 0x03c0 byte
     attr_table0: Box<[u8]>,     // 0x0040 byte
+    name_table1: Box<[u8]>,     // 0x03c0 byte
+    attr_table1: Box<[u8]>,     // 0x0040 byte
+    name_table2: Box<[u8]>,     // 0x03c0 byte
+    attr_table2: Box<[u8]>,     // 0x0040 byte
+    name_table3: Box<[u8]>,     // 0x03c0 byte
+    attr_table3: Box<[u8]>,     // 0x0040 byte
+
     bg_palette: [u8; 0x10],     // 0x0010 byte
     sprite_palette: [u8; 0x10], // 0x0010 byte
     vram: Box<[u8]>,            // 0x2000 byte
@@ -96,17 +104,24 @@ pub struct PpuUnit {
 impl PpuUnit {
     pub fn new() -> PpuUnit {
         let reg = PpuRegister::default();
-        let name_table0 = Box::new([0_u8; 0x03c0]);
-        let attr_table0 = Box::new([0_u8; 0x0040]);
         let bg_palette = [0_u8; 0x10];
         let sprite_palette = [0_u8; 0x10];
         let vram = Box::new([0u8; 0x2000]); // 2048 byte
         let sprites = Box::new([Sprite::default(); 64]);
 
+        const NAME_TABLE_SIZE: usize = 0x03c0;
+        const ATTR_TABLE_SIZE: usize = 0x0040;
+
         PpuUnit {
             reg,
-            name_table0,
-            attr_table0,
+            name_table0: Box::new([0; NAME_TABLE_SIZE]),
+            attr_table0: Box::new([0; ATTR_TABLE_SIZE]),
+            name_table1: Box::new([0; NAME_TABLE_SIZE]),
+            attr_table1: Box::new([0; ATTR_TABLE_SIZE]),
+            name_table2: Box::new([0; NAME_TABLE_SIZE]),
+            attr_table2: Box::new([0; ATTR_TABLE_SIZE]),
+            name_table3: Box::new([0; NAME_TABLE_SIZE]),
+            attr_table3: Box::new([0; ATTR_TABLE_SIZE]),
             bg_palette,
             sprite_palette,
             vram,
@@ -331,14 +346,50 @@ impl PpuUnit {
             addr
         };
 
+        const NAME_SIZE: u16 = 0x03c0;
+        const ATTR_SIZE: u16 = 0x0040;
+
+        const NM0_BASE: u16 = 0x2000;
+        const AT0_BASE: u16 = 0x23c0;
+        const NM1_BASE: u16 = 0x2400;
+        const AT1_BASE: u16 = 0x27c0;
+        const NM2_BASE: u16 = 0x2800;
+        const AT2_BASE: u16 = 0x2bc0;
+        const NM3_BASE: u16 = 0x2c00;
+        const AT3_BASE: u16 = 0x2fc0;
+
         match addr2 {
-            a if a >= 0x2000 && a < 0x2000 + 0x3c0 => {
-                let idx = (a - 0x2000) as usize;
+            a if a >= NM0_BASE && a < NM0_BASE + NAME_SIZE => {
+                let idx = (a - NM0_BASE) as usize;
                 self.name_table0[idx] = data;
             }
-            a if a >= 0x23c0 && a < 0x23c0 + 0x040 => {
-                let idx = (a - 0x23c0) as usize;
+            a if a >= AT0_BASE && a < AT0_BASE + ATTR_SIZE => {
+                let idx = (a - AT0_BASE) as usize;
                 self.attr_table0[idx] = data;
+            }
+            a if a >= NM1_BASE && a < NM1_BASE + NAME_SIZE => {
+                let idx = (a - NM1_BASE) as usize;
+                self.name_table1[idx] = data;
+            }
+            a if a >= AT1_BASE && a < AT1_BASE + ATTR_SIZE => {
+                let idx = (a - AT1_BASE) as usize;
+                self.attr_table1[idx] = data;
+            }
+            a if a >= NM2_BASE && a < NM2_BASE + NAME_SIZE => {
+                let idx = (a - NM2_BASE) as usize;
+                self.name_table2[idx] = data;
+            }
+            a if a >= AT2_BASE && a < AT2_BASE + ATTR_SIZE => {
+                let idx = (a - AT2_BASE) as usize;
+                self.attr_table2[idx] = data;
+            }
+            a if a >= NM3_BASE && a < NM3_BASE + NAME_SIZE => {
+                let idx = (a - NM3_BASE) as usize;
+                self.name_table3[idx] = data;
+            }
+            a if a >= AT3_BASE && a < AT3_BASE + ATTR_SIZE => {
+                let idx = (a - AT3_BASE) as usize;
+                self.attr_table3[idx] = data;
             }
             a if a >= 0x3f00 && a < 0x3f00 + 0x10 => {
                 let idx = (a - 0x3f00) as usize;
@@ -349,7 +400,7 @@ impl PpuUnit {
                 self.sprite_palette[idx] = data;
             }
             _ => {
-                panic!("yet to be implemented to write addr: {:x}", addr);
+                unimplemented!("yet to be implemented to write addr: {:x}", addr);
             }
         }
     }

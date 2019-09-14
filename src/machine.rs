@@ -681,7 +681,7 @@ impl Executer {
                 self.register.p.zero = d == 0;
             }
             _ => {
-                panic!("yet to not impl: {:?}", inst);
+                unimplemented!("yet to not impl: {:?}", inst);
             }
         }
 
