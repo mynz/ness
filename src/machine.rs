@@ -414,24 +414,33 @@ impl Executer {
         let mut extra_cycles = 0;
 
         match inst.opcode {
-            Opcode::ADC => {
+            Opcode::ADC | Opcode::SBC => {
                 // http://taotao54321.hatenablog.com/entry/2017/04/09/151355
 
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => unimplemented!(),
+                    _ => unimplemented!("{:?}, {:?}", inst.opcode, inst.operand),
+                };
+
+                // SBCはADCの引数を反転させることで実現できる
+                // https://stackoverflow.com/a/29224684
+                let b = if inst.opcode == Opcode::SBC {
+                    !m
+                } else {
+                    m
                 };
 
                 let a = self.register.a;
                 let c = if self.register.p.carry { 1 } else { 0 };
-                let d16 = (a + m + c) as u16;
+                let d16 = (a + b + c) as u16;
                 let c = d16 > 0x00ff;
                 let d = d16 as u8;
 
-                // V: 符号付きオーバーフローが発生したか(同符号の値を加算した結果符号が変わったら真)
+                // V: 符号付きオーバーフローが発生したか
+                // (同符号の値を加算した結果符号が変わったら真)
                 let v = {
                     let s0 = a >> 7;
-                    let s1 = m >> 7;
+                    let s1 = b >> 7;
                     let s2 = d >> 7;
                     s0 == s1 && s0 != s2
                 };
