@@ -447,8 +447,20 @@ impl PpuUnit {
         std::mem::replace(&mut self.nmi_interuption, false)
     }
 
-    fn scroll_wrap(base: u32, scroll: u8, max: u32) -> u32 {
-        (base + scroll as u32) % max
+    fn scroll_wrap(base: u32, scroll: u8, max: u32) -> (u32, bool) {
+        let ap = base + scroll as u32;
+        let p = ap % max;
+        let mirror = ap > max;
+        (p, mirror)
+    }
+
+    fn select_name_table(&self, x_mirror: bool, y_mirror: bool) -> (&Box<[u8]>, &Box<[u8]>) {
+        match (x_mirror, y_mirror) {
+            (false, false) => (&self.name_table0, &self.attr_table0),
+            (true, false) => (&self.name_table1, &self.attr_table1),
+            (false, true) => (&self.name_table2, &self.attr_table2),
+            (true, true) => (&self.name_table3, &self.attr_table3),
+        }
     }
 
     fn render(&mut self, pos: &Pos, pixel_count: u32, rom: &Rom) {
@@ -458,8 +470,6 @@ impl PpuUnit {
 
         // https://wiki.nesdev.com/w/index.php/PPU_registers#PPUCTRL
 
-        let name_table = &self.name_table0;
-        let attr_table = &self.attr_table0;
         let bg_palette = &self.bg_palette;
         let sprite_palette = &self.sprite_palette;
         let chr_table = &rom.get_chr();
@@ -469,18 +479,18 @@ impl PpuUnit {
 
         {
             let (scroll_x, scroll_y) = self.reg.scroll;
-
-            let y = Self::scroll_wrap(pos.1, scroll_y, HEIGHT);
+            let (y, y_mirror) = Self::scroll_wrap(pos.1, scroll_y, HEIGHT);
             let name_idx_in_line = (y / 8) * 32; // 8ピクセル毎、横に32個
             let attr_idx_in_line = (y / 32) * 8; // 32ピクセル毎、横に8個
 
             // 背景の処理
             for ix in 0..nwidth {
-                let x = Self::scroll_wrap(pos.0 + ix, scroll_x, WIDTH);
+                let (x, x_mirror) = Self::scroll_wrap(pos.0 + ix, scroll_x, WIDTH);
 
                 let name_idx = (name_idx_in_line + x / 8) as usize;
-
+                let (name_table, attr_table) = self.select_name_table(x_mirror, y_mirror);
                 let pat_idx = name_table[name_idx] as usize;
+
                 // 背景の場合は chr_table にアクセス
                 let pat_ofs = pat_idx * 16;
                 let chr = &chr_table[pat_ofs..pat_ofs + 16];
