@@ -75,7 +75,8 @@ impl State for App {
             keybits |= 1 << PadButton::Right as u8;
         }
 
-        self.exe.set_joypad_keybits(keybits);
+        // TODO: joypad1 の入力も必要
+        self.exe.set_joypad_keybits(0, keybits);
 
         /*
         self.pad_state = PadState::default();

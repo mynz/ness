@@ -281,6 +281,7 @@ pub struct Executer {
     ppu_unit: PpuUnit,
     rom: Box<Rom>,
     joypad0: Joypad,
+    joypad1: Joypad,
 
     last_exec_inst: Inst,
     cycles: Cycle,
@@ -299,16 +300,18 @@ impl Executer {
         self.rom = Box::new(rom);
     }
 
-    pub fn set_joypad_keybits(&mut self, keybits: u32) {
-        self.joypad0.set_joypad_keybits(keybits);
+    pub fn set_joypad_keybits(&mut self, pad_idx: u8, keybits: u32) {
+        let pad = if pad_idx == 0 { &mut self.joypad0 } else { &mut self.joypad1 };
+        pad.set_joypad_keybits(keybits);
     }
 
     fn load_byte(&mut self, addr: u16) -> u8 {
         if addr >= 0x2000 && addr < 0x4000 {
             return self.ppu_unit.load_byte(addr);
         } else if addr == 0x4016 {
-            // joypad0
-            return self.joypad0.load_byte();
+            return self.joypad0.load_byte(); // joypad0
+        } else if addr == 0x4017 {
+            return self.joypad1.load_byte(); // joypad1
         }
 
         let word = self.load_word(addr);
@@ -358,6 +361,7 @@ impl Executer {
         } else if addr == 0x4016 {
             // joypad0
             self.joypad0.store_byte(data);
+            self.joypad1.store_byte(data);
         } else {
             panic!("store_byte out of bound: {:x}, {:x}", addr, data);
         };
