@@ -127,7 +127,8 @@ fn main() {
     //let rom = Rom::load_image("static/roms/giko009.nes");
     //let rom = Rom::load_image("static/roms/giko010b.nes");
     //let rom = Rom::load_image("static/roms/giko011.nes");
-    let rom = Rom::load_image("static/roms/giko016.nes");
-    //let rom = Rom::load_image("static/roms/falling.nes");
+    //let rom = Rom::load_image("static/roms/giko016.nes"); // NG
+    //let rom = Rom::load_image("static/roms/falling.nes"); // NG
+    let rom = Rom::load_image("static/roms/nestest.nes"); // NG
     App::run(rom);
 }
