@@ -349,6 +349,10 @@ impl Executer {
             self.wram[addr as usize] = data;
         } else if addr >= 0x2000 && addr < 0x2008 {
             self.ppu_unit.store_from_cpu(addr, data);
+        } else if addr >= 0x4000 && addr <= 0x4013  {
+            // TODO: APU
+        } else if addr == 0x4015 {
+            // TODO: APU
         } else if addr == 0x4014 {
             // ODA DMA
             let addr_from = 0x100 * data as usize;
@@ -362,6 +366,8 @@ impl Executer {
             // joypad0
             self.joypad0.store_byte(data);
             self.joypad1.store_byte(data);
+        } else if addr == 0x4017 {
+            // TODO: APU frame count(frame sequencer)
         } else {
             panic!("store_byte out of bound: {:x}, {:x}", addr, data);
         };
