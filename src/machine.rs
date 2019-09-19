@@ -301,7 +301,11 @@ impl Executer {
     }
 
     pub fn set_joypad_keybits(&mut self, pad_idx: u8, keybits: u32) {
-        let pad = if pad_idx == 0 { &mut self.joypad0 } else { &mut self.joypad1 };
+        let pad = if pad_idx == 0 {
+            &mut self.joypad0
+        } else {
+            &mut self.joypad1
+        };
         pad.set_joypad_keybits(keybits);
     }
 
@@ -349,7 +353,7 @@ impl Executer {
             self.wram[addr as usize] = data;
         } else if addr >= 0x2000 && addr < 0x2008 {
             self.ppu_unit.store_from_cpu(addr, data);
-        } else if addr >= 0x4000 && addr <= 0x4013  {
+        } else if addr >= 0x4000 && addr <= 0x4013 {
             // TODO: APU
         } else if addr == 0x4015 {
             // TODO: APU
@@ -404,7 +408,7 @@ impl Executer {
         (Inst::decode(&mut bytes.as_ref(), inst_spec, pc), inst_spec)
     }
 
-    fn get_addr_from_operand(&self, operand: Operand) -> u16 {
+    fn get_addr_from_operand(&mut self, operand: Operand) -> u16 {
         let addr: u16 = match operand {
             Operand::Immediate(_) => unreachable!("must not come Immediate"),
             Operand::ZeroPage(a) => a as u16,
@@ -413,6 +417,7 @@ impl Executer {
             Operand::Absolute(a) => a,
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
+            Operand::IndirectY(a) => self.load_word(a as u16) + self.register.y as u16,
             _ => panic!("no impl: {:#?}", operand),
         };
         addr
