@@ -188,11 +188,11 @@ struct StatusRegister {
     negative: bool, // N
     overflow: bool, // V
     reserved: bool,
-    brk: bool, // break
-    decimal: bool, // D
+    brk: bool,       // break
+    decimal: bool,   // D
     interrupt: bool, // I
-    zero: bool, // Z
-    carry: bool, // C
+    zero: bool,      // Z
+    carry: bool,     // C
 }
 
 impl StatusRegister {
