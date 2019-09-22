@@ -185,14 +185,14 @@ impl Default for Inst {
 // https://lipoyang.hatenablog.com/entry/20131031/p1
 
 struct StatusRegister {
-    negative: bool,
-    overflow: bool,
+    negative: bool, // N
+    overflow: bool, // V
     reserved: bool,
     brk: bool, // break
-    decimal: bool,
-    interrupt: bool,
-    zero: bool,
-    carry: bool,
+    decimal: bool, // D
+    interrupt: bool, // I
+    zero: bool, // Z
+    carry: bool, // C
 }
 
 impl StatusRegister {
@@ -530,6 +530,20 @@ impl Executer {
                     };
                     self.register.pc = add_rel_to_pc(self.register.pc, r);
                 }
+            }
+            Opcode::BIT => {
+                let addr = self.get_addr_from_operand(inst.operand);
+                let m = self.load_byte(addr);
+                let a = self.register.a;
+
+                let d = a & m;
+                let z = d != 0;
+                let n = (d & (1 << 7)) != 0;
+                let v = (d & (1 << 6)) != 0;
+
+                self.register.p.negative = n;
+                self.register.p.zero = z;
+                self.register.p.overflow = v;
             }
             Opcode::CLC => {
                 assert_eq!(inst.operand, Operand::Implied);
