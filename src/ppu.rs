@@ -360,10 +360,10 @@ impl PpuUnit {
         const NM3_END: u16 = NM3_BASE + NAME_SIZE - 1;
 
         let ret = match addr {
-            NM0_BASE...NM0_END => self.name_table0[(addr - NM0_BASE) as usize],
-            NM1_BASE...NM1_END => self.name_table1[(addr - NM1_BASE) as usize],
-            NM2_BASE...NM2_END => self.name_table2[(addr - NM2_BASE) as usize],
-            NM3_BASE...NM3_END => self.name_table3[(addr - NM3_BASE) as usize],
+            NM0_BASE..=NM0_END => self.name_table0[(addr - NM0_BASE) as usize],
+            NM1_BASE..=NM1_END => self.name_table1[(addr - NM1_BASE) as usize],
+            NM2_BASE..=NM2_END => self.name_table2[(addr - NM2_BASE) as usize],
+            NM3_BASE..=NM3_END => self.name_table3[(addr - NM3_BASE) as usize],
             _ => unimplemented!(),
         };
 
