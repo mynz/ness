@@ -535,12 +535,21 @@ impl Executer {
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.carry = c;
             }
-            Opcode::BEQ | Opcode::BNE | Opcode::BCS | Opcode::BPL => {
+            Opcode::BCC
+            | Opcode::BCS
+            | Opcode::BEQ
+            | Opcode::BNE
+            | Opcode::BPL
+            | Opcode::BVC
+            | Opcode::BVS => {
                 let cond = match inst.opcode {
+                    Opcode::BCC => !self.register.p.carry,
+                    Opcode::BCS => self.register.p.carry,
                     Opcode::BEQ => self.register.p.zero,
                     Opcode::BNE => !self.register.p.zero,
-                    Opcode::BCS => self.register.p.carry,
                     Opcode::BPL => !self.register.p.negative,
+                    Opcode::BVC => !self.register.p.overflow,
+                    Opcode::BVS => self.register.p.overflow,
                     _ => unreachable!(),
                 };
 
@@ -822,7 +831,7 @@ impl Executer {
         }
 
         let (inst, spec) = self.fetch_inst();
-        //println!("xxx: inst {:?}: ", inst);
+        println!("xxx: inst {:?}: ", inst);
 
         // DMA用
         let extra_cycles = self.execute_inst(&inst);
