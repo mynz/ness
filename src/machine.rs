@@ -480,7 +480,7 @@ impl Executer {
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
             }
-            Opcode::ASL | Opcode::LSR => {
+            Opcode::ASL | Opcode::LSR | Opcode::ROL | Opcode::ROR  => {
                 // 対象はメモリだけでなく、Aレジスタの場合もある
 
                 enum T {
@@ -499,6 +499,14 @@ impl Executer {
                 let (d, c) = match inst.opcode {
                     Opcode::ASL => (s << 1, s & 0x80 != 0),
                     Opcode::LSR => (s >> 1, s & 0x01 != 0),
+                    Opcode::ROL => {
+                        let c = if self.register.p.carry { 1 }else { 0 };
+                        (s << 1 | c, s & 0x80 != 0)
+                    }
+                    Opcode::ROR => {
+                        let c = if self.register.p.carry { 0x80 }else { 0 };
+                        (s >> 1 | c, s & 0x01 != 0)
+                    }
                     _ => unreachable!(),
                 };
 
@@ -508,10 +516,8 @@ impl Executer {
                     self.register.a = d;
                 }
 
-                let n = inst.opcode == Opcode::ASL && (d & 0x80 != 0);
-
                 self.register.p.zero = d == 0;
-                self.register.p.negative = n;
+                self.register.p.negative = d & 0x80 != 0;
                 self.register.p.carry = c;
             }
             Opcode::BEQ | Opcode::BNE | Opcode::BCS | Opcode::BPL => {
