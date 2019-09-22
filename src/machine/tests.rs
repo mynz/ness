@@ -154,6 +154,24 @@ fn test_giko016() {
 }
 
 #[test]
+fn test_falling() {
+    let mut exe = Executer::new();
+
+    let rom = Rom::load_image("static/roms/falling.nes");
+    exe.set_rom(rom);
+    exe.hard_reset();
+
+    let mut _inst_count = 0;
+    loop {
+        exe.execute();
+        if exe.get_frame_count() == 5 {
+            break;
+        }
+        _inst_count += 1;
+    }
+}
+
+#[test]
 fn test_executer_00() {
     let mut exe = Executer::new();
     assert_eq!(0, exe.register.a);
