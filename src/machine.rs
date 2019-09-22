@@ -539,6 +539,7 @@ impl Executer {
             | Opcode::BCS
             | Opcode::BEQ
             | Opcode::BNE
+            | Opcode::BMI
             | Opcode::BPL
             | Opcode::BVC
             | Opcode::BVS => {
@@ -547,6 +548,7 @@ impl Executer {
                     Opcode::BCS => self.register.p.carry,
                     Opcode::BEQ => self.register.p.zero,
                     Opcode::BNE => !self.register.p.zero,
+                    Opcode::BMI => self.register.p.negative,
                     Opcode::BPL => !self.register.p.negative,
                     Opcode::BVC => !self.register.p.overflow,
                     Opcode::BVS => self.register.p.overflow,
@@ -576,12 +578,13 @@ impl Executer {
                 self.register.p.overflow = v;
             }
             Opcode::CLC => {
-                assert_eq!(inst.operand, Operand::Implied);
                 self.register.p.carry = false;
             }
             Opcode::CLD => {
-                assert_eq!(inst.operand, Operand::Implied);
                 self.register.p.decimal = false;
+            }
+            Opcode::CLV => {
+                self.register.p.overflow = false;
             }
             Opcode::CMP | Opcode::CPX | Opcode::CPY => {
                 let m = match inst.operand {
@@ -685,8 +688,11 @@ impl Executer {
                 debug_assert_eq!(inst.operand, Operand::Implied);
             }
             Opcode::PHA => {
-                debug_assert_eq!(inst.operand, Operand::Implied);
                 self.push_u8(self.register.a);
+            }
+            Opcode::PHP => {
+                let d = self.register.p.encode();
+                self.push_u8(d);
             }
             Opcode::PLA => {
                 debug_assert_eq!(inst.operand, Operand::Implied);
@@ -694,6 +700,10 @@ impl Executer {
                 self.register.a = d;
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
+            }
+            Opcode::PLP => {
+                let d = self.pop_u8();
+                self.register.p = StatusRegister::decode(d);
             }
             Opcode::RTI => {
                 debug_assert_eq!(inst.operand, Operand::Implied);
