@@ -33,7 +33,7 @@ impl App {
 
         if let Some(rom) = rom {
             exe.set_rom(rom);
-            exe.hard_reset();
+            //exe.hard_reset();
         }
 
         Ok(Self { exe })
