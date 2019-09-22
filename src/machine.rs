@@ -466,7 +466,10 @@ impl Executer {
             Opcode::AND | Opcode::EOR | Opcode::ORA => {
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
-                    _ => unimplemented!(),
+                    _ => {
+                        let addr = self.get_addr_from_operand(inst.operand);
+                        self.load_byte(addr)
+                    }
                 };
 
                 let d = match inst.opcode {
