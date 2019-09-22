@@ -354,16 +354,16 @@ impl PpuUnit {
     }
 
     fn load_memory(&self, addr: u16) -> u8 {
-        const NM0_END: u16 = NM0_BASE + NAME_SIZE - 1;
-        const NM1_END: u16 = NM1_BASE + NAME_SIZE - 1;
-        const NM2_END: u16 = NM2_BASE + NAME_SIZE - 1;
-        const NM3_END: u16 = NM3_BASE + NAME_SIZE - 1;
+        const NM0_LAST: u16 = NM0_BASE + NAME_SIZE - 1;
+        const NM1_LAST: u16 = NM1_BASE + NAME_SIZE - 1;
+        const NM2_LAST: u16 = NM2_BASE + NAME_SIZE - 1;
+        const NM3_LAST: u16 = NM3_BASE + NAME_SIZE - 1;
 
         let ret = match addr {
-            NM0_BASE..=NM0_END => self.name_table0[(addr - NM0_BASE) as usize],
-            NM1_BASE..=NM1_END => self.name_table1[(addr - NM1_BASE) as usize],
-            NM2_BASE..=NM2_END => self.name_table2[(addr - NM2_BASE) as usize],
-            NM3_BASE..=NM3_END => self.name_table3[(addr - NM3_BASE) as usize],
+            NM0_BASE..=NM0_LAST => self.name_table0[(addr - NM0_BASE) as usize],
+            NM1_BASE..=NM1_LAST => self.name_table1[(addr - NM1_BASE) as usize],
+            NM2_BASE..=NM2_LAST => self.name_table2[(addr - NM2_BASE) as usize],
+            NM3_BASE..=NM3_LAST => self.name_table3[(addr - NM3_BASE) as usize],
             _ => unimplemented!(),
         };
 
