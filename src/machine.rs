@@ -322,19 +322,39 @@ impl Executer {
     }
 
     fn load_byte(&mut self, addr: u16) -> u8 {
-        if addr >= 0x2000 && addr < 0x4000 {
+        if addr <= 0x07ff {
+            return self.wram[addr as usize];
+        } else if addr >= 0x2000 && addr < 0x4000 {
             return self.ppu_unit.load_byte(addr);
         } else if addr == 0x4016 {
             return self.joypad0.load_byte(); // joypad0
         } else if addr == 0x4017 {
             return self.joypad1.load_byte(); // joypad1
+        } else if addr >= 0x8000 {
+            let base = 0x8000;
+            let prg_size = self.rom.get_prg().len();
+            let mut ofs = (addr - base) as u64;
+
+            // prg が 16kb しかない場合は、0xc000 からの領域にミラーリングされていると見なす
+            if ofs >= 0x4000 && prg_size <= 0x4000 {
+                ofs -= 0x4000;
+            }
+
+            let mut cur = Cursor::new(self.rom.get_prg());
+            cur.set_position(ofs);
+            return cur.read_u8().unwrap();
         }
 
-        let word = self.load_word(addr);
-        (word & 0x00ff) as u8
+        unimplemented!("load_word: {:x}", addr);
     }
 
     fn load_word(&mut self, addr: u16) -> u16 {
+        let d0 = self.load_byte(addr) as u16;
+        let d1 = self.load_byte(addr + 1) as u16;
+        (d1 << 8 | d0) as u16
+        //(d0 << 8 | d1) as u16
+
+        /*
         if addr <= 0x07ff {
             let mut cur = Cursor::new(&self.wram);
             cur.set_position(addr as u64);
@@ -358,6 +378,7 @@ impl Executer {
         }
 
         panic!("yet to be implemented: {:x}", addr);
+        */
     }
 
     fn store_byte(&mut self, addr: u16, data: u8) -> Cycle {
