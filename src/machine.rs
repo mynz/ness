@@ -237,7 +237,6 @@ impl Default for StatusRegister {
     }
 }
 
-#[derive(Default)]
 struct Register {
     a: u8, // accumelater
     x: u8, // index register
@@ -245,6 +244,19 @@ struct Register {
     s: u8, // stack pointer
     p: StatusRegister,
     pc: u16,
+}
+
+impl Default for Register {
+    fn default() -> Self {
+        Self {
+            a: 0,
+            x: 0,
+            y: 0,
+            s: 0,
+            p: StatusRegister::default(),
+            pc: 0xc000,
+        }
+    }
 }
 
 #[derive(Default)]
@@ -483,7 +495,7 @@ impl Executer {
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
             }
-            Opcode::ASL | Opcode::LSR | Opcode::ROL | Opcode::ROR  => {
+            Opcode::ASL | Opcode::LSR | Opcode::ROL | Opcode::ROR => {
                 // 対象はメモリだけでなく、Aレジスタの場合もある
 
                 enum T {
@@ -503,11 +515,11 @@ impl Executer {
                     Opcode::ASL => (s << 1, s & 0x80 != 0),
                     Opcode::LSR => (s >> 1, s & 0x01 != 0),
                     Opcode::ROL => {
-                        let c = if self.register.p.carry { 1 }else { 0 };
+                        let c = if self.register.p.carry { 1 } else { 0 };
                         (s << 1 | c, s & 0x80 != 0)
                     }
                     Opcode::ROR => {
-                        let c = if self.register.p.carry { 0x80 }else { 0 };
+                        let c = if self.register.p.carry { 0x80 } else { 0 };
                         (s >> 1 | c, s & 0x01 != 0)
                     }
                     _ => unreachable!(),
