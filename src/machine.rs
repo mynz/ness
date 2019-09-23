@@ -597,7 +597,7 @@ impl Executer {
                 let a = self.register.a;
 
                 let d = a & m;
-                let z = d != 0;
+                let z = d == 0;
                 let n = (d & (1 << 7)) != 0;
                 let v = (d & (1 << 6)) != 0;
 
