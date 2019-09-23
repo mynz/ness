@@ -786,7 +786,7 @@ impl Executer {
                 };
                 extra_cycles = self.store_byte(addr, s);
             }
-            Opcode::TAX | Opcode::TAY | Opcode::TSX | Opcode::TXA | Opcode::TXS | Opcode::TYA => {
+            Opcode::TAX | Opcode::TAY | Opcode::TSX | Opcode::TXA | Opcode::TYA => {
                 let d: u8 = match inst.opcode {
                     Opcode::TAX => {
                         self.register.x = self.register.a;
@@ -804,10 +804,6 @@ impl Executer {
                         self.register.a = self.register.x;
                         self.register.a
                     }
-                    Opcode::TXS => {
-                        self.register.s = self.register.x;
-                        self.register.s
-                    }
                     Opcode::TYA => {
                         self.register.a = self.register.y;
                         self.register.a
@@ -816,6 +812,10 @@ impl Executer {
                 };
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
+            }
+            Opcode::TXS => {
+                // 他のT*シリーズと違ってPフラグを操作しない
+                self.register.s = self.register.x;
             }
             _ => {
                 unimplemented!("yet to not impl: {:?}", inst);
