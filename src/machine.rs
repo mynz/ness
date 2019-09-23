@@ -214,7 +214,7 @@ impl StatusRegister {
             negative: v & (1 << 7) != 0,
             overflow: v & (1 << 6) != 0,
             b5: v & (1 << 5) != 0,
-            b4: (1 << 4) != 0,
+            b4: v & (1 << 4) != 0,
             decimal: v & (1 << 3) != 0,
             interrupt: v & (1 << 2) != 0,
             zero: v & (1 << 1) != 0,
@@ -719,7 +719,15 @@ impl Executer {
                 self.push_u8(self.register.a);
             }
             Opcode::PHP => {
+                // https://wiki.nesdev.com/w/index.php/Status_flags
+                // b4 はスペック的には true であるべきだが nestest.log は false の挙動なのか？
+                self.register.p.b4 = true;
+                //self.register.p.b4 = false;
+                self.register.p.b5 = true;
                 let d = self.register.p.encode();
+
+                //println!("yyy: PHP {:x}", d);
+
                 self.push_u8(d);
             }
             Opcode::PLA => {
