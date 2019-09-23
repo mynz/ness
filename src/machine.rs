@@ -6,8 +6,8 @@ mod inst_specs;
 mod tests;
 
 use byteorder::{ByteOrder, LittleEndian, ReadBytesExt, WriteBytesExt};
-use std::io::Cursor;
 use std::fmt;
+use std::io::Cursor;
 
 use self::inst_specs::INST_SPECS;
 use crate::frame_buffer::FrameBuffer;
@@ -186,10 +186,10 @@ impl Default for Inst {
 // https://lipoyang.hatenablog.com/entry/20131031/p1
 
 struct StatusRegister {
-    negative: bool, // N
-    overflow: bool, // V
-    b4: bool,       // B (bit 4)
-    b5: bool,       // B (bit 5)
+    negative: bool,  // N
+    overflow: bool,  // V
+    b4: bool,        // B (bit 4)
+    b5: bool,        // B (bit 5)
     decimal: bool,   // D
     interrupt: bool, // I
     zero: bool,      // Z
@@ -229,7 +229,7 @@ impl Default for StatusRegister {
             negative: false,
             overflow: false,
             b4: false, // break
-            b5: true, // break
+            b5: true,  // break
             decimal: false,
             interrupt: true,
             zero: false,
@@ -262,7 +262,15 @@ impl Default for Register {
 
 impl fmt::Display for Register {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "A:{:02X} X:{:02X} Y:{:02X} P:{:02X} SP:{:02X}", self.a, self.x, self.y, self.p.encode(), self.s)
+        write!(
+            f,
+            "A:{:02X} X:{:02X} Y:{:02X} P:{:02X} SP:{:02X}",
+            self.a,
+            self.x,
+            self.y,
+            self.p.encode(),
+            self.s
+        )
     }
 }
 
@@ -879,7 +887,8 @@ impl Executer {
         let (inst, spec) = self.fetch_inst();
 
         if true {
-            println!("xxx: {:X?}, {}", inst, self.register);
+            //println!("xxx: {:X?}, {}", inst, self.register);
+            println!("xxx: {:X}, {:?} {}", inst.pc, inst.opcode, self.register);
         }
 
         // DMA用
