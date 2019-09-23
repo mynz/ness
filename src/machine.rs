@@ -606,8 +606,8 @@ impl Executer {
 
                 let d = a & m;
                 let z = d == 0;
-                let n = (d & (1 << 7)) != 0;
-                let v = (d & (1 << 6)) != 0;
+                let n = (m & (1 << 7)) != 0;
+                let v = (m & (1 << 6)) != 0;
 
                 self.register.p.negative = n;
                 self.register.p.zero = z;
