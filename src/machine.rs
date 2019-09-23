@@ -744,14 +744,18 @@ impl Executer {
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
             }
-            Opcode::PLP => {
+            Opcode::PLP | Opcode::RTI => {
+                // bit4, bit5 は無視する挙動
+                // https://wiki.nesdev.com/w/index.php/Status_flags
+
                 let d = self.pop_u8();
-                self.register.p = StatusRegister::decode(d);
-            }
-            Opcode::RTI => {
-                debug_assert_eq!(inst.operand, Operand::Implied);
-                self.register.p = StatusRegister::decode(self.pop_u8());
-                self.register.pc = self.pop_u16();
+                let o = self.register.p.encode();
+                let p = (0x30 & o) | (0xcf & d);
+                self.register.p = StatusRegister::decode(p);
+
+                if inst.opcode == Opcode::RTI {
+                    self.register.pc = self.pop_u16();
+                }
             }
             Opcode::RTS => {
                 let v = self.pop_u16();
