@@ -262,7 +262,7 @@ impl Default for Register {
 
 impl fmt::Display for Register {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "A: {:X}, X: {:X}, Y: {:X}, P: {:X}, S: {:X}", self.a, self.x, self.y, self.p.encode(), self.s)
+        write!(f, "A:{:02X} X:{:02X} Y:{:02X} P:{:02X} SP:{:02X}", self.a, self.x, self.y, self.p.encode(), self.s)
     }
 }
 
@@ -721,9 +721,8 @@ impl Executer {
             Opcode::PHP => {
                 // https://wiki.nesdev.com/w/index.php/Status_flags
                 // b4 はスペック的には true であるべきだが nestest.log は false の挙動なのか？
-                self.register.p.b4 = true;
-                //self.register.p.b4 = false;
-                self.register.p.b5 = true;
+                //self.register.p.b4 = true; // questionable
+                //self.register.p.b5 = true; // okay
                 let d = self.register.p.encode();
 
                 //println!("yyy: PHP {:x}", d);
@@ -880,7 +879,7 @@ impl Executer {
         let (inst, spec) = self.fetch_inst();
 
         if true {
-            println!("xxx: {:X?}, R: {}", inst, self.register);
+            println!("xxx: {:X?}, {}", inst, self.register);
         }
 
         // DMA用
