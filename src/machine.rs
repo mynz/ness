@@ -623,6 +623,7 @@ impl Executer {
                 self.register.p.overflow = false;
             }
             Opcode::CMP | Opcode::CPX | Opcode::CPY => {
+                // http://www.6502.org/tutorials/compare_beyond.html#2.1
                 let m = match inst.operand {
                     Operand::Immediate(v) => v,
                     _ => {
@@ -638,7 +639,9 @@ impl Executer {
                     _ => unreachable!(),
                 };
 
-                self.register.p.negative = s < m;
+                let n = (s.wrapping_sub(m) & 0x80) != 0;
+
+                self.register.p.negative = n;
                 self.register.p.zero = s == m;
                 self.register.p.carry = s >= m;
             }
