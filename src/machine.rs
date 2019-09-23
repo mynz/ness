@@ -7,6 +7,7 @@ mod tests;
 
 use byteorder::{ByteOrder, LittleEndian, ReadBytesExt, WriteBytesExt};
 use std::io::Cursor;
+use std::fmt;
 
 use self::inst_specs::INST_SPECS;
 use crate::frame_buffer::FrameBuffer;
@@ -187,8 +188,8 @@ impl Default for Inst {
 struct StatusRegister {
     negative: bool, // N
     overflow: bool, // V
-    reserved: bool,
-    brk: bool,       // break
+    b4: bool,       // B (bit 4)
+    b5: bool,       // B (bit 5)
     decimal: bool,   // D
     interrupt: bool, // I
     zero: bool,      // Z
@@ -199,8 +200,8 @@ impl StatusRegister {
     fn encode(&self) -> u8 {
         let v = if self.negative { 1 << 7 } else { 0 }
             | if self.overflow { 1 << 6 } else { 0 }
-            | if self.reserved { 1 << 5 } else { 0 }
-            | if self.brk { 1 << 4 } else { 0 }
+            | if self.b5 { 1 << 5 } else { 0 }
+            | if self.b4 { 1 << 4 } else { 0 }
             | if self.decimal { 1 << 3 } else { 0 }
             | if self.interrupt { 1 << 2 } else { 0 }
             | if self.zero { 1 << 1 } else { 0 }
@@ -212,8 +213,8 @@ impl StatusRegister {
         Self {
             negative: v & (1 << 7) != 0,
             overflow: v & (1 << 6) != 0,
-            reserved: v & (1 << 5) != 0,
-            brk: v & (1 << 4) != 0,
+            b5: v & (1 << 5) != 0,
+            b4: (1 << 4) != 0,
             decimal: v & (1 << 3) != 0,
             interrupt: v & (1 << 2) != 0,
             zero: v & (1 << 1) != 0,
@@ -227,8 +228,8 @@ impl Default for StatusRegister {
         StatusRegister {
             negative: false,
             overflow: false,
-            reserved: true,
-            brk: true, // break
+            b4: false, // break
+            b5: true, // break
             decimal: false,
             interrupt: true,
             zero: false,
@@ -256,6 +257,12 @@ impl Default for Register {
             p: StatusRegister::default(),
             pc: 0xc000,
         }
+    }
+}
+
+impl fmt::Display for Register {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        write!(f, "A: {:X}, X: {:X}, Y: {:X}, P: {:X}, S: {:X}", self.a, self.x, self.y, self.p.encode(), self.s)
     }
 }
 
@@ -849,7 +856,8 @@ impl Executer {
     pub fn execute(&mut self) -> u8 {
         // NMIの検出
         if self.ppu_unit.check_nmi_enabled() {
-            self.register.p.brk = false;
+            self.register.p.b4 = false;
+            self.register.p.b5 = true;
             self.push_u16(self.register.pc);
             self.push_u8(self.register.p.encode());
             self.register.p.interrupt = true;
@@ -862,7 +870,10 @@ impl Executer {
         }
 
         let (inst, spec) = self.fetch_inst();
-        println!("xxx: inst {:?}: ", inst);
+
+        if true {
+            println!("xxx: {:X?}, R: {}", inst, self.register);
+        }
 
         // DMA用
         let extra_cycles = self.execute_inst(&inst);
