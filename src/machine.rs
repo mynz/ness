@@ -465,6 +465,7 @@ impl Executer {
             Operand::Absolute(a) => a,
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
+            Operand::IndirectX(a) => self.load_word((a as u16 + self.register.x as u16) & 0xff),
             Operand::IndirectY(a) => self.load_word(a as u16) + self.register.y as u16,
             _ => panic!("no impl: {:#?}", operand),
         };
