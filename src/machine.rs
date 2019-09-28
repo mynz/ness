@@ -852,11 +852,11 @@ impl Executer {
         let stack_base = 0x0100;
 
         let s = self.register.s as u16 + stack_base;
-        self.store_byte(s, v0);
+        self.store_byte(s, v1);
         self.register.s = self.register.s.wrapping_sub(1);
 
         let s = self.register.s as u16 + stack_base;
-        self.store_byte(s, v1);
+        self.store_byte(s, v0);
         self.register.s = self.register.s.wrapping_sub(1);
     }
 
@@ -865,11 +865,11 @@ impl Executer {
 
         self.register.s = self.register.s.wrapping_add(1);
         let s = self.register.s as u16 + stack_base;
-        let v1 = self.load_byte(s);
+        let v0 = self.load_byte(s);
 
         self.register.s = self.register.s.wrapping_add(1);
         let s = self.register.s as u16 + stack_base;
-        let v0 = self.load_byte(s);
+        let v1 = self.load_byte(s);
 
         let v = pack_u16(v0, v1);
         v
