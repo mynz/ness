@@ -466,7 +466,29 @@ impl Executer {
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
             Operand::IndirectX(a) => self.load_word((a as u16 + self.register.x as u16) & 0xff),
-            Operand::IndirectY(a) => self.load_word(a as u16) + self.register.y as u16,
+            Operand::IndirectY(a) => {
+                let m = self.load_word(a as u16) ;
+                let y = self.register.y as u16;
+
+
+                let cond = self.register.pc == 0xd95b;
+                if cond {
+                    println!("{:x}, {:x?}", self.register.pc, (a, m, y));
+                    println!("www: {:x?}", self.load_word(0x245));
+                }
+
+                //let d = m + y;
+                //let d = m.wrapping_add(y);
+                let d = (m as u32 + y as u32) as u16;
+
+                if cond {
+                    println!("d {:x?}", d);
+                }
+
+                d
+
+
+            }
             _ => panic!("no impl: {:#?}", operand),
         };
         addr
