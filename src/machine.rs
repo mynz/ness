@@ -367,33 +367,14 @@ impl Executer {
         let d0 = self.load_byte(addr) as u16;
         let d1 = self.load_byte(addr + 1) as u16;
         (d1 << 8 | d0) as u16
-        //(d0 << 8 | d1) as u16
+    }
 
-        /*
-        if addr <= 0x07ff {
-            let mut cur = Cursor::new(&self.wram);
-            cur.set_position(addr as u64);
-            return cur.read_u16::<LittleEndian>().unwrap();
-        }
+    fn load_word_zero_paged(&mut self, addr: u16) -> u16 {
+        let zp = |a| a & 0x00ff;
 
-        // 0xffff まで有効
-        if addr >= 0x8000 {
-            let base = 0x8000;
-            let prg_size = self.rom.get_prg().len();
-            let mut ofs = (addr - base) as u64;
-
-            // prg が 16kb しかない場合は、0xc000 からの領域にミラーリングされていると見なす
-            if ofs >= 0x4000 && prg_size <= 0x4000 {
-                ofs -= 0x4000;
-            }
-
-            let mut cur = Cursor::new(self.rom.get_prg());
-            cur.set_position(ofs);
-            return cur.read_u16::<LittleEndian>().unwrap();
-        }
-
-        panic!("yet to be implemented: {:x}", addr);
-        */
+        let d0 = self.load_byte(zp(addr)) as u16;
+        let d1 = self.load_byte(zp(addr + 1)) as u16;
+        (d1 << 8 | d0) as u16
     }
 
     fn store_byte(&mut self, addr: u16, data: u8) -> Cycle {
@@ -465,29 +446,13 @@ impl Executer {
             Operand::Absolute(a) => a,
             Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
             Operand::AbsoluteY(a) => (a as i16 + u8_to_i16(self.register.y)) as u16,
-            Operand::IndirectX(a) => self.load_word((a as u16 + self.register.x as u16) & 0xff),
+            Operand::IndirectX(a) => {
+                self.load_word_zero_paged((a as u16 + self.register.x as u16) & 0xff)
+            }
             Operand::IndirectY(a) => {
-                let m = self.load_word(a as u16) ;
+                let m = self.load_word_zero_paged(a as u16);
                 let y = self.register.y as u16;
-
-
-                let cond = self.register.pc == 0xd95b;
-                if cond {
-                    println!("{:x}, {:x?}", self.register.pc, (a, m, y));
-                    println!("www: {:x?}", self.load_word(0x245));
-                }
-
-                //let d = m + y;
-                //let d = m.wrapping_add(y);
-                let d = (m as u32 + y as u32) as u16;
-
-                if cond {
-                    println!("d {:x?}", d);
-                }
-
-                d
-
-
+                (m as u32 + y as u32) as u16
             }
             _ => panic!("no impl: {:#?}", operand),
         };
