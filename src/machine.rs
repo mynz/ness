@@ -369,6 +369,19 @@ impl Executer {
         (d1 << 8 | d0) as u16
     }
 
+    fn load_word_in_page(&mut self, addr: u16) -> u16 {
+        let a0 = addr;
+        let a1 = {
+            let h = addr & 0xff00;
+            let l = addr & 0x00ff;
+            h + ((l + 1) & 0xff)
+        };
+
+        let d0 = self.load_byte(a0) as u16;
+        let d1 = self.load_byte(a1) as u16;
+        (d1 << 8 | d0) as u16
+    }
+
     fn load_word_zero_paged(&mut self, addr: u16) -> u16 {
         let zp = |a| a & 0x00ff;
 
@@ -678,7 +691,7 @@ impl Executer {
             Opcode::JMP => {
                 let d = match inst.operand {
                     Operand::Absolute(v) => v,
-                    Operand::Indirect(v) => self.load_word(v),
+                    Operand::Indirect(v) => self.load_word_in_page(v),
                     _ => unimplemented!(),
                 };
                 self.register.pc = d;
