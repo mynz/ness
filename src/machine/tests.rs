@@ -373,3 +373,25 @@ fn test_render_sprite() {
     exe.ppu_unit
         .save_as_png("screenshot/ss_test_render_sprite.png");
 }
+
+#[test]
+fn test_nestest() {
+    let mut exe = Executer::new();
+
+    exe.set_rom(Rom::load_image("static/roms/nestest.nes"));
+
+    let mut cnt = 0;
+
+    loop {
+        exe.execute();
+        cnt += 1;
+        if exe.last_exec_inst.pc == 0xdf90 {
+            break;
+        }
+    }
+
+    assert_eq!(cnt, 3385);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+    assert_eq!(exe.register.a, 0x12);
+}
+
