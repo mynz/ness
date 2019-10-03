@@ -419,4 +419,28 @@ fn test_nestest() {
     assert_eq!(cnt, 4369);
     assert_eq!(exe.last_exec_inst.opcode, Opcode::LDY);
     assert_eq!(exe.register.y, 0xbb);
+
+    loop {
+        exe.execute();
+        cnt += 1;
+        if cnt == 5004 {
+            break;
+        }
+    }
+
+    assert_eq!(cnt, 5004);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::NOP);
+    assert_eq!(exe.last_exec_inst.pc, 0xC6BD);
+
+    exe.execute(); // NOP
+    cnt += 1;
+    assert_eq!(cnt, 5005);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::NOP);
+    assert_eq!(exe.last_exec_inst.pc, 0xC6BF);
+
+    exe.execute(); // NOP
+    cnt += 1;
+    assert_eq!(cnt, 5006);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::NOP);
+    assert_eq!(exe.last_exec_inst.pc, 0xC6C1);
 }
