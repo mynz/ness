@@ -255,7 +255,7 @@ impl Default for Register {
             y: 0,
             s: 0xfd,
             p: StatusRegister::default(),
-            pc: 0xc000,
+            pc: 0x8000,
         }
     }
 }

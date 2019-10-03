@@ -180,8 +180,6 @@ fn test_executer_00() {
     let rom = Rom::load_image("static/sample1/sample1.nes");
     exe.set_rom(rom);
 
-    exe.hard_reset();
-
     let cycles_beg = exe.cycles;
 
     assert_eq!(exe.register.pc, 0x8000);
@@ -189,7 +187,7 @@ fn test_executer_00() {
     assert_eq!(exe.register.x, 0x00);
     exe.execute();
     assert_eq!(exe.register.x, 0xff);
-    assert_eq!(exe.register.s, 0x00);
+    assert_eq!(exe.register.s, 0xfd);
     exe.execute(); // TXS
     assert_eq!(exe.register.s, 0xff);
     exe.execute(); // LDA
