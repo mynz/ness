@@ -736,9 +736,6 @@ impl Executer {
                 //self.register.p.b4 = true; // questionable
                 //self.register.p.b5 = true; // okay
                 let d = self.register.p.encode();
-
-                //println!("yyy: PHP {:x}", d);
-
                 self.push_u8(d);
             }
             Opcode::PLA => {
@@ -894,7 +891,7 @@ impl Executer {
 
         let (inst, spec) = self.fetch_inst();
 
-        if true {
+        if false {
             //println!("xxx: {:X?}, {}", inst, self.register);
             println!("xxx: {:X}, {:?} {}", inst.pc, inst.opcode, self.register);
         }
