@@ -816,7 +816,7 @@ impl Executer {
                 self.register.s = self.register.x;
             }
             _ => {
-                unimplemented!("yet to not impl: {:?}", inst);
+                unimplemented!("yet to not impl: {:x?}", inst);
             }
         }
 
