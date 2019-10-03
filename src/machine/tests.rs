@@ -394,4 +394,3 @@ fn test_nestest() {
     assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
     assert_eq!(exe.register.a, 0x12);
 }
-
