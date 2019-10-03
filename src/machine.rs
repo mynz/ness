@@ -457,7 +457,7 @@ impl Executer {
             Operand::ZeroPageX(a) => (a as u16 + self.register.x as u16) & 0xff,
             Operand::ZeroPageY(a) => (a as u16 + self.register.y as u16) & 0xff,
             Operand::Absolute(a) => a,
-            Operand::AbsoluteX(a) => (a as i16 + u8_to_i16(self.register.x)) as u16,
+            Operand::AbsoluteX(a) => (a as u32 + self.register.x as u32) as u16,
             Operand::AbsoluteY(a) => (a as u32 + self.register.y as u32) as u16,
             Operand::IndirectX(a) => {
                 self.load_word_zero_paged((a as u16 + self.register.x as u16) & 0xff)
