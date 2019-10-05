@@ -122,6 +122,7 @@ enum ExtCycles {
     Zero,
     One,
     OneOrTwo,
+    Undefined,
 }
 
 #[derive(Debug)]
@@ -725,7 +726,7 @@ impl Executer {
                 self.register.p.zero = d == 0;
             }
             Opcode::NOP => {
-                debug_assert_eq!(inst.operand, Operand::Implied);
+                // ExtCycles::Undefined を持つ未定義命令も含む
             }
             Opcode::PHA => {
                 self.push_u8(self.register.a);

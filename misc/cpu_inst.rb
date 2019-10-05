@@ -41,11 +41,6 @@ ops = table.map {|e|
   e[1]
 }.uniq.sort
 
-#pp ams
-#pp ops
-#pp icodes
-
-
 orderd = table.sort {|a, b|
   a[3] <=> b[3]
 }.map { |e|
@@ -62,25 +57,24 @@ def fmt(e, idx)
   sz = e[4]
   cl = e[5]
   ec = e[6]
-  
-  #p ec
 
   ec = case ec
   when "" then "Zero"
   when "+1" then "One"
   when "+1or2" then "OneOrTwo"
+  when "undefined" then "Undefined"
   end
 
   #"#{o}, #{am}, #{sz}, #{cl}, #{ec}"
 
   ret = <<-"EOS"
   InstSpec {  // #{idx}
-    code: #{cd},
+    code: 0x#{cd.to_s(16)},
     opcode: Opcode::#{o},
     operand: Operand::#{am},
     size: #{sz},
-    cycle: #{cl},
-    ext_cycle: ExtCycle::#{ec},
+    cycles: #{cl},
+    ext_cycles: ExtCycles::#{ec},
   },
   EOS
   ret
@@ -88,7 +82,27 @@ end
 
 256.times { |i|
   e = orderd.assoc(i)
-  e = orderd.assoc(0xea) unless e # NOP
+  #e = orderd.assoc(0xea) unless e # NOP
+
+  unless e
+    e = orderd.assoc(0xea).dup
+
+    low = i & 0x0F
+
+    operand, size = case low
+    when 0x0 then ["Immediate", 2]
+    when 0x4 then ["ZeroPage", 2]
+    when 0xa then ["Implied", 1]
+    when 0xc then ["Absolute", 3]
+    else ["Implied",1]
+    end
+
+    e[1][0] = operand
+    e[1][1] = "NOP"
+    e[1][3] = i
+    e[1][4] = size
+    e[1][6] = "undefined"
+  end
 
   l = fmt(e[1], i)
   #puts l + ",  // #{i}"
