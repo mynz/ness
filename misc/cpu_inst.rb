@@ -37,6 +37,33 @@ AbsoluteX     RLA           $3F   3   7
 
 Immediate     SBC           $EB   2   2
 
+IndirectX     DCP           $c3   2   8
+ZeroPage      DCP           $c7   2   5
+Absolute      DCP           $cF   3   6
+
+IndirectY     DCP           $d3   2   8
+ZeroPageX     DCP           $d7   2   6
+AbsoluteY     DCP           $dB   3   7
+AbsoluteX     DCP           $dF   3   7
+
+IndirectX     RRA           $63   2   8
+ZeroPage      RRA           $67   2   5
+Absolute      RRA           $6F   3   6
+
+IndirectY     RRA           $73   2   8
+ZeroPageX     RRA           $77   2   6
+AbsoluteY     RRA           $7B   3   7
+AbsoluteX     RRA           $7F   3   7
+
+IndirectX     SRE           $43   2   8
+ZeroPage      SRE           $47   2   5
+Absolute      SRE           $4F   3   6
+
+IndirectY     SRE           $53   2   8
+ZeroPageX     SRE           $57   2   6
+AbsoluteY     SRE           $5B   3   7
+AbsoluteX     SRE           $5F   3   7
+
 EOS
 
 txt += extra
