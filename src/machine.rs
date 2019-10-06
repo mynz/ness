@@ -779,9 +779,15 @@ impl Executer {
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
-            Opcode::STA => {
+            Opcode::STA | Opcode::SAX => {
+                let s = if inst.opcode == Opcode::SAX {
+                    self.register.a & self.register.x
+                } else {
+                    self.register.a
+                };
+
                 let addr = self.get_addr_from_operand(inst.operand);
-                extra_cycles = self.store_byte(addr, self.register.a);
+                extra_cycles = self.store_byte(addr, s);
             }
             Opcode::STX | Opcode::STY => {
                 let addr = self.get_addr_from_operand(inst.operand);
