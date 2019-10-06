@@ -35,6 +35,8 @@ ZeroPageX     RLA           $37   2   6
 AbsoluteY     RLA           $3B   3   7
 AbsoluteX     RLA           $3F   3   7
 
+Immediate     SBC           $EB   2   2
+
 EOS
 
 txt += extra

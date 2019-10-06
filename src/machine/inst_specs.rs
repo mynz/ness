@@ -2119,11 +2119,11 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
     InstSpec {
         // 235
         code: 0xeb,
-        opcode: Opcode::NOP,
-        operand: Operand::Implied,
-        size: 1,
+        opcode: Opcode::SBC,
+        operand: Operand::Immediate(0),
+        size: 2,
         cycles: 2,
-        ext_cycles: ExtCycles::Undefined,
+        ext_cycles: ExtCycles::Zero,
     },
     InstSpec {
         // 236
