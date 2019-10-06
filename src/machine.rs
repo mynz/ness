@@ -655,6 +655,22 @@ impl Executer {
                 self.register.p.zero = s == m;
                 self.register.p.carry = s >= m;
             }
+            Opcode::DCP => {
+                // DEC part
+                let addr = self.get_addr_from_operand(inst.operand);
+
+                let s = self.load_byte(addr);
+                let d = if s == 0 { 0xff } else { s - 1 };
+                self.store_byte(addr, d);
+
+                // CMP part
+                let s = self.register.a;
+                let n = (s.wrapping_sub(d) & 0x80) != 0;
+
+                self.register.p.negative = n;
+                self.register.p.zero = s == d;
+                self.register.p.carry = s >= d;
+            }
             Opcode::DEC => {
                 let addr = self.get_addr_from_operand(inst.operand);
 
