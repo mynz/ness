@@ -3,9 +3,17 @@ require "pp"
 # http://pgate1.at-ninja.jp/NES_on_FPGA/nes_cpu.htm#clock
 
 txt = open("misc/cpu_inst.txt").read
-#pp txt
 
-# "Zero Page,X   ADC $44,X     $75   2   4"
+extra = <<"EOS"
+IndirectX     LAX           $A3   2   6
+ZeroPage      LAX           $A7   2   3
+Absolute      LAX           $AF   3   4
+IndirectY     LAX           $B3   2   5
+ZeroPageY     LAX           $B7   2   4
+AbsoluteY     LAX           $BF   3   4
+EOS
+
+txt += extra
 
 table = txt.lines.map { |line|
   l = line.chomp
@@ -80,9 +88,8 @@ def fmt(e, idx)
   ret
 end
 
-256.times { |i|
+0xff.times { |i|
   e = orderd.assoc(i)
-  #e = orderd.assoc(0xea) unless e # NOP
 
   unless e
     e = orderd.assoc(0xea).dup
@@ -105,6 +112,5 @@ end
   end
 
   l = fmt(e[1], i)
-  #puts l + ",  // #{i}"
   puts l
 }
