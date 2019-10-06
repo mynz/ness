@@ -11,6 +11,30 @@ Absolute      LAX           $AF   3   4
 IndirectY     LAX           $B3   2   5
 ZeroPageY     LAX           $B7   2   4
 AbsoluteY     LAX           $BF   3   4
+
+IndirectX     SAX           $83   2   6
+ZeroPage      SAX           $87   2   3
+Absolute      SAX           $8F   3   4
+ZeroPageY     SAX           $97   2   4
+
+IndirectX     SLO           $03   2   8
+ZeroPage      SLO           $07   2   5
+Absolute      SLO           $0F   3   6
+
+IndirectY     SLO           $13   2   8
+ZeroPageX     SLO           $17   2   6
+AbsoluteY     SLO           $1B   3   7
+AbsoluteX     SLO           $1F   3   7
+
+IndirectX     RLA           $23   2   8
+ZeroPage      RLA           $27   2   5
+Absolute      RLA           $2F   3   6
+
+IndirectY     RLA           $33   2   8
+ZeroPageX     RLA           $37   2   6
+AbsoluteY     RLA           $3B   3   7
+AbsoluteX     RLA           $3F   3   7
+
 EOS
 
 txt += extra
