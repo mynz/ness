@@ -2296,4 +2296,13 @@ pub(super) const INST_SPECS: &[InstSpec] = &[
         cycles: 6,
         ext_cycles: ExtCycles::One,
     },
+    InstSpec {
+        // 255
+        code: 0xff,
+        opcode: Opcode::NOP,
+        operand: Operand::Implied,
+        size: 1,
+        cycles: 2,
+        ext_cycles: ExtCycles::Undefined,
+    },
 ];

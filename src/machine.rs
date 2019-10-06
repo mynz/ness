@@ -707,7 +707,7 @@ impl Executer {
                 self.push_u16(inst.pc + 2);
                 self.register.pc = d;
             }
-            Opcode::LDA | Opcode::LDX | Opcode::LDY => {
+            Opcode::LAX | Opcode::LDA | Opcode::LDX | Opcode::LDY => {
                 let d: u8 = if let Operand::Immediate(v) = inst.operand {
                     v
                 } else {
@@ -715,13 +715,16 @@ impl Executer {
                     self.load_byte(addr)
                 };
 
-                let r = match inst.opcode {
-                    Opcode::LDA => &mut self.register.a,
-                    Opcode::LDX => &mut self.register.x,
-                    Opcode::LDY => &mut self.register.y,
+                match inst.opcode {
+                    Opcode::LAX => {
+                        self.register.a = d;
+                        self.register.x = d;
+                    }
+                    Opcode::LDA => self.register.a = d,
+                    Opcode::LDX => self.register.x = d,
+                    Opcode::LDY => self.register.y = d,
                     _ => unreachable!(),
                 };
-                *r = d;
 
                 self.register.p.negative = d & 0x80 != 0;
                 self.register.p.zero = d == 0;
