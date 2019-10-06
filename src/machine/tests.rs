@@ -443,4 +443,17 @@ fn test_nestest() {
     assert_eq!(cnt, 5006);
     assert_eq!(exe.last_exec_inst.opcode, Opcode::NOP);
     assert_eq!(exe.last_exec_inst.pc, 0xC6C1);
+
+    while cnt <= 5258 {
+        exe.execute();
+        cnt += 1;
+    }
+
+    assert_eq!(cnt, 5259);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::LDA);
+
+    exe.execute();
+    cnt += 1;
+    assert_eq!(cnt, 5260);
+    assert_eq!(exe.last_exec_inst.opcode, Opcode::LAX);
 }

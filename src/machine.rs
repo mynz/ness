@@ -71,6 +71,7 @@ enum Opcode {
     INY,
     JMP,
     JSR,
+    LAX,
     LDA,
     LDX,
     LDY,
