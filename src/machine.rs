@@ -814,6 +814,21 @@ impl Executer {
             Opcode::SEI => {
                 self.register.p.interrupt = true;
             }
+            Opcode::SLO => {
+                // combo
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::ASL,
+                    operand: inst.operand,
+                });
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::ORA,
+                    operand: inst.operand,
+                });
+            }
             Opcode::STA | Opcode::SAX => {
                 let s = if inst.opcode == Opcode::SAX {
                     self.register.a & self.register.x
