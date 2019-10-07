@@ -456,4 +456,9 @@ fn test_nestest() {
     cnt += 1;
     assert_eq!(cnt, 5260);
     assert_eq!(exe.last_exec_inst.opcode, Opcode::LAX);
+
+    while cnt <= 6881 {
+        exe.execute();
+        cnt += 1;
+    }
 }
