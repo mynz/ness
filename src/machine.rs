@@ -713,6 +713,21 @@ impl Executer {
                 self.register.p.zero = d == 0;
                 self.register.p.negative = d & 0x80 != 0;
             }
+            Opcode::ISB => {
+                // combo
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::INC,
+                    operand: inst.operand,
+                });
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::SBC,
+                    operand: inst.operand,
+                });
+            }
             Opcode::JMP => {
                 let d = match inst.operand {
                     Operand::Absolute(v) => v,
