@@ -70,7 +70,7 @@ enum Opcode {
     INC,
     INX,
     INY,
-    ISC,
+    ISB,
     JMP,
     JSR,
     LAX,

@@ -64,6 +64,15 @@ ZeroPageX     SRE           $57   2   6
 AbsoluteY     SRE           $5B   3   7
 AbsoluteX     SRE           $5F   3   7
 
+IndirectX     ISB           $E3   2   8
+ZeroPage      ISB           $E7   2   5
+Absolute      ISB           $EF   3   6
+
+IndirectY     ISB           $F3   2   8
+ZeroPageX     ISB           $F7   2   6
+AbsoluteY     ISB           $FB   3   7
+AbsoluteX     ISB           $FF   3   7
+
 EOS
 
 txt += extra
