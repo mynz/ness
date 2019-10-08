@@ -369,7 +369,7 @@ impl Executer {
             return cur.read_u8().unwrap();
         }
 
-        unimplemented!("load_word: {:x}", addr);
+        unimplemented!("load_byte: {:x}", addr);
     }
 
     fn load_word(&mut self, addr: u16) -> u16 {
