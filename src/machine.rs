@@ -816,6 +816,21 @@ impl Executer {
                     operand: inst.operand,
                 });
             }
+            Opcode::RRA => {
+                // combo
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::ROR,
+                    operand: inst.operand,
+                });
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::ADC,
+                    operand: inst.operand,
+                });
+            }
             Opcode::RTS => {
                 let v = self.pop_u16();
                 self.register.pc = v + 1;
