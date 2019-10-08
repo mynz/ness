@@ -801,6 +801,21 @@ impl Executer {
                     self.register.pc = self.pop_u16();
                 }
             }
+            Opcode::RLA => {
+                // combo
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::ROL,
+                    operand: inst.operand,
+                });
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::AND,
+                    operand: inst.operand,
+                });
+            }
             Opcode::RTS => {
                 let v = self.pop_u16();
                 self.register.pc = v + 1;
@@ -826,6 +841,21 @@ impl Executer {
                     pc: inst.pc,
                     code: inst.code,
                     opcode: Opcode::ORA,
+                    operand: inst.operand,
+                });
+            }
+            Opcode::SRE => {
+                // combo
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::LSR,
+                    operand: inst.operand,
+                });
+                self.execute_inst(&Inst {
+                    pc: inst.pc,
+                    code: inst.code,
+                    opcode: Opcode::EOR,
                     operand: inst.operand,
                 });
             }
