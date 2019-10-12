@@ -62,17 +62,31 @@ impl State for App {
         let mut keybits: u32 = 0;
 
         let keys = window.keyboard();
-        if keys[Key::H].is_down() {
+        if keys[Key::A].is_down() {
             keybits |= 1 << PadButton::Left as u8;
         }
-        if keys[Key::J].is_down() {
+        if keys[Key::S].is_down() {
             keybits |= 1 << PadButton::Down as u8;
         }
-        if keys[Key::K].is_down() {
+        if keys[Key::W].is_down() {
             keybits |= 1 << PadButton::Up as u8;
         }
-        if keys[Key::L].is_down() {
+        if keys[Key::D].is_down() {
             keybits |= 1 << PadButton::Right as u8;
+        }
+
+        if keys[Key::K].is_down() {
+            keybits |= 1 << PadButton::A as u8;
+        }
+        if keys[Key::J].is_down() {
+            keybits |= 1 << PadButton::B as u8;
+        }
+
+        if keys[Key::G].is_down() {
+            keybits |= 1 << PadButton::Select as u8;
+        }
+        if keys[Key::H].is_down() {
+            keybits |= 1 << PadButton::Start as u8;
         }
 
         // TODO: joypad1 の入力も必要
