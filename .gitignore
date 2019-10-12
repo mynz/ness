@@ -2,3 +2,4 @@
 /screenshot
 **/*.rs.bk
 tmp
+static/local
