@@ -1001,7 +1001,7 @@ impl Executer {
 
         let (inst, spec) = self.fetch_inst();
 
-        if true {
+        if false {
             //println!("xxx: {:X?}, {}", inst, self.register);
             println!("xxx: {:X}, {:?} {}", inst.pc, inst.opcode, self.register);
         }
