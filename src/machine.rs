@@ -287,7 +287,7 @@ impl fmt::Display for Register {
 struct Joypad {
     keybits: u32,
     load_count: u8,
-    store_count: u8,
+    s: u8,
 }
 
 impl Joypad {
@@ -302,11 +302,12 @@ impl Joypad {
         ret
     }
     fn store_byte(&mut self, data: u8) {
-        if self.store_count == 1 && data == 0 {
+        let d = data & 0x01;
+        if self.s == 1 && d == 0 {
             // reset
             self.load_count = 0;
         }
-        self.store_count = data;
+        self.s = d;
     }
 }
 
