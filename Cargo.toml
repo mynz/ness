@@ -2,6 +2,7 @@
 name = "rustness"
 version = "0.1.0"
 authors = ["mynz <rollingteapot@gmail.com>"]
+description = "A Famicon/NES emulator"
 edition = "2018"
 
 [dependencies]
@@ -9,3 +10,4 @@ edition = "2018"
 image = ""
 byteorder = ""
 quicksilver = ""
+clap = ""
