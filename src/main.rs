@@ -4,8 +4,11 @@ extern crate rustness;
 use rustness::machine::Executer;
 use rustness::rom::Rom;
 
-extern crate quicksilver;
+#[macro_use]
+extern crate clap;
+use clap::{App, Arg};
 
+extern crate quicksilver;
 use quicksilver::{
     geom::Vector,
     graphics::Background::Img,
@@ -16,13 +19,12 @@ use quicksilver::{
     Result,
 };
 
-extern crate image;
 
-struct App {
+struct Rustness {
     exe: Executer,
 }
 
-impl App {
+impl Rustness {
     // ダミー
     fn new() -> Result<Self> {
         Self::new_with_params(None)
@@ -47,9 +49,9 @@ impl App {
     }
 }
 
-impl State for App {
-    fn new() -> Result<App> {
-        App::new()
+impl State for Rustness {
+    fn new() -> Result<Rustness> {
+        Self::new()
     }
 
     fn update(&mut self, window: &mut Window) -> Result<()> {
@@ -136,15 +138,34 @@ impl State for App {
 }
 
 fn main() {
-    //let rom = Rom::load_image("static/sample1/sample1.nes");
-    //let rom = Rom::load_image("static/roms/giko005.nes");
-    //let rom = Rom::load_image("static/roms/giko008.nes");
-    //let rom = Rom::load_image("static/roms/giko009.nes");
-    //let rom = Rom::load_image("static/roms/giko010b.nes");
-    //let rom = Rom::load_image("static/roms/giko011.nes");
-    //let rom = Rom::load_image("static/roms/giko016.nes"); // NG
-    //let rom = Rom::load_image("static/roms/falling.nes"); // NG
-    //let rom = Rom::load_image("static/roms/nestest.nes"); // OK
-    let rom = Rom::load_image("static/local/Super_mario_brothers.nes"); // OK
-    App::run(rom);
+    let app = App::new(crate_name!())
+        .version(crate_version!())
+        .author(crate_authors!())
+        .about(crate_description!())
+        .arg(Arg::from_usage("-r --rom [ROM] 'Set rom file path'"))
+        .arg(Arg::from_usage("-d... 'Set debug level (multiple)'"))
+    ;
+
+    let matches = app.get_matches();
+    let debug_level = matches.occurrences_of("d");
+    let rom_path = if let Some(o) = matches.value_of("rom") {
+        o
+    } else {
+        //"static/sample1/sample1.nes"
+        //"static/roms/giko005.nes"
+        //"static/roms/giko008.nes"
+        //"static/roms/giko009.nes"
+        //"static/roms/giko010b.nes"
+        //"static/roms/giko011.nes"
+        //"static/roms/giko016.nes" // NG
+        //"static/roms/falling.nes" // NG
+        //"static/roms/nestest.nes" // OK
+        "static/local/Super_mario_brothers.nes" // NG
+    };
+
+    println!("rom file path is [{}]", rom_path);
+    println!("debug level: {}", debug_level);
+
+    let rom = Rom::load_image(rom_path);
+    Rustness::run(rom);
 }
