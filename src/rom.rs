@@ -120,3 +120,16 @@ fn test_rom() {
     assert_eq!(rom.get_bytes_of_prg(), rom.get_prg().len());
     assert_eq!(rom.get_bytes_of_chr(), rom.get_chr().len());
 }
+
+#[test]
+fn test_smb() {
+    let rom = Rom::load_image("static/local/Super_mario_brothers.nes");
+    let sig = rom.get_signature();
+    assert_eq!(sig, "NES\u{1a}".as_bytes());
+
+    let header = rom.get_header();
+    assert_eq!(16, header.len());
+
+    assert_eq!(rom.get_bytes_of_chr(), 0x2000);
+    assert_eq!(rom.get_bytes_of_prg(), 0x8000);
+}
