@@ -364,7 +364,7 @@ impl PpuUnit {
             NM1_BASE..=NM1_LAST => self.name_table1[(addr - NM1_BASE) as usize],
             NM2_BASE..=NM2_LAST => self.name_table2[(addr - NM2_BASE) as usize],
             NM3_BASE..=NM3_LAST => self.name_table3[(addr - NM3_BASE) as usize],
-            _ => unimplemented!(),
+            _ => unimplemented!("PPU addr: {:X}", addr),
         };
 
         ret
