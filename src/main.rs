@@ -27,11 +27,13 @@ struct Rustness {
 impl Rustness {
     // ダミー
     fn new() -> Result<Self> {
-        Self::new_with_params(None)
+        let args = CmdArgs::default();
+        Self::new_with_params(None, args)
     }
 
-    fn new_with_params(rom: Option<Rom>) -> Result<Self> {
+    fn new_with_params(rom: Option<Rom>, args: CmdArgs) -> Result<Self> {
         let mut exe = Executer::new();
+        exe.args = args;
 
         if let Some(rom) = rom {
             exe.set_rom(rom);
@@ -41,10 +43,10 @@ impl Rustness {
         Ok(Self { exe })
     }
 
-    fn run(rom: Rom, _args: CmdArgs) {
+    fn run(rom: Rom, args: CmdArgs) {
         let win_size = Vector::new(255, 240);
         run_with("RUSTNESS", win_size, Settings::default(), || {
-            Self::new_with_params(Some(rom))
+            Self::new_with_params(Some(rom), args)
         });
     }
 }
