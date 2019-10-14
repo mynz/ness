@@ -156,7 +156,7 @@ fn main() {
         .value_of("debug-level")
         .map_or(1, |v| v.parse().unwrap());
 
-    let rom_path = matches.value_of("ROM").unwrap_or(
+    let rom_path = matches.value_of("rom").unwrap_or(
         //"static/sample1/sample1.nes"
         //"static/roms/giko005.nes"
         //"static/roms/giko008.nes"
