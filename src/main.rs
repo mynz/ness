@@ -175,7 +175,7 @@ fn main() {
     };
 
     if false || args.debug_level > 0 {
-        println!("rom: [{}]", rom_path);
+        println!("rom_path: [{}]", rom_path);
         println!("debug-level: {}", debug_level);
     }
 
