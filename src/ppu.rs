@@ -161,104 +161,6 @@ impl PpuUnit {
         Pos(self.next_render_x, self.next_render_y)
     }
 
-    pub fn execute(&mut self, cycles: Cycle, rom: &Rom) {
-        let mut rest_cycles = cycles;
-        while rest_cycles > 0 {
-            if rest_cycles > CYCLES_PER_LINE {
-                self.execute_internal(CYCLES_PER_LINE, rom);
-                rest_cycles -= CYCLES_PER_LINE;
-            } else {
-                self.execute_internal(rest_cycles, rom);
-                break;
-            }
-        }
-    }
-
-    fn start_new_frame(&mut self) {
-    }
-
-    fn execute_internal(&mut self, cycles: Cycle, rom: &Rom) {
-        // 1 frame = 341 * 262 = 89342 PPU cycles
-        // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
-
-        assert!(cycles > 0);
-        assert!(cycles <= CYCLES_PER_LINE);
-
-        if cycles < self.rest_cycles_in_line {
-            // まだラインの処理中.
-
-            let pos_ofs = Pos(self.next_render_x, self.next_render_y);
-            self.render(&pos_ofs, cycles, rom);
-
-            self.next_render_x += cycles;
-            self.rest_cycles_in_line -= cycles;
-        } else {
-            // ライン処理の終了を検知.
-            let excess = cycles - self.rest_cycles_in_line;
-
-            // ラインの残りをレンダリングする.
-            if self.rest_cycles_in_line > 0 {
-                let pos_ofs = Pos(self.next_render_x, self.next_render_y);
-                self.render(&pos_ofs, self.rest_cycles_in_line, rom);
-            }
-
-            // 次のラインに進める.
-            self.next_render_y += 1;
-            if self.next_render_y >= 262 {
-                // ライン0へ折り返す.
-                self.next_render_y = 0;
-                // フレームが完成.
-                self.frame_count += 1;
-                self.start_new_frame();
-            }
-            let new_y = self.next_render_y;
-
-            // 新ラインの初期化処理を行う.
-            {
-                // 0-239 line: visible scanline
-                // ライン上のスプライトを探す
-                if new_y <= 239 {
-                    let mut count = 0;
-                    for it in self.sprites.iter() {
-                        let sy = it.y as u32;
-                        if new_y <= sy && new_y + 7 >= sy {
-                            self.line_sprites[count] = *it;
-                            count += 1;
-                            if count == 8 {
-                                break;
-                            }
-                        }
-                    }
-                    self.line_sprite_count = count as u8;
-                }
-
-                // 240 line: post-render-scanline アイドル状態
-
-                // 241-260 line: VBlank
-                if new_y == 241 {
-                    // start VBLANK
-                    self.reg.status.vblank = true;
-                    // NMI
-                    if self.reg.ctrl & 0x80 != 0 {
-                        self.nmi_interuption = true;
-                    }
-                }
-
-                // 261 line: pre-render-scanling VBLANKフラグが下ろされる
-                if new_y == 261 {
-                    self.reg.status.vblank = false;
-                }
-            }
-
-            // 新しいラインのレンダリング.
-            let pos_ofs = Pos(0, new_y);
-            self.render(&pos_ofs, excess, rom);
-
-            self.next_render_x = excess;
-            self.rest_cycles_in_line = CYCLES_PER_LINE - excess;
-        }
-    }
-
     pub fn get_ppu_register(&self) -> &PpuRegister {
         &self.reg
     }
@@ -464,6 +366,105 @@ impl PpuUnit {
             (true, false) => (&self.name_table1, &self.attr_table1),
             (false, true) => (&self.name_table2, &self.attr_table2),
             (true, true) => (&self.name_table3, &self.attr_table3),
+        }
+    }
+
+    pub fn execute(&mut self, cycles: Cycle, rom: &Rom) {
+        let mut rest_cycles = cycles;
+        while rest_cycles > 0 {
+            if rest_cycles > CYCLES_PER_LINE {
+                self.execute_internal(CYCLES_PER_LINE, rom);
+                rest_cycles -= CYCLES_PER_LINE;
+            } else {
+                self.execute_internal(rest_cycles, rom);
+                break;
+            }
+        }
+    }
+
+    fn start_new_frame(&mut self) {
+        //println!("scroll: {:?}", self.reg.scroll);
+    }
+
+    fn execute_internal(&mut self, cycles: Cycle, rom: &Rom) {
+        // 1 frame = 341 * 262 = 89342 PPU cycles
+        // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
+
+        assert!(cycles > 0);
+        assert!(cycles <= CYCLES_PER_LINE);
+
+        if cycles < self.rest_cycles_in_line {
+            // まだラインの処理中.
+
+            let pos_ofs = Pos(self.next_render_x, self.next_render_y);
+            self.render(&pos_ofs, cycles, rom);
+
+            self.next_render_x += cycles;
+            self.rest_cycles_in_line -= cycles;
+        } else {
+            // ライン処理の終了を検知.
+            let excess = cycles - self.rest_cycles_in_line;
+
+            // ラインの残りをレンダリングする.
+            if self.rest_cycles_in_line > 0 {
+                let pos_ofs = Pos(self.next_render_x, self.next_render_y);
+                self.render(&pos_ofs, self.rest_cycles_in_line, rom);
+            }
+
+            // 次のラインに進める.
+            self.next_render_y += 1;
+            if self.next_render_y >= 262 {
+                // ライン0へ折り返す.
+                self.next_render_y = 0;
+                // フレームが完成.
+                self.frame_count += 1;
+                self.start_new_frame();
+            }
+            let new_y = self.next_render_y;
+
+            // 新ラインの初期化処理を行う.
+            {
+                // 0-239 line: visible scanline
+                // ライン上のスプライトを探す
+                if new_y <= 239 {
+                    let mut count = 0;
+                    for it in self.sprites.iter() {
+                        let sy = it.y as u32;
+                        if new_y <= sy && new_y + 7 >= sy {
+                            self.line_sprites[count] = *it;
+                            count += 1;
+                            if count == 8 {
+                                break;
+                            }
+                        }
+                    }
+                    self.line_sprite_count = count as u8;
+                }
+
+                // 240 line: post-render-scanline アイドル状態
+
+                // 241-260 line: VBlank
+                if new_y == 241 {
+                    // start VBLANK
+                    self.reg.status.vblank = true;
+                    // NMI
+                    if self.reg.ctrl & 0x80 != 0 {
+                        self.nmi_interuption = true;
+                    }
+                }
+
+                // 261 line: pre-render-scanling VBLANKフラグが下ろされる
+                if new_y == 261 {
+                    self.reg.status.vblank = false;
+                }
+            }
+
+            // 新しいラインのレンダリング.
+            let pos_ofs = Pos(0, new_y);
+            self.render(&pos_ofs, excess, rom);
+
+            self.next_render_x = excess;
+            self.rest_cycles_in_line = CYCLES_PER_LINE - excess;
         }
     }
 
