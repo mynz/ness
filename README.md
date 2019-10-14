@@ -9,7 +9,8 @@ A Famicon/NES emulator written by Rust
 - [x] static/roms/giko008.nes
 - [x] static/roms/giko009.nes
 - [x] static/roms/giko010b.nes
-- [x] static/roms/giko011.nes
+- [ ] static/roms/giko011.nes
+  - スクロールが継続しない
 - [x] static/roms/nestest.nes
 - [ ] static/roms/giko016.nes
 - [ ] static/roms/falling.nes
