@@ -13,7 +13,7 @@ use self::inst_specs::INST_SPECS;
 use crate::frame_buffer::FrameBuffer;
 use crate::ppu::PpuUnit;
 use crate::rom::Rom;
-use crate::Cycle;
+use crate::*;
 
 fn u8_to_i8(u: u8) -> i8 {
     unsafe { std::mem::transmute::<u8, i8>(u) }
@@ -322,6 +322,8 @@ pub struct Executer {
 
     last_exec_inst: Inst,
     cycles: Cycle,
+
+    pub debug_options: DebugOptions,
 }
 
 impl Executer {
@@ -1001,7 +1003,7 @@ impl Executer {
 
         let (inst, spec) = self.fetch_inst();
 
-        if false {
+        if self.debug_options.debug_level > 1 {
             //println!("xxx: {:X?}, {}", inst, self.register);
             println!("xxx: {:X}, {:?} {}", inst.pc, inst.opcode, self.register);
         }

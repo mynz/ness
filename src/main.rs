@@ -3,6 +3,7 @@
 extern crate rustness;
 use rustness::machine::Executer;
 use rustness::rom::Rom;
+use rustness::*;
 
 #[macro_use]
 extern crate clap;
@@ -18,7 +19,6 @@ use quicksilver::{
     //Future,
     Result,
 };
-
 
 struct Rustness {
     exe: Executer,
@@ -55,8 +55,6 @@ impl State for Rustness {
     }
 
     fn update(&mut self, window: &mut Window) -> Result<()> {
-        use rustness::PadButton;
-
         if window.keyboard()[Key::Q].is_down() || window.keyboard()[Key::Escape].is_down() {
             window.close();
         }
@@ -124,7 +122,9 @@ impl State for Rustness {
             }
         }
 
-        println!("update frame: {}", frame_count);
+        if self.exe.debug_options.debug_level > 0 {
+            println!("update frame: {}", frame_count);
+        }
 
         window.clear(Color::GREEN)?;
         {
@@ -142,15 +142,19 @@ fn main() {
         .version(crate_version!())
         .author(crate_authors!())
         .about(crate_description!())
-        .arg(Arg::from_usage("-r --rom [ROM] 'Set rom file path'"))
-        .arg(Arg::from_usage("-d... 'Set debug level (multiple)'"))
-    ;
+        .arg(Arg::from_usage("-q, --quiet 'Set stdout silent'"))
+        .arg(Arg::from_usage("-r, --rom [ROM] 'Set rom file path'"))
+        .arg(Arg::from_usage(
+            "-d, --debug-level=[LEVEL] 'Set debug level'",
+        ));
 
     let matches = app.get_matches();
-    let debug_level = matches.occurrences_of("d");
-    let rom_path = if let Some(o) = matches.value_of("rom") {
-        o
-    } else {
+
+    let debug_level = matches
+        .value_of("debug-level")
+        .map_or(1, |v| v.parse().unwrap());
+
+    let rom_path = matches.value_of("ROM").unwrap_or(
         //"static/sample1/sample1.nes"
         //"static/roms/giko005.nes"
         //"static/roms/giko008.nes"
@@ -160,11 +164,15 @@ fn main() {
         //"static/roms/giko016.nes" // NG
         //"static/roms/falling.nes" // NG
         //"static/roms/nestest.nes" // OK
-        "static/local/Super_mario_brothers.nes" // NG
-    };
+        "static/local/Super_mario_brothers.nes", // NG
+    );
 
-    println!("rom file path is [{}]", rom_path);
-    println!("debug level: {}", debug_level);
+    let opts = DebugOptions { debug_level };
+
+    if false || opts.debug_level > 0 {
+        println!("rom: [{}]", rom_path);
+        println!("debug-level: {}", debug_level);
+    }
 
     let rom = Rom::load_image(rom_path);
     Rustness::run(rom);

@@ -6,6 +6,16 @@ pub mod rom;
 
 type Cycle = u32;
 
+pub struct DebugOptions {
+    pub debug_level: u32,
+}
+
+impl Default for DebugOptions {
+    fn default() -> Self {
+        Self { debug_level: 0 }
+    }
+}
+
 pub enum PadButton {
     A,
     B,
