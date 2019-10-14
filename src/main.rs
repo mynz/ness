@@ -162,11 +162,12 @@ fn main() {
         //"static/roms/giko008.nes"
         //"static/roms/giko009.nes"
         //"static/roms/giko010b.nes"
-        "static/roms/giko011.nes" // NG
+
         //"static/roms/giko016.nes" // NG
         //"static/roms/falling.nes" // NG
         //"static/roms/nestest.nes" // OK
-        //"static/local/Super_mario_brothers.nes", // NG
+        //"static/local/Super_mario_brothers.nes" // NG
+        "static/roms/giko011.nes", // NG
     );
 
     let args = CmdArgs {
