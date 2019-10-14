@@ -174,6 +174,9 @@ impl PpuUnit {
         }
     }
 
+    fn start_new_frame(&mut self) {
+    }
+
     fn execute_internal(&mut self, cycles: Cycle, rom: &Rom) {
         // 1 frame = 341 * 262 = 89342 PPU cycles
         // http://taotao54321.hatenablog.com/entry/2017/04/11/115205
@@ -206,6 +209,7 @@ impl PpuUnit {
                 self.next_render_y = 0;
                 // フレームが完成.
                 self.frame_count += 1;
+                self.start_new_frame();
             }
             let new_y = self.next_render_y;
 
