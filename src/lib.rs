@@ -6,13 +6,17 @@ pub mod rom;
 
 type Cycle = u32;
 
-pub struct DebugOptions {
+pub struct CmdArgs {
     pub debug_level: u32,
+    pub rom_path: String,
 }
 
-impl Default for DebugOptions {
+impl Default for CmdArgs {
     fn default() -> Self {
-        Self { debug_level: 0 }
+        Self {
+            debug_level: 0,
+            rom_path: "".to_string(),
+        }
     }
 }
 

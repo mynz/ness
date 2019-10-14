@@ -41,7 +41,7 @@ impl Rustness {
         Ok(Self { exe })
     }
 
-    fn run(rom: Rom) {
+    fn run(rom: Rom, _args: CmdArgs) {
         let win_size = Vector::new(255, 240);
         run_with("RUSTNESS", win_size, Settings::default(), || {
             Self::new_with_params(Some(rom))
@@ -122,7 +122,7 @@ impl State for Rustness {
             }
         }
 
-        if self.exe.debug_options.debug_level > 0 {
+        if self.exe.args.debug_level > 0 {
             println!("update frame: {}", frame_count);
         }
 
@@ -167,13 +167,16 @@ fn main() {
         "static/local/Super_mario_brothers.nes", // NG
     );
 
-    let opts = DebugOptions { debug_level };
+    let args = CmdArgs {
+        debug_level,
+        rom_path: rom_path.to_string(),
+    };
 
-    if false || opts.debug_level > 0 {
+    if false || args.debug_level > 0 {
         println!("rom: [{}]", rom_path);
         println!("debug-level: {}", debug_level);
     }
 
     let rom = Rom::load_image(rom_path);
-    Rustness::run(rom);
+    Rustness::run(rom, args);
 }

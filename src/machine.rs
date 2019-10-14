@@ -323,7 +323,7 @@ pub struct Executer {
     last_exec_inst: Inst,
     cycles: Cycle,
 
-    pub debug_options: DebugOptions,
+    pub args: CmdArgs,
 }
 
 impl Executer {
@@ -1003,7 +1003,7 @@ impl Executer {
 
         let (inst, spec) = self.fetch_inst();
 
-        if self.debug_options.debug_level > 1 {
+        if self.args.debug_level > 1 {
             //println!("xxx: {:X?}, {}", inst, self.register);
             println!("xxx: {:X}, {:?} {}", inst.pc, inst.opcode, self.register);
         }
