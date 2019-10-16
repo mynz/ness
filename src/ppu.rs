@@ -361,12 +361,20 @@ impl PpuUnit {
     }
 
     fn select_name_table(&self, x_mirror: bool, y_mirror: bool) -> (&Box<[u8]>, &Box<[u8]>) {
-        match (x_mirror, y_mirror) {
-            (false, false) => (&self.name_table0, &self.attr_table0),
-            (true, false) => (&self.name_table1, &self.attr_table1),
-            (false, true) => (&self.name_table2, &self.attr_table2),
-            (true, true) => (&self.name_table3, &self.attr_table3),
-        }
+        let idx = match (x_mirror, y_mirror) {
+            (false, false) => 0,
+            (true, false) => 1,
+            (false, true) => 2,
+            (true, true) => 3,
+        };
+
+        let ps = [
+            (&self.name_table0, &self.attr_table0),
+            (&self.name_table1, &self.attr_table1),
+            (&self.name_table2, &self.attr_table2),
+            (&self.name_table3, &self.attr_table3),
+        ];
+        ps[idx]
     }
 
     pub fn execute(&mut self, cycles: Cycle, rom: &Rom) {
