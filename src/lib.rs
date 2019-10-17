@@ -9,6 +9,7 @@ type Cycle = u32;
 pub struct CmdArgs {
     pub debug_level: u32,
     pub rom_path: String,
+    pub pause: bool,
 }
 
 impl Default for CmdArgs {
@@ -16,6 +17,7 @@ impl Default for CmdArgs {
         Self {
             debug_level: 0,
             rom_path: "".to_string(),
+            pause: false,
         }
     }
 }

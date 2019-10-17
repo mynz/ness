@@ -173,6 +173,7 @@ fn main() {
     let args = CmdArgs {
         debug_level,
         rom_path: rom_path.to_string(),
+        pause: false,
     };
 
     if false || args.debug_level > 0 {
