@@ -20,7 +20,7 @@ fn u8_to_i8(u: u8) -> i8 {
 }
 
 fn u8_to_i16(u: u8) -> i16 {
-    u8_to_i8(u) as i16
+    i16::from(u8_to_i8(u))
 }
 
 fn pack_u16(b0: u8, b1: u8) -> u16 {
@@ -36,7 +36,7 @@ fn unpack_u16(w: u16) -> (u8, u8) {
 
 fn add_rel_to_pc(pc: u16, r: u8) -> u16 {
     let base = pc as i16;
-    let rr = u8_to_i8(r) as i16;
+    let rr = u8_to_i16(r);
     (base + rr) as u16
 }
 
@@ -172,7 +172,7 @@ impl Inst {
         };
 
         Inst {
-            pc: pc,
+            pc,
             code: spec.code,
             opcode: spec.opcode,
             operand,

@@ -20,7 +20,7 @@ impl FrameBuffer {
         }
     }
 
-    pub fn set_pixel(&mut self, pos: &Pos, c: &RGB) {
+    pub fn set_pixel(&mut self, pos: Pos, c: RGB) {
         let p = 3 * (self.w * pos.1 + pos.0) as usize;
         self.buf[p + 0] = c.0;
         self.buf[p + 1] = c.1;
@@ -47,12 +47,12 @@ mod tests {
     #[test]
     fn test_save_as_png() {
         let mut fb = FrameBuffer::new(32, 24);
-        fb.set_pixel(&Pos(0, 0), &RGB(0xff, 0, 0));
-        fb.set_pixel(&Pos(1, 0), &RGB(0xff, 0, 0));
-        fb.set_pixel(&Pos(2, 0), &RGB(0xff, 0, 0));
-        fb.set_pixel(&Pos(0, 1), &RGB(0, 0xff, 0));
-        fb.set_pixel(&Pos(1, 1), &RGB(0, 0, 0xff));
-        fb.set_pixel(&Pos(2, 1), &RGB(0, 0xff, 0xff));
+        fb.set_pixel(Pos(0, 0), RGB(0xff, 0, 0));
+        fb.set_pixel(Pos(1, 0), RGB(0xff, 0, 0));
+        fb.set_pixel(Pos(2, 0), RGB(0xff, 0, 0));
+        fb.set_pixel(Pos(0, 1), RGB(0, 0xff, 0));
+        fb.set_pixel(Pos(1, 1), RGB(0, 0, 0xff));
+        fb.set_pixel(Pos(2, 1), RGB(0, 0xff, 0xff));
         fb.save_as_png("screenshot/ss_test00.png");
     }
 }

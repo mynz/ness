@@ -255,8 +255,6 @@ impl PpuUnit {
                 unimplemented!("yet to implement ppu addr: 0x{:x}", addr);
             }
         }
-
-        //panic!("yet to be implemented: {:x}", addr);
     }
 
     fn load_memory(&self, addr: u16) -> u8 {
@@ -564,7 +562,7 @@ impl PpuUnit {
             let x = pos.0 + ix;
             let col_idx = out_color_indices[ix as usize];
             let rgb = COLOR_PALETTE[col_idx as usize];
-            self.frame_buffer.set_pixel(&Pos(x, y), &rgb);
+            self.frame_buffer.set_pixel(Pos(x, y), rgb);
         }
     }
 
