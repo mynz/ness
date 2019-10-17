@@ -13,8 +13,8 @@ extern crate quicksilver;
 use quicksilver::{
     geom::Vector,
     graphics::Background::Img,
-    graphics::{Color, Image, PixelFormat},
-    input::Key,
+    graphics::{Image, PixelFormat},
+    input::{ButtonState, Key},
     lifecycle::{run_with, Settings, State, Window},
     //Future,
     Result,
@@ -91,24 +91,13 @@ impl State for Rustness {
             keybits |= 1 << PadButton::Start as u8;
         }
 
+        // pause
+        if keys[Key::Space] == ButtonState::Pressed {
+            self.exe.args.pause = !self.exe.args.pause;
+        }
+
         // TODO: joypad1 の入力も必要
         self.exe.set_joypad_keybits(0, keybits);
-
-        /*
-        self.pad_state = PadState::default();
-        if window.keyboard()[Key::K].is_down() {
-            self.pad_state.key_ud = -1;
-        }
-        if window.keyboard()[Key::J].is_down() {
-            self.pad_state.key_ud = 1;
-        }
-        if window.keyboard()[Key::H].is_down() {
-            self.pad_state.key_lr = -1;
-        }
-        if window.keyboard()[Key::L].is_down() {
-            self.pad_state.key_lr = 1;
-        }
-         */
 
         Ok(())
     }
@@ -116,19 +105,20 @@ impl State for Rustness {
     fn draw(&mut self, window: &mut Window) -> Result<()> {
         // 本来 update() で呼び出すべきかもしれないが、
         // ここに書かないとキーイベントなどがうまくとれない.
-        let frame_count = self.exe.get_frame_count();
-        loop {
-            self.exe.execute();
-            if self.exe.get_frame_count() > frame_count {
-                break;
+        if !self.exe.args.pause {
+            let frame_count = self.exe.get_frame_count();
+            loop {
+                self.exe.execute();
+                if self.exe.get_frame_count() > frame_count {
+                    break;
+                }
             }
         }
 
         if self.exe.args.debug_level > 0 {
-            println!("update frame: {}", frame_count);
+            println!("update frame: {}", self.exe.get_frame_count());
         }
 
-        window.clear(Color::GREEN)?;
         {
             let fb = self.exe.get_frame_buffer();
             let img = Image::from_raw(&fb.buf, fb.w, fb.h, PixelFormat::RGB).unwrap();
