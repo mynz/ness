@@ -131,7 +131,13 @@ impl State for Rustness {
         }
 
         {
-            let fb = self.exe.get_frame_buffer();
+            let debug_mode = self.exe.args.debug_mode;
+            let fb = if debug_mode != 0 {
+                self.exe.get_debug_frame_buffer(debug_mode)
+            } else {
+                self.exe.get_frame_buffer()
+            };
+
             let img = Image::from_raw(&fb.buf, fb.w, fb.h, PixelFormat::RGB).unwrap();
             window.draw(&img.area(), Img(&img));
         }

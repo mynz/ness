@@ -105,6 +105,7 @@ pub struct PpuUnit {
     nmi_interuption: bool,
 
     frame_buffer: FrameBuffer,
+    debug_frame_buffer: FrameBuffer,
 
     next_render_x: u32, // x
     next_render_y: u32, // y
@@ -142,6 +143,7 @@ impl PpuUnit {
             line_sprite_count: 0,
             nmi_interuption: false,
             frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
+            debug_frame_buffer: FrameBuffer::new(DISPLAY_SIZE.0, DISPLAY_SIZE.1),
             next_render_x: 0,
             next_render_y: 0,
             rest_cycles_in_line: CYCLES_PER_LINE,
@@ -564,6 +566,10 @@ impl PpuUnit {
             let rgb = COLOR_PALETTE[col_idx as usize];
             self.frame_buffer.set_pixel(Pos(x, y), rgb);
         }
+    }
+
+    pub fn get_debug_frame_buffer(&mut self, _debug_mode: u32) -> &FrameBuffer {
+        &self.debug_frame_buffer
     }
 
     pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {

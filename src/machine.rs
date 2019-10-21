@@ -1027,4 +1027,8 @@ impl Executer {
     pub fn get_frame_buffer(&self) -> &FrameBuffer {
         self.ppu_unit.get_frame_buffer()
     }
+
+    pub fn get_debug_frame_buffer(&mut self, debug_mode: u32) -> &FrameBuffer {
+        self.ppu_unit.get_debug_frame_buffer(debug_mode)
+    }
 }
