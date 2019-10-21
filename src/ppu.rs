@@ -3,7 +3,7 @@
 use crate::color_palette::COLOR_PALETTE;
 use crate::frame_buffer::FrameBuffer;
 use crate::rom::Rom;
-use crate::{Cycle, Pos};
+use crate::{Cycle, Pos, RGB};
 use std::path::Path;
 
 const WIDTH: u32 = 256;
@@ -569,7 +569,12 @@ impl PpuUnit {
     }
 
     pub fn get_debug_frame_buffer(&mut self, _debug_mode: u32) -> &FrameBuffer {
-        &self.debug_frame_buffer
+        let fb = &mut self.debug_frame_buffer;
+
+        let col = RGB(0xff, 0, 0);
+        fb.set_pixel(Pos(10, 10), col);
+
+        fb
     }
 
     pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
