@@ -20,15 +20,36 @@ impl FrameBuffer {
         }
     }
 
+    #[inline]
     pub fn set_pixel(&mut self, pos: Pos, c: RGB) {
-        let p = 3 * (self.w * pos.1 + pos.0) as usize;
-        self.buf[p + 0] = c.0;
-        self.buf[p + 1] = c.1;
-        self.buf[p + 2] = c.2;
+        let i = self.get_index_by_pos(pos);
+        self.buf[i + 0] = c.0;
+        self.buf[i + 1] = c.1;
+        self.buf[i + 2] = c.2;
+    }
+
+    pub fn fill_rect(&mut self, p0: Pos, p1: Pos, c: RGB) {
+        let w = p1.0 - p0.0;
+        let h = p1.1 - p0.1;
+
+        for y in 0..h {
+            for x in 0..w {
+                let p = Pos(p0.0 + x, p0.1 + y);
+                let i = self.get_index_by_pos(p);
+                self.buf[i + 0] = c.0;
+                self.buf[i + 1] = c.1;
+                self.buf[i + 2] = c.2;
+            }
+        }
     }
 
     pub fn save_as_png<P: AsRef<Path>>(&self, path: P) {
         image::save_buffer(path, &self.buf, self.w, self.h, image::RGB(8)).unwrap();
+    }
+
+    #[inline(always)]
+    fn get_index_by_pos(&self, pos: Pos) -> usize {
+        3 * (self.w * pos.1 + pos.0) as usize
     }
 }
 

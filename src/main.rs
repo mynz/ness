@@ -100,6 +100,7 @@ impl State for Rustness {
             (Key::Key1, 1),
             (Key::Key2, 2),
             (Key::Key3, 3),
+            (Key::Key4, 4),
         ];
         for (key, v) in ks.iter() {
             if keys[*key] == ButtonState::Pressed {

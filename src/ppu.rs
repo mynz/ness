@@ -568,11 +568,41 @@ impl PpuUnit {
         }
     }
 
-    pub fn get_debug_frame_buffer(&mut self, _debug_mode: u32) -> &FrameBuffer {
+    pub fn get_debug_frame_buffer(&mut self, debug_mode: u32) -> &FrameBuffer {
         let fb = &mut self.debug_frame_buffer;
 
-        let col = RGB(0xff, 0, 0);
-        fb.set_pixel(Pos(10, 10), col);
+        let names = match debug_mode {
+            0 => &self.name_table0,
+            1 => &self.name_table1,
+            2 => &self.name_table2,
+            3 => &self.name_table3,
+            _ => &self.name_table0,
+        };
+
+        let mut i = 0;
+        for y in 0..30 {
+            for x in 0..32 {
+                let v = names[i];
+
+                let p0 = Pos(x * 8, y * 8);
+                let p1 = Pos(p0.0 + 8, p0.1 + 8);
+
+                let col = match v {
+                    0 => RGB(0x00, 0x00, 0x00),
+                    1 => RGB(0x00, 0x00, 0xff),
+                    2 => RGB(0x00, 0xff, 0x00),
+                    3 => RGB(0x00, 0xff, 0xff),
+                    4 => RGB(0xff, 0x00, 0x00),
+                    5 => RGB(0xff, 0x00, 0xff),
+                    6 => RGB(0xff, 0xff, 0x00),
+                    _ => RGB(0xff, 0xff, 0xff),
+                };
+
+                fb.fill_rect(p0, p1, col);
+
+                i += 1;
+            }
+        }
 
         fb
     }
