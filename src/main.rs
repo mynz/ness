@@ -104,7 +104,16 @@ impl State for Rustness {
         ];
         for (key, v) in ks.iter() {
             if keys[*key] == ButtonState::Pressed {
-                self.exe.args.debug_mode = Some(*v);
+                let new_mode = if let Some(prev) = self.exe.args.debug_mode {
+                    if prev == *v {
+                        None
+                    } else {
+                        Some(*v)
+                    }
+                } else {
+                    Some(*v)
+                };
+                self.exe.args.debug_mode = new_mode;
             }
         }
 
