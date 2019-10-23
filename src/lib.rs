@@ -10,7 +10,7 @@ pub struct CmdArgs {
     pub debug_level: u32,
     pub rom_path: String,
     pub pause: bool,
-    pub debug_mode: u32,
+    pub debug_mode: Option<u32>,
 }
 
 impl Default for CmdArgs {
@@ -19,7 +19,7 @@ impl Default for CmdArgs {
             debug_level: 0,
             rom_path: "".to_string(),
             pause: false,
-            debug_mode: 0,
+            debug_mode: None,
         }
     }
 }

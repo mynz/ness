@@ -104,7 +104,7 @@ impl State for Rustness {
         ];
         for (key, v) in ks.iter() {
             if keys[*key] == ButtonState::Pressed {
-                self.exe.args.debug_mode = *v;
+                self.exe.args.debug_mode = Some(*v);
             }
         }
 
@@ -132,8 +132,7 @@ impl State for Rustness {
         }
 
         {
-            let debug_mode = self.exe.args.debug_mode;
-            let fb = if debug_mode != 0 {
+            let fb = if let Some(debug_mode) = self.exe.args.debug_mode {
                 self.exe.get_debug_frame_buffer(debug_mode)
             } else {
                 self.exe.get_frame_buffer()
@@ -182,7 +181,7 @@ fn main() {
         debug_level,
         rom_path: rom_path.to_string(),
         pause: false,
-        debug_mode: 0,
+        debug_mode: None,
     };
 
     if false || args.debug_level > 0 {
