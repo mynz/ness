@@ -24,6 +24,7 @@ impl Default for CmdArgs {
     }
 }
 
+#[derive(Debug, Copy, Clone, PartialEq)]
 pub enum PadButton {
     A,
     B,

@@ -61,35 +61,21 @@ impl State for Rustness {
             window.close();
         }
 
-        let mut keybits: u32 = 0;
-
         let keys = window.keyboard();
-        if keys[Key::A].is_down() {
-            keybits |= 1 << PadButton::Left as u8;
-        }
-        if keys[Key::S].is_down() {
-            keybits |= 1 << PadButton::Down as u8;
-        }
-        if keys[Key::W].is_down() {
-            keybits |= 1 << PadButton::Up as u8;
-        }
-        if keys[Key::D].is_down() {
-            keybits |= 1 << PadButton::Right as u8;
-        }
 
-        if keys[Key::K].is_down() {
-            keybits |= 1 << PadButton::A as u8;
-        }
-        if keys[Key::J].is_down() {
-            keybits |= 1 << PadButton::B as u8;
-        }
-
-        if keys[Key::G].is_down() {
-            keybits |= 1 << PadButton::Select as u8;
-        }
-        if keys[Key::H].is_down() {
-            keybits |= 1 << PadButton::Start as u8;
-        }
+        let keybits: u32 = [
+            (Key::A, PadButton::Left),
+            (Key::S, PadButton::Down),
+            (Key::W, PadButton::Up),
+            (Key::D, PadButton::Right),
+            (Key::K, PadButton::A),
+            (Key::J, PadButton::B),
+            (Key::G, PadButton::Select),
+            (Key::H, PadButton::Start),
+        ]
+        .into_iter()
+        .filter(|(k, _pad)| keys[*k].is_down())
+        .fold(0_u32, |acc, (_k, pad)| acc | (1 << (*pad as u32)));
 
         // TODO: joypad1 の入力も必要
         self.exe.set_joypad_keybits(0, keybits);
