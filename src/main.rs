@@ -90,35 +90,38 @@ impl State for Rustness {
         if keys[Key::H].is_down() {
             keybits |= 1 << PadButton::Start as u8;
         }
+
+        // TODO: joypad1 の入力も必要
+        self.exe.set_joypad_keybits(0, keybits);
+
         // pause
         if keys[Key::Space] == ButtonState::Pressed {
             self.exe.args.pause = !self.exe.args.pause;
         }
-        // debug_mode
-        let ks = [
+
+        // debug_mode: toggle with keys
+        [
             (Key::Key0, 0),
             (Key::Key1, 1),
             (Key::Key2, 2),
             (Key::Key3, 3),
             (Key::Key4, 4),
-        ];
-        for (key, v) in ks.iter() {
-            if keys[*key] == ButtonState::Pressed {
-                let new_mode = if let Some(prev) = self.exe.args.debug_mode {
-                    if prev == *v {
-                        None
-                    } else {
-                        Some(*v)
-                    }
+        ]
+        .into_iter()
+        .filter(|(key, _v)| keys[*key] == ButtonState::Pressed)
+        .nth(0)
+        .map(|(_key, v)| {
+            let nv = if let Some(pv) = self.exe.args.debug_mode {
+                if pv == *v {
+                    None
                 } else {
                     Some(*v)
-                };
-                self.exe.args.debug_mode = new_mode;
-            }
-        }
-
-        // TODO: joypad1 の入力も必要
-        self.exe.set_joypad_keybits(0, keybits);
+                }
+            } else {
+                Some(*v)
+            };
+            self.exe.args.debug_mode = nv;
+        });
 
         Ok(())
     }
